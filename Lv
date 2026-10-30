@@ -1,1 +1,218 @@
+-- ======================================================
+-- LOUIS VUITTON HUB - STABLE ATTACK AURA & FIXED HEIGHT
+-- ======================================================
 
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Xóa GUI cũ nếu có
+if PlayerGui:FindFirstChild("LVHubAuraGui") then
+    PlayerGui.LVHubAuraGui:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "LVHubAuraGui"
+ScreenGui.Parent = PlayerGui
+ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 99999
+
+-- Khung Menu chính (Cố định ở giữa màn hình)
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 380, 0, 260)
+MainFrame.Position = UDim2.new(0.5, -190, 0.5, -130)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = MainFrame
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Color = Color3.fromRGB(212, 175, 55)
+UIStroke.Thickness = 2
+UIStroke.Parent = MainFrame
+
+-- Tiêu đề Menu
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(1, 0, 0, 45)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+TitleLabel.Text = "⚡ LOUIS VUITTON HUB | ATTACK AURA ⚡"
+TitleLabel.TextColor3 = Color3.fromRGB(212, 175, 55)
+TitleLabel.TextSize = 13
+TitleLabel.Font = Enum.Font.FredokaOne
+TitleLabel.Parent = MainFrame
+
+local TitleCorner = Instance.new("UICorner")
+TitleCorner.CornerRadius = UDim.new(0, 10)
+TitleCorner.Parent = TitleLabel
+
+-- Nút Bật/Tắt Attack Aura
+local AuraToggleBtn = Instance.new("TextButton")
+AuraToggleBtn.Size = UDim2.new(0, 340, 0, 50)
+AuraToggleBtn.Position = UDim2.new(0.5, -170, 0, 65)
+AuraToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+AuraToggleBtn.Text = "Attack Aura Farm: OFF"
+AuraToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AuraToggleBtn.TextSize = 15
+AuraToggleBtn.Font = Enum.Font.GothamBold
+AuraToggleBtn.Parent = MainFrame
+
+local BtnCorner = Instance.new("UICorner")
+BtnCorner.CornerRadius = UDim.new(0, 8)
+BtnCorner.Parent = AuraToggleBtn
+
+local BtnStroke = Instance.new("UIStroke")
+BtnStroke.Color = Color3.fromRGB(212, 175, 55)
+BtnStroke.Thickness = 1
+BtnStroke.Parent = AuraToggleBtn
+
+-- Cấu hình Global Variables
+_G.AttackAuraFarm = false
+_G.SelectWeapon = "Melee"
+_G.TweenSpeed = 170
+_G.FarmHeight = 15 -- Độ cao cố định so với đầu quái (không bị giật lên xuống)
+
+AuraToggleBtn.MouseButton1Click:Connect(function()
+    _G.AttackAuraFarm = not _G.AttackAuraFarm
+    if _G.AttackAuraFarm then
+        AuraToggleBtn.Text = "Attack Aura Farm: ON (Đang Chạy)"
+        AuraToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+    else
+        AuraToggleBtn.Text = "Attack Aura Farm: OFF"
+        AuraToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    end
+end)
+
+-- Nút nổi hình ảnh logo Louis Vuitton ở góc màn hình
+local ToggleButton = Instance.new("ImageButton")
+ToggleButton.Size = UDim2.new(0, 60, 0, 60)
+ToggleButton.Position = UDim2.new(0.02, 0, 0.25, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+-- Dán Decal ID của bạn vào trong ngoặc kép bên dưới nếu cần thay đổi ảnh
+ToggleButton.Image = "rbxassetid://0000000000" 
+ToggleButton.ScaleType = Enum.ScaleType.Stretch
+ToggleButton.Active = true
+ToggleButton.Draggable = true
+ToggleButton.Parent = ScreenGui
+
+local LogoCorner = Instance.new("UICorner")
+LogoCorner.CornerRadius = UDim.new(1, 0)
+LogoCorner.Parent = ToggleButton
+
+local LogoStroke = Instance.new("UIStroke")
+LogoStroke.Color = Color3.fromRGB(212, 175, 55)
+LogoStroke.Thickness = 2.5
+LogoStroke.Parent = ToggleButton
+
+ToggleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+-- Backend: Tự động cầm vũ khí
+local function EquipWeapon()
+    pcall(function()
+        local char = LocalPlayer.Character
+        if not char then return end
+        for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
+            if tool:IsA("Tool") and tool.ToolTip == _G.SelectWeapon then
+                char.Humanoid:EquipTool(tool)
+            end
+        end
+    end)
+end
+
+-- Backend: Attack Aura (Tự động kích hoạt đánh diện rộng liên tục)
+task.spawn(function()
+    while task.wait(0.01) do
+        if _G.AttackAuraFarm then
+            pcall(function()
+                EquipWeapon()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChildOfClass("Tool") then
+                    char:FindFirstChildOfClass("Tool"):Activate()
+                end
+                
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local myPos = char.HumanoidRootPart.Position
+                    if workspace:FindFirstChild("Enemies") then
+                        for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+                            if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 and enemy:FindFirstChild("HumanoidRootPart") then
+                                if (enemy.HumanoidRootPart.Position - myPos).Magnitude <= 55 then
+                                    game:GetService("VirtualUser"):Button1Down(Vector2.new(0,0))
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Backend: Giữ độ cao cố định, không bay lên xuống ngắt quãng
+local TweenService = game:GetService("TweenService")
+local currentTween = nil
+
+local function TweenToFixedAltitude(targetPos)
+    pcall(function()
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            local hrp = LocalPlayer.Character.HumanoidRootPart
+            local humanoid = LocalPlayer.Character.Humanoid
+            humanoid.PlatformStand = true
+            
+            local distance = (hrp.Position - targetPos).Magnitude
+            local tweenTime = distance / _G.TweenSpeed
+            local tweenInfo = TweenInfo.new(tweenTime, Enum.EasingStyle.Linear)
+            
+            if currentTween then currentTween:Cancel() end
+            currentTween = TweenService:Create(hrp, tweenInfo, {CFrame = CFrame.new(targetPos)})
+            currentTween:Play()
+            
+            currentTween.Completed:Connect(function()
+                humanoid.PlatformStand = false
+            end)
+        end
+    end)
+end
+
+-- Vòng lặp tìm quái gần nhất và neo giữ ở một độ cao cố định trên đầu quái
+task.spawn(function()
+    while task.wait(0.1) do
+        if _G.AttackAuraFarm and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            pcall(function()
+                local hrp = LocalPlayer.Character.HumanoidRootPart
+                local targetMob = nil
+                local shortestDistance = math.huge
+
+                if workspace:FindFirstChild("Enemies") then
+                    for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+                        if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 and enemy:FindFirstChild("HumanoidRootPart") then
+                            local dist = (enemy.HumanoidRootPart.Position - hrp.Position).Magnitude
+                            if dist < shortestDistance then
+                                shortestDistance = dist
+                                targetMob = enemy
+                            end
+                        end
+                    end
+                end
+
+                if targetMob and targetMob:FindFirstChild("HumanoidRootPart") then
+                    -- Tính toán vị trí đứng cố định trên đầu quái với chiều cao _G.FarmHeight
+                    local mobPos = targetMob.HumanoidRootPart.Position
+                    local fixedPosition = Vector3.new(mobPos.X, mobPos.Y + _G.FarmHeight, mobPos.Z)
+                    
+                    -- Chỉ thực hiện di chuyển mượt mà nếu khoảng cách lệch đáng kể để tránh rung lắc
+                    if (hrp.Position - fixedPosition).Magnitude > 3 then
+                        TweenToFixedAltitude(fixedPosition)
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+print("Louis Vuitton Hub: Đã tối ưu Attack Aura và cố định độ cao farm thành công!")
