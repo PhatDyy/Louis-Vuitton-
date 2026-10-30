@@ -1,5 +1,5 @@
 -- ======================================================
--- LOUIS VUITTON HUB v3.0 - By phatdyy
+-- LOUIS VUITTON HUB v4.0 - FULL HUB UI & STABLE ATTACK AURA
 -- ======================================================
 
 local Players = game:GetService("Players")
@@ -7,22 +7,22 @@ local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
 
--- Xóa GUI cũ nếu có
-if PlayerGui:FindFirstChild("LouisVuittonHubV3") then
-    PlayerGui.LouisVuittonHubV3:Destroy()
+-- Xóa GUI cũ nếu có để tránh kẹt
+if PlayerGui:FindFirstChild("LouisVuittonHubV4") then
+    PlayerGui.LouisVuittonHubV4:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "LouisVuittonHubV3"
+ScreenGui.Name = "LouisVuittonHubV4"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 99999
 
--- Khung Menu chính
+-- Khung Menu Hub chính (Thiết kế hiện đại chuẩn Hub)
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 420, 0, 280)
-MainFrame.Position = UDim2.new(0.5, -210, 0.5, -140)
-MainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+MainFrame.Size = UDim2.new(0, 420, 0, 310)
+MainFrame.Position = UDim2.new(0.5, -210, 0.5, -155)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
@@ -33,15 +33,15 @@ UICorner.CornerRadius = UDim.new(0, 12)
 UICorner.Parent = MainFrame
 
 local UIStroke = Instance.new("UIStroke")
-UIStroke.Color = Color3.fromRGB(212, 175, 55) -- Viền vàng Louis Vuitton
+UIStroke.Color = Color3.fromRGB(212, 175, 55) -- Viền vàng Louis Vuitton sang trọng
 UIStroke.Thickness = 2
 UIStroke.Parent = MainFrame
 
--- Tiêu đề
+-- Tiêu đề Hub
 local TitleLabel = Instance.new("TextLabel")
 TitleLabel.Size = UDim2.new(1, 0, 0, 45)
 TitleLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-TitleLabel.Text = "⚡ Louis Vuitton Hub v67.99 | Blox Fruits ⚡"
+TitleLabel.Text = "⚡ Louis Vuitton Hub v4.0 | Blox Fruits ⚡"
 TitleLabel.TextColor3 = Color3.fromRGB(212, 175, 55)
 TitleLabel.TextSize = 14
 TitleLabel.Font = Enum.Font.FredokaOne
@@ -51,10 +51,10 @@ local TitleCorner = Instance.new("UICorner")
 TitleCorner.CornerRadius = UDim.new(0, 12)
 TitleCorner.Parent = TitleLabel
 
--- Nút Bật/Tắt Auto Farm (Attack Aura + Khóa độ cao)
+-- 1. Nút Bật/Tắt Auto Farm (Attack Aura + Khóa độ cao)
 local FarmToggleBtn = Instance.new("TextButton")
-FarmToggleBtn.Size = UDim2.new(0, 380, 0, 50)
-FarmToggleBtn.Position = UDim2.new(0.5, -190, 0, 65)
+FarmToggleBtn.Size = UDim2.new(0, 380, 0, 45)
+FarmToggleBtn.Position = UDim2.new(0.5, -190, 0, 60)
 FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 FarmToggleBtn.Text = "Auto Farm (Attack Aura): OFF"
 FarmToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -62,28 +62,80 @@ FarmToggleBtn.TextSize = 13
 FarmToggleBtn.Font = Enum.Font.GothamBold
 FarmToggleBtn.Parent = MainFrame
 
-local BtnCorner = Instance.new("UICorner")
-BtnCorner.CornerRadius = UDim.new(0, 8)
-BtnCorner.Parent = FarmToggleBtn
+local BtnCorner1 = Instance.new("UICorner")
+BtnCorner1.CornerRadius = UDim.new(0, 8)
+BtnCorner1.Parent = FarmToggleBtn
 
-local BtnStroke = Instance.new("UIStroke")
-BtnStroke.Color = Color3.fromRGB(212, 175, 55)
-BtnStroke.Thickness = 1
-BtnStroke.Parent = FarmToggleBtn
+-- 2. Nút Bật/Tắt Fast Attack (Đánh siêu tốc)
+local FastAtkBtn = Instance.new("TextButton")
+FastAtkBtn.Size = UDim2.new(0, 380, 0, 45)
+FastAtkBtn.Position = UDim2.new(0.5, -190, 0, 115)
+FastAtkBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+FastAtkBtn.Text = "Fast Attack: ON"
+FastAtkBtn.TextColor3 = Color3.fromRGB(0, 255, 0)
+FastAtkBtn.TextSize = 13
+FastAtkBtn.Font = Enum.Font.GothamBold
+FastAtkBtn.Parent = MainFrame
 
--- Cấu hình Global
+local BtnCorner2 = Instance.new("UICorner")
+BtnCorner2.CornerRadius = UDim.new(0, 8)
+BtnCorner2.Parent = FastAtkBtn
+
+-- 3. Nút Bật/Tắt Auto Quest (Tự động nhận nhiệm vụ)
+local QuestToggleBtn = Instance.new("TextButton")
+QuestToggleBtn.Size = UDim2.new(0, 380, 0, 45)
+QuestToggleBtn.Position = UDim2.new(0.5, -190, 0, 170)
+QuestToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+QuestToggleBtn.Text = "Auto Quest: OFF"
+QuestToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+QuestToggleBtn.TextSize = 13
+QuestToggleBtn.Font = Enum.Font.GothamBold
+QuestToggleBtn.Parent = MainFrame
+
+local BtnCorner3 = Instance.new("UICorner")
+BtnCorner3.CornerRadius = UDim.new(0, 8)
+BtnCorner3.Parent = QuestToggleBtn
+
+-- Trạng thái biến cấu hình Global
 _G.AutoFarm = false
+_G.FastAttack = true
+_G.AutoQuest = false
 _G.SelectWeapon = "Melee"
-_G.FarmHeight = 16 -- Khoảng cách chiều cao cố định trên đầu quái
+_G.FarmHeight = 16 -- Độ cao cố định trên đầu quái
 
+-- Xử lý sự kiện bấm nút Auto Farm
 FarmToggleBtn.MouseButton1Click:Connect(function()
     _G.AutoFarm = not _G.AutoFarm
     if _G.AutoFarm then
-        FarmToggleBtn.Text = "Auto Farm: ON (Đang chạy ổn định)"
+        FarmToggleBtn.Text = "Auto Farm: ON (Đang chạy Attack Aura)"
         FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
     else
         FarmToggleBtn.Text = "Auto Farm (Attack Aura): OFF"
         FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    end
+end)
+
+-- Xử lý sự kiện bấm nút Fast Attack
+FastAtkBtn.MouseButton1Click:Connect(function()
+    _G.FastAttack = not _G.FastAttack
+    if _G.FastAttack then
+        FastAtkBtn.Text = "Fast Attack: ON"
+        FastAtkBtn.TextColor3 = Color3.fromRGB(0, 255, 0)
+    else
+        FastAtkBtn.Text = "Fast Attack: OFF"
+        FastAtkBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
+end)
+
+-- Xử lý sự kiện bấm nút Auto Quest
+QuestToggleBtn.MouseButton1Click:Connect(function()
+    _G.AutoQuest = not _G.AutoQuest
+    if _G.AutoQuest then
+        QuestToggleBtn.Text = "Auto Quest: ON"
+        QuestToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 0)
+    else
+        QuestToggleBtn.Text = "Auto Quest: OFF"
+        QuestToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     end
 end)
 
@@ -125,7 +177,7 @@ local function EquipWeapon()
     end)
 end
 
--- Attack Aura: Tự động quét và đánh quái diện rộng liên tục không cần click
+-- ATTACK AURA & FAST ATTACK (Tự động quét, kích hoạt vũ khí và đánh diện rộng)
 task.spawn(function()
     while task.wait(0.01) do
         if _G.AutoFarm then
@@ -141,8 +193,12 @@ task.spawn(function()
                     if workspace:FindFirstChild("Enemies") then
                         for _, enemy in pairs(workspace.Enemies:GetChildren()) do
                             if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 and enemy:FindFirstChild("HumanoidRootPart") then
-                                if (enemy.HumanoidRootPart.Position - myPos).Magnitude <= 60 then
+                                if (enemy.HumanoidRootPart.Position - myPos).Magnitude <= 70 then
                                     game:GetService("VirtualUser"):Button1Down(Vector2.new(0,0))
+                                    if _G.FastAttack then
+                                        -- Kích hoạt thêm nhịp đánh nhanh nếu bật Fast Attack
+                                        game:GetService("VirtualUser"):Button1Up(Vector2.new(0,0))
+                                    end
                                 end
                             end
                         end
@@ -153,10 +209,10 @@ task.spawn(function()
     end
 end)
 
--- Tự động nhận nhiệm vụ chuẩn
+-- Tự động nhận nhiệm vụ
 task.spawn(function()
     while task.wait(0.5) do
-        if _G.AutoFarm then
+        if _G.AutoQuest and _G.AutoFarm then
             pcall(function()
                 local questActive = LocalPlayer.PlayerGui.Main.Quest.Visible
                 if not questActive then
@@ -167,14 +223,13 @@ task.spawn(function()
     end
 end)
 
--- KHÓA CHẶT ĐỘ CAO ỔN ĐỊNH (Triệt tiêu hoàn toàn lỗi bay lên bay xuống)
+-- KHÓA CHẶT ĐỘ CAO ỔN ĐỊNH (Triệt tiêu lỗi bay lên bay xuống)
 RunService.Stepped:Connect(function()
     if _G.AutoFarm and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         pcall(function()
             local hrp = LocalPlayer.Character.HumanoidRootPart
             local humanoid = LocalPlayer.Character.Humanoid
             
-            -- Tắt ngã người khi bay
             humanoid.PlatformStand = true
             
             local targetMob = nil
@@ -194,9 +249,9 @@ RunService.Stepped:Connect(function()
 
             if targetMob and targetMob:FindFirstChild("HumanoidRootPart") then
                 local mobPos = targetMob.HumanoidRootPart.Position
-                -- Cố định vị trí ngay trên đầu quái mà không dùng tween giật cục
+                -- Ghim chặt vị trí trên đầu quái, cố định độ cao không rung lắc
                 hrp.CFrame = CFrame.new(mobPos.X, mobPos.Y + _G.FarmHeight, mobPos.Z)
-                hrp.Velocity = Vector3.new(0, 0, 0) -- Khóa vận tốc để nhân vật không bị trôi
+                hrp.Velocity = Vector3.new(0, 0, 0)
             end
         end)
     else
@@ -208,4 +263,4 @@ RunService.Stepped:Connect(function()
     end
 end)
 
-print("Louis Vuitton Hub v3.0: Đã fix lỗi bay lên bay xuống thành công!")
+print("Louis Vuitton Hub v4.0: Đã khởi chạy menu và Attack Aura thành công!")
