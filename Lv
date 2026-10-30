@@ -1,5 +1,5 @@
 -- ======================================================
--- LOUIS VUITTON HUB v10.0 - AUTO FARM & TRUE MELEE ATTACK AURA
+-- LOUIS VUITTON HUB v11.0 - FIXED UI & ATTACK AURA
 -- ======================================================
 
 local Players = game:GetService("Players")
@@ -8,20 +8,19 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualUser = game:GetService("VirtualUser")
-local TweenService = game:GetService("TweenService")
 
 -- Xóa GUI cũ nếu có
-if PlayerGui:FindFirstChild("LVHubv10") then
-    PlayerGui.LVHubv10:Destroy()
+if PlayerGui:FindFirstChild("LVHubv11") then
+    PlayerGui.LVHubv11:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "LVHubv10"
+ScreenGui.Name = "LVHubv11"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 999999
 
--- Khung tổng thể Hub (Sidebar Style giống Banana Cat Hub)
+-- Khung tổng thể Hub (Sidebar Style chuẩn đẹp)
 local MainFrame = Instance.new("Frame")
 MainFrame.Size = UDim2.new(0, 520, 0, 320)
 MainFrame.Position = UDim2.new(0.5, -260, 0.5, -160)
@@ -40,7 +39,7 @@ MainStroke.Color = Color3.fromRGB(212, 175, 55) -- Viền vàng Louis Vuitton
 MainStroke.Thickness = 2
 MainStroke.Parent = MainFrame
 
--- Thanh Tiêu đề trên cùng
+-- Thanh Tiêu đề trên cùng (Đã sửa lỗi font chữ)
 local TitleBar = Instance.new("Frame")
 TitleBar.Size = UDim2.new(1, 0, 0, 35)
 TitleBar.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
@@ -55,10 +54,10 @@ local TitleText = Instance.new("TextLabel")
 TitleText.Size = UDim2.new(1, -20, 1, 0)
 TitleText.Position = UDim2.new(0, 10, 0, 0)
 TitleText.BackgroundTransparency = 1
-TitleText.Text = "⚡ Louis Vuitton Hub v10.0 - Blox Fruit ⚡"
+TitleText.Text = "LOUIS VUITTON HUB v11.0 - BLOX FRUITS"
 TitleText.TextColor3 = Color3.fromRGB(212, 175, 55)
 TitleText.TextSize = 13
-TitleText.Font = Enum.Font.FredokaOne
+TitleText.Font = Enum.Font.GothamBold
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 TitleText.Parent = TitleBar
 
@@ -71,10 +70,10 @@ Sidebar.BorderSizePixel = 0
 Sidebar.ScrollBarThickness = 3
 Sidebar.Parent = MainFrame
 
-local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-UIListLayout.Padding = UDim.new(0, 5)
-UIListLayout.Parent = Sidebar
+local SidebarLayout = Instance.new("UIListLayout")
+SidebarLayout.SortOrder = Enum.SortOrder.LayoutOrder
+SidebarLayout.Padding = UDim.new(0, 5)
+SidebarLayout.Parent = Sidebar
 
 -- Khung Nội Dung Bên Phải (Container)
 local ContentContainer = Instance.new("Frame")
@@ -92,6 +91,7 @@ local function CreatePage(name)
     page.BackgroundTransparency = 1
     page.Visible = false
     page.ScrollBarThickness = 4
+    page.CanvasSize = UDim2.new(0, 0, 0, 200)
     page.Parent = ContentContainer
     
     local layout = Instance.new("UIListLayout")
@@ -107,7 +107,6 @@ local function CreateTabButton(name, targetPage)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -10, 0, 35)
     btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    btn.Text = "  " + name -- fixed concatenation context or string format
     btn.Text = "  " .. name
     btn.TextColor3 = Color3.fromRGB(200, 200, 200)
     btn.TextSize = 12
@@ -134,7 +133,7 @@ CreateTabButton("Auto Farm + Aura", pageFarming)
 
 pageFarming.Visible = true
 
--- Trạng thái biến cấu hình Global
+-- Trạng thái biến Global
 _G.AutoFarm = false
 _G.AutoQuest = false
 _G.FarmHeight = 16
@@ -168,12 +167,12 @@ local function CreateToggleInPage(page, text, callback)
     end)
 end
 
--- Thêm tính năng
+-- Thêm tính năng vào menu
 CreateToggleInPage(pageSettingFarm, "Auto Quest (Nhận nhiệm vụ)", function(state)
     _G.AutoQuest = state
 end)
 
-CreateToggleInPage(pageFarming, "Auto Farm (Bay đến quái + Attack Aura)", function(state)
+CreateToggleInPage(pageFarming, "Auto Farm (Bay đến quái + Aura)", function(state)
     _G.AutoFarm = state
 end)
 
@@ -219,7 +218,7 @@ local function EquipMelee()
     end)
 end
 
--- ATTACK AURA & TỰ ĐỘNG BAY ĐẾN QUÁI: Khi bật, tự động bay lên đầu quái và kích hoạt đánh lan Melee tại chỗ
+-- ATTACK AURA & TỰ ĐỘNG BAY ĐẾN QUÁI
 task.spawn(function()
     while task.wait(0.01) do
         if _G.AutoFarm then
@@ -232,7 +231,6 @@ task.spawn(function()
                     tool:Activate()
                 end
                 
-                -- Quét và đánh lan quái xung quanh
                 if char and char:FindFirstChild("HumanoidRootPart") then
                     local hrp = char.HumanoidRootPart
                     if workspace:FindFirstChild("Enemies") then
@@ -280,7 +278,6 @@ RunService.Stepped:Connect(function()
 
             if targetMob and targetMob:FindFirstChild("HumanoidRootPart") then
                 local mobPos = targetMob.HumanoidRootPart.Position
-                -- Bay đến đầu quái và ghim chặt độ cao ổn định không bị giật
                 hrp.CFrame = CFrame.new(mobPos.X, mobPos.Y + _G.FarmHeight, mobPos.Z)
                 hrp.Velocity = Vector3.new(0, 0, 0)
             end
@@ -308,4 +305,4 @@ task.spawn(function()
     end
 end)
 
-print("Louis Vuitton Hub v10.0: Đã hoàn tất Auto Farm bay đến quái và Attack Aura!")
+print("Louis Vuitton Hub v11.0: Đã sửa lỗi hiển thị menu và khởi chạy thành công!")
