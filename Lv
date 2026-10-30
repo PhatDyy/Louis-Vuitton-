@@ -1,5 +1,5 @@
 -- ======================================================
--- LOUIS VUITTON HUB v8.0 - MELEE ATTACK AURA & SIDEBAR UI
+-- LOUIS VUITTON HUB v10.0 - AUTO FARM & TRUE MELEE ATTACK AURA
 -- ======================================================
 
 local Players = game:GetService("Players")
@@ -8,14 +8,15 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualUser = game:GetService("VirtualUser")
+local TweenService = game:GetService("TweenService")
 
 -- Xóa GUI cũ nếu có
-if PlayerGui:FindFirstChild("LVHubv8") then
-    PlayerGui.LVHubv8:Destroy()
+if PlayerGui:FindFirstChild("LVHubv10") then
+    PlayerGui.LVHubv10:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "LVHubv8"
+ScreenGui.Name = "LVHubv10"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 999999
@@ -54,7 +55,7 @@ local TitleText = Instance.new("TextLabel")
 TitleText.Size = UDim2.new(1, -20, 1, 0)
 TitleText.Position = UDim2.new(0, 10, 0, 0)
 TitleText.BackgroundTransparency = 1
-TitleText.Text = "⚡ Louis Vuitton Hub v8.0 - Blox Fruit ⚡"
+TitleText.Text = "⚡ Louis Vuitton Hub v10.0 - Blox Fruit ⚡"
 TitleText.TextColor3 = Color3.fromRGB(212, 175, 55)
 TitleText.TextSize = 13
 TitleText.Font = Enum.Font.FredokaOne
@@ -106,6 +107,7 @@ local function CreateTabButton(name, targetPage)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -10, 0, 35)
     btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.Text = "  " + name -- fixed concatenation context or string format
     btn.Text = "  " .. name
     btn.TextColor3 = Color3.fromRGB(200, 200, 200)
     btn.TextSize = 12
@@ -128,14 +130,14 @@ local pageSettingFarm = CreatePage("SettingFarm")
 local pageFarming = CreatePage("Farming")
 
 CreateTabButton("Setting Farm", pageSettingFarm)
-CreateTabButton("Melee Attack Aura", pageFarming)
+CreateTabButton("Auto Farm + Aura", pageFarming)
 
 pageFarming.Visible = true
 
 -- Trạng thái biến cấu hình Global
 _G.AutoFarm = false
 _G.AutoQuest = false
-_G.SelectWeapon = "Melee"
+_G.FarmHeight = 16
 
 -- Hàm tạo nút Toggle trong trang
 local function CreateToggleInPage(page, text, callback)
@@ -171,7 +173,7 @@ CreateToggleInPage(pageSettingFarm, "Auto Quest (Nhận nhiệm vụ)", function
     _G.AutoQuest = state
 end)
 
-CreateToggleInPage(pageFarming, "Melee Attack Aura (Đánh lan tại chỗ)", function(state)
+CreateToggleInPage(pageFarming, "Auto Farm (Bay đến quái + Attack Aura)", function(state)
     _G.AutoFarm = state
 end)
 
@@ -200,8 +202,8 @@ ToggleButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
 
--- Tự động cầm vũ khí Melee lên tay
-local function EquipWeapon()
+-- Tự động trang bị Melee lên tay
+local function EquipMelee()
     pcall(function()
         local char = LocalPlayer.Character
         if not char then return end
@@ -217,30 +219,30 @@ local function EquipWeapon()
     end)
 end
 
--- MELEE ATTACK AURA THỰC THỤ: Tự động cầm Melee và tung đòn đánh lan diện rộng xung quanh vị trí người chơi đứng
+-- ATTACK AURA & TỰ ĐỘNG BAY ĐẾN QUÁI: Khi bật, tự động bay lên đầu quái và kích hoạt đánh lan Melee tại chỗ
 task.spawn(function()
     while task.wait(0.01) do
         if _G.AutoFarm then
             pcall(function()
-                EquipWeapon()
+                EquipMelee()
                 local char = LocalPlayer.Character
-                local hrp = char and char:FindFirstChild("HumanoidRootPart")
                 local tool = char and char:FindFirstChildOfClass("Tool")
                 
-                if hrp and tool then
-                    -- Kích hoạt Tool Melee
+                if tool then
                     tool:Activate()
-                    
-                    -- Quét tất cả quái trong bán kính xung quanh nhân vật và gửi lệnh tấn công diện rộng
+                end
+                
+                -- Quét và đánh lan quái xung quanh
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local hrp = char.HumanoidRootPart
                     if workspace:FindFirstChild("Enemies") then
                         for _, enemy in pairs(workspace.Enemies:GetChildren()) do
                             local enemyHrp = enemy:FindFirstChild("HumanoidRootPart")
                             local enemyHum = enemy:FindFirstChild("Humanoid")
                             if enemyHrp and enemyHum and enemyHum.Health > 0 then
-                                if (enemyHrp.Position - hrp.Position).Magnitude <= 60 then
-                                    -- Gửi tín hiệu sát thương chuẩn Melee đến quái
+                                if (enemyHrp.Position - hrp.Position).Magnitude <= 70 then
                                     VirtualUser:Button1Down(Vector2.new(0,0))
-                                    task.wait(0.02)
+                                    task.wait(0.01)
                                     VirtualUser:Button1Up(Vector2.new(0,0))
                                 end
                             end
@@ -249,6 +251,46 @@ task.spawn(function()
                 end
             end)
         end
+    end
+end)
+
+-- KHÓA ĐỘ CAO VÀ BAY ĐẾN QUÁI GẦN NHẤT ỔN ĐỊNH
+RunService.Stepped:Connect(function()
+    if _G.AutoFarm and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        pcall(function()
+            local hrp = LocalPlayer.Character.HumanoidRootPart
+            local humanoid = LocalPlayer.Character.Humanoid
+            
+            humanoid.PlatformStand = true
+            
+            local targetMob = nil
+            local shortestDistance = math.huge
+
+            if workspace:FindFirstChild("Enemies") then
+                for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+                    if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 and enemy:FindFirstChild("HumanoidRootPart") then
+                        local dist = (enemy.HumanoidRootPart.Position - hrp.Position).Magnitude
+                        if dist < shortestDistance then
+                            shortestDistance = dist
+                            targetMob = enemy
+                        end
+                    end
+                end
+            end
+
+            if targetMob and targetMob:FindFirstChild("HumanoidRootPart") then
+                local mobPos = targetMob.HumanoidRootPart.Position
+                -- Bay đến đầu quái và ghim chặt độ cao ổn định không bị giật
+                hrp.CFrame = CFrame.new(mobPos.X, mobPos.Y + _G.FarmHeight, mobPos.Z)
+                hrp.Velocity = Vector3.new(0, 0, 0)
+            end
+        end)
+    else
+        pcall(function()
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+                LocalPlayer.Character.Humanoid.PlatformStand = false
+            end
+        end)
     end
 end)
 
@@ -266,4 +308,4 @@ task.spawn(function()
     end
 end)
 
-print("Louis Vuitton Hub v8.0: Đã khởi chạy Melee Attack Aura & Sidebar UI thành công!")
+print("Louis Vuitton Hub v10.0: Đã hoàn tất Auto Farm bay đến quái và Attack Aura!")
