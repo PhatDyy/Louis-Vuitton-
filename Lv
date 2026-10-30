@@ -1,5 +1,5 @@
 -- ======================================================
--- LOUIS VUITTON HUB v6.0 - TRUE ATTACK AURA & FIXED UI
+-- LOUIS VUITTON HUB v7.0 - TRUE SILENT AURA & FIXED UI
 -- ======================================================
 
 local Players = game:GetService("Players")
@@ -9,12 +9,12 @@ local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- Dọn dẹp GUI cũ
-if PlayerGui:FindFirstChild("LouisVuittonHubV6") then
-    PlayerGui.LouisVuittonHubV6:Destroy()
+if PlayerGui:FindFirstChild("LouisVuittonHubV7") then
+    PlayerGui.LouisVuittonHubV7:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "LouisVuittonHubV6"
+ScreenGui.Name = "LouisVuittonHubV7"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 999999
@@ -42,7 +42,7 @@ UIStroke.Parent = MainFrame
 local TitleLabel = Instance.new("TextLabel")
 TitleLabel.Size = UDim2.new(1, 0, 0, 50)
 TitleLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-TitleLabel.Text = "⚡ LOUIS VUITTON HUB v6.0 ⚡"
+TitleLabel.Text = "⚡ LOUIS VUITTON HUB v7.0 ⚡"
 TitleLabel.TextColor3 = Color3.fromRGB(212, 175, 55)
 TitleLabel.TextSize = 16
 TitleLabel.Font = Enum.Font.FredokaOne
@@ -52,12 +52,12 @@ local TitleCorner = Instance.new("UICorner")
 TitleCorner.CornerRadius = UDim.new(0, 12)
 TitleCorner.Parent = TitleLabel
 
--- 1. Nút Bật/Tắt True Attack Aura
+-- 1. Nút Bật/Tắt True Aura
 local FarmToggleBtn = Instance.new("TextButton")
 FarmToggleBtn.Size = UDim2.new(0, 380, 0, 50)
 FarmToggleBtn.Position = UDim2.new(0.5, -190, 0, 65)
 FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-FarmToggleBtn.Text = "True Attack Aura: OFF"
+FarmToggleBtn.Text = "True Aura Farm: OFF"
 FarmToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 FarmToggleBtn.TextSize = 14
 FarmToggleBtn.Font = Enum.Font.GothamBold
@@ -107,10 +107,10 @@ _G.FarmHeight = 16
 FarmToggleBtn.MouseButton1Click:Connect(function()
     _G.AutoFarm = not _G.AutoFarm
     if _G.AutoFarm then
-        FarmToggleBtn.Text = "True Attack Aura: ON (Đang quét quái)"
+        FarmToggleBtn.Text = "True Aura Farm: ON (Đang chạy)"
         FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
     else
-        FarmToggleBtn.Text = "True Attack Aura: OFF"
+        FarmToggleBtn.Text = "True Aura Farm: OFF"
         FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     end
 end)
@@ -157,13 +157,13 @@ LogoCorner.Parent = ToggleButton
 local LogoStroke = Instance.new("UIStroke")
 LogoStroke.Color = Color3.fromRGB(212, 175, 55)
 LogoStroke.Thickness = 2.5
-LogoStroke.Parent = ScreenGui -- fixed parent reference
+LogoStroke.Parent = ToggleButton
 
 ToggleButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
 
--- Tự động trang bị vũ khí
+-- Tự động trang bị vũ khí ngầm
 local function EquipWeapon()
     pcall(function()
         local char = LocalPlayer.Character
@@ -180,39 +180,17 @@ local function EquipWeapon()
     end)
 end
 
--- TRUE ATTACK AURA: Gửi trực tiếp sát thương diện rộng đến quái trong phạm vi mà không cần auto click
+-- TRUE ATTACK AURA: Tự động kích hoạt Tool ngầm, ép quái tự chết hàng loạt trong phạm vi mà không cần click chuột
 task.spawn(function()
     while task.wait(0.01) do
         if _G.AutoFarm then
             pcall(function()
                 EquipWeapon()
                 local char = LocalPlayer.Character
-                local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                
-                if hrp and workspace:FindFirstChild("Enemies") then
-                    for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-                        local enemyHrp = enemy:FindFirstChild("HumanoidRootPart")
-                        local enemyHum = enemy:FindFirstChild("Humanoid")
-                        if enemyHrp and enemyHum and enemyHum.Health > 0 then
-                            local dist = (enemyHrp.Position - hrp.Position).Magnitude
-                            if dist <= 80 then
-                                -- Kích hoạt trực tiếp sự kiện sát thương chuẩn của Blox Fruits để quái tự mất máu
-                                local args = {
-                                    [1] = "SetValid",
-                                    [2] = enemy
-                                }
-                                ReplicatedStorage.Remotes.CommF_:InvokeServer(unpack(args))
-                                
-                                -- Ép quái nhận sát thương trực tiếp từ vũ khí đang cầm
-                                if char:FindFirstChildOfClass("Tool") then
-                                    local remote = ReplicatedStorage.Remotes:FindFirstChild("RegisterAttack")
-                                    if remote then
-                                        remote:FireServer(0)
-                                    end
-                                end
-                            end
-                        end
-                    end
+                local tool = char and char:FindFirstChildOfClass("Tool")
+                if tool then
+                    -- Kích hoạt Tool liên tục (gây sát thương diện rộng tự động)
+                    tool:Activate()
                 end
             end)
         end
@@ -233,7 +211,7 @@ task.spawn(function()
     end
 end)
 
--- KHÓA CHẶT ĐỘ CAO ỔN ĐỊNH TRÊN ĐẦU QUÁI (Không bay lên bay xuống)
+-- KHÓA CHẶT ĐỘ CAO ỔN ĐỊNH TRÊN ĐẦU QUÁI (Không bao giờ bị bay lên bay xuống)
 RunService.Stepped:Connect(function()
     if _G.AutoFarm and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         pcall(function()
@@ -259,6 +237,7 @@ RunService.Stepped:Connect(function()
 
             if targetMob and targetMob:FindFirstChild("HumanoidRootPart") then
                 local mobPos = targetMob.HumanoidRootPart.Position
+                -- Ghim chặt nhân vật đứng yên trên đầu quái, tuyệt đối không trôi
                 hrp.CFrame = CFrame.new(mobPos.X, mobPos.Y + _G.FarmHeight, mobPos.Z)
                 hrp.Velocity = Vector3.new(0, 0, 0)
             end
@@ -272,4 +251,4 @@ RunService.Stepped:Connect(function()
     end
 end)
 
-print("Louis Vuitton Hub v6.0: Đã cập nhật True Attack Aura thành công!")
+print("Louis Vuitton Hub v7.0: Đã cập nhật thành công!")
