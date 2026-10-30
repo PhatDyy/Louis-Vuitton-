@@ -1,28 +1,28 @@
 -- ======================================================
--- LOUIS VUITTON HUB v5.0 - FIXED UI & POWERFUL ATTACK AURA
+-- LOUIS VUITTON HUB v6.0 - TRUE ATTACK AURA & FIXED UI
 -- ======================================================
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
-local VirtualUser = game:GetService("VirtualUser")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- Dọn dẹp GUI cũ
-if PlayerGui:FindFirstChild("LouisVuittonHubV5") then
-    PlayerGui.LouisVuittonHubV5:Destroy()
+if PlayerGui:FindFirstChild("LouisVuittonHubV6") then
+    PlayerGui.LouisVuittonHubV6:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "LouisVuittonHubV5"
+ScreenGui.Name = "LouisVuittonHubV6"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 999999
 
 -- Khung Menu Hub chính (Hiển thị to rõ ở giữa màn hình)
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 420, 0, 320)
-MainFrame.Position = UDim2.new(0.5, -210, 0.5, -160)
+MainFrame.Size = UDim2.new(0, 420, 0, 300)
+MainFrame.Position = UDim2.new(0.5, -210, 0.5, -150)
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
@@ -42,7 +42,7 @@ UIStroke.Parent = MainFrame
 local TitleLabel = Instance.new("TextLabel")
 TitleLabel.Size = UDim2.new(1, 0, 0, 50)
 TitleLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-TitleLabel.Text = "⚡ LOUIS VUITTON HUB v5.0 ⚡"
+TitleLabel.Text = "⚡ LOUIS VUITTON HUB v6.0 ⚡"
 TitleLabel.TextColor3 = Color3.fromRGB(212, 175, 55)
 TitleLabel.TextSize = 16
 TitleLabel.Font = Enum.Font.FredokaOne
@@ -52,12 +52,12 @@ local TitleCorner = Instance.new("UICorner")
 TitleCorner.CornerRadius = UDim.new(0, 12)
 TitleCorner.Parent = TitleLabel
 
--- 1. Nút Bật/Tắt Auto Farm (Attack Aura)
+-- 1. Nút Bật/Tắt True Attack Aura
 local FarmToggleBtn = Instance.new("TextButton")
 FarmToggleBtn.Size = UDim2.new(0, 380, 0, 50)
 FarmToggleBtn.Position = UDim2.new(0.5, -190, 0, 65)
 FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-FarmToggleBtn.Text = "Attack Aura Farm: OFF"
+FarmToggleBtn.Text = "True Attack Aura: OFF"
 FarmToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 FarmToggleBtn.TextSize = 14
 FarmToggleBtn.Font = Enum.Font.GothamBold
@@ -67,7 +67,7 @@ local BtnCorner1 = Instance.new("UICorner")
 BtnCorner1.CornerRadius = UDim.new(0, 8)
 BtnCorner1.Parent = FarmToggleBtn
 
--- 2. Nút Chọn Vũ Khí (Melee / Sword)
+-- 2. Nút Chọn Vũ Khí
 local WeaponBtn = Instance.new("TextButton")
 WeaponBtn.Size = UDim2.new(0, 380, 0, 50)
 WeaponBtn.Position = UDim2.new(0.5, -190, 0, 125)
@@ -100,17 +100,17 @@ BtnCorner3.Parent = QuestToggleBtn
 -- Trạng thái biến Global
 _G.AutoFarm = false
 _G.AutoQuest = false
-_G.SelectWeapon = "Melee" -- Hoặc "Sword"
+_G.SelectWeapon = "Melee" 
 _G.FarmHeight = 16
 
 -- Xử lý nút Auto Farm
 FarmToggleBtn.MouseButton1Click:Connect(function()
     _G.AutoFarm = not _G.AutoFarm
     if _G.AutoFarm then
-        FarmToggleBtn.Text = "Attack Aura Farm: ON (Đang đánh)"
+        FarmToggleBtn.Text = "True Attack Aura: ON (Đang quét quái)"
         FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
     else
-        FarmToggleBtn.Text = "Attack Aura Farm: OFF"
+        FarmToggleBtn.Text = "True Attack Aura: OFF"
         FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     end
 end)
@@ -157,25 +157,21 @@ LogoCorner.Parent = ToggleButton
 local LogoStroke = Instance.new("UIStroke")
 LogoStroke.Color = Color3.fromRGB(212, 175, 55)
 LogoStroke.Thickness = 2.5
-LogoStroke.Parent = ToggleButton
+LogoStroke.Parent = ScreenGui -- fixed parent reference
 
 ToggleButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
 
--- Hàm tự động trang bị vũ khí từ Backpack lên tay nhân vật
+-- Tự động trang bị vũ khí
 local function EquipWeapon()
     pcall(function()
         local char = LocalPlayer.Character
         if not char then return end
-        -- Kiểm tra xem trên tay đã cầm đúng loại tool chưa
         local humanoid = char:FindFirstChildOfClass("Humanoid")
         local currentTool = char:FindFirstChildOfClass("Tool")
-        if currentTool and currentTool.ToolTip == _G.SelectWeapon then
-            return -- Đang cầm rồi thì thôi
-        end
+        if currentTool and currentTool.ToolTip == _G.SelectWeapon then return end
         
-        -- Tìm trong Backpack để equip
         for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
             if tool:IsA("Tool") and tool.ToolTip == _G.SelectWeapon then
                 humanoid:EquipTool(tool)
@@ -184,28 +180,35 @@ local function EquipWeapon()
     end)
 end
 
--- ATTACK AURA MẠNH MẼ: Tự động cầm vũ khí và spam đánh diện rộng liên tục
+-- TRUE ATTACK AURA: Gửi trực tiếp sát thương diện rộng đến quái trong phạm vi mà không cần auto click
 task.spawn(function()
     while task.wait(0.01) do
         if _G.AutoFarm then
             pcall(function()
                 EquipWeapon()
                 local char = LocalPlayer.Character
-                local tool = char and char:FindFirstChildOfClass("Tool")
-                if tool then
-                    tool:Activate()
-                end
+                local hrp = char and char:FindFirstChild("HumanoidRootPart")
                 
-                -- Kích hoạt VirtualUser click đánh quái xung quanh
-                if char and char:FindFirstChild("HumanoidRootPart") then
-                    local myPos = char.HumanoidRootPart.Position
-                    if workspace:FindFirstChild("Enemies") then
-                        for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-                            if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 and enemy:FindFirstChild("HumanoidRootPart") then
-                                if (enemy.HumanoidRootPart.Position - myPos).Magnitude <= 80 then
-                                    VirtualUser:Button1Down(Vector2.new(0,0))
-                                    task.wait()
-                                    VirtualUser:Button1Up(Vector2.new(0,0))
+                if hrp and workspace:FindFirstChild("Enemies") then
+                    for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+                        local enemyHrp = enemy:FindFirstChild("HumanoidRootPart")
+                        local enemyHum = enemy:FindFirstChild("Humanoid")
+                        if enemyHrp and enemyHum and enemyHum.Health > 0 then
+                            local dist = (enemyHrp.Position - hrp.Position).Magnitude
+                            if dist <= 80 then
+                                -- Kích hoạt trực tiếp sự kiện sát thương chuẩn của Blox Fruits để quái tự mất máu
+                                local args = {
+                                    [1] = "SetValid",
+                                    [2] = enemy
+                                }
+                                ReplicatedStorage.Remotes.CommF_:InvokeServer(unpack(args))
+                                
+                                -- Ép quái nhận sát thương trực tiếp từ vũ khí đang cầm
+                                if char:FindFirstChildOfClass("Tool") then
+                                    local remote = ReplicatedStorage.Remotes:FindFirstChild("RegisterAttack")
+                                    if remote then
+                                        remote:FireServer(0)
+                                    end
                                 end
                             end
                         end
@@ -223,14 +226,14 @@ task.spawn(function()
             pcall(function()
                 local questActive = LocalPlayer.PlayerGui.Main.Quest.Visible
                 if not questActive then
-                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StartQuest", "Bandit", 1)
+                    ReplicatedStorage.Remotes.CommF_:InvokeServer("StartQuest", "Bandit", 1)
                 end
             end)
         end
     end
 end)
 
--- KHÓA CHẶT ĐỘ CAO ỔN ĐỊNH TRÊN ĐẦU QUÁI (Không bị bay lên bay xuống)
+-- KHÓA CHẶT ĐỘ CAO ỔN ĐỊNH TRÊN ĐẦU QUÁI (Không bay lên bay xuống)
 RunService.Stepped:Connect(function()
     if _G.AutoFarm and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         pcall(function()
@@ -256,7 +259,6 @@ RunService.Stepped:Connect(function()
 
             if targetMob and targetMob:FindFirstChild("HumanoidRootPart") then
                 local mobPos = targetMob.HumanoidRootPart.Position
-                -- Ghim chặt nhân vật đứng yên trên đầu quái
                 hrp.CFrame = CFrame.new(mobPos.X, mobPos.Y + _G.FarmHeight, mobPos.Z)
                 hrp.Velocity = Vector3.new(0, 0, 0)
             end
@@ -270,4 +272,4 @@ RunService.Stepped:Connect(function()
     end
 end)
 
-print("Louis Vuitton Hub v5.0: Đã load thành công giao diện và Attack Aura!")
+print("Louis Vuitton Hub v6.0: Đã cập nhật True Attack Aura thành công!")
