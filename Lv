@@ -1,27 +1,27 @@
 -- ======================================================
--- LOUIS VUITTON HUB V2.0 - FULL UI & AUTO FARM (QUEST + AURA)
+-- LOUIS VUITTON HUB v3.0 - STABLE HEIGHT ATTACK AURA
 -- ======================================================
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 
--- Xóa GUI cũ nếu có để tránh trùng lặp
-if PlayerGui:FindFirstChild("LouisVuittonHubV2") then
-    PlayerGui.LouisVuittonHubV2:Destroy()
+-- Xóa GUI cũ nếu có
+if PlayerGui:FindFirstChild("LouisVuittonHubV3") then
+    PlayerGui.LouisVuittonHubV3:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "LouisVuittonHubV2"
+ScreenGui.Name = "LouisVuittonHubV3"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 99999
 
--- Khung Menu chính (Thiết kế chuẩn Hub hiện đại)
+-- Khung Menu chính
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 440, 0, 320)
-MainFrame.Position = UDim2.new(0.5, -220, 0.5, -160)
+MainFrame.Size = UDim2.new(0, 420, 0, 280)
+MainFrame.Position = UDim2.new(0.5, -210, 0.5, -140)
 MainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
@@ -33,17 +33,17 @@ UICorner.CornerRadius = UDim.new(0, 12)
 UICorner.Parent = MainFrame
 
 local UIStroke = Instance.new("UIStroke")
-UIStroke.Color = Color3.fromRGB(212, 175, 55) -- Viền vàng Louis Vuitton sang trọng
+UIStroke.Color = Color3.fromRGB(212, 175, 55) -- Viền vàng Louis Vuitton
 UIStroke.Thickness = 2
 UIStroke.Parent = MainFrame
 
--- Tiêu đề Louis Vuitton Hub
+-- Tiêu đề
 local TitleLabel = Instance.new("TextLabel")
 TitleLabel.Size = UDim2.new(1, 0, 0, 45)
 TitleLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-TitleLabel.Text = "⚡ Louis Vuitton Hub v2.0 | Blox Fruits ⚡"
+TitleLabel.Text = "⚡ Louis Vuitton Hub v3.0 | Blox Fruits ⚡"
 TitleLabel.TextColor3 = Color3.fromRGB(212, 175, 55)
-TitleLabel.TextSize = 15
+TitleLabel.TextSize = 14
 TitleLabel.Font = Enum.Font.FredokaOne
 TitleLabel.Parent = MainFrame
 
@@ -51,92 +51,39 @@ local TitleCorner = Instance.new("UICorner")
 TitleCorner.CornerRadius = UDim.new(0, 12)
 TitleCorner.Parent = TitleLabel
 
--- 1. Nút Bật/Tắt Auto Farm (Quest + Attack Aura)
+-- Nút Bật/Tắt Auto Farm (Attack Aura + Khóa độ cao)
 local FarmToggleBtn = Instance.new("TextButton")
-FarmToggleBtn.Size = UDim2.new(0, 400, 0, 45)
-FarmToggleBtn.Position = UDim2.new(0.5, -200, 0, 60)
+FarmToggleBtn.Size = UDim2.new(0, 380, 0, 50)
+FarmToggleBtn.Position = UDim2.new(0.5, -190, 0, 65)
 FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-FarmToggleBtn.Text = "Auto Farm (Quest + Attack Aura): OFF"
+FarmToggleBtn.Text = "Auto Farm (Attack Aura): OFF"
 FarmToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 FarmToggleBtn.TextSize = 13
 FarmToggleBtn.Font = Enum.Font.GothamBold
 FarmToggleBtn.Parent = MainFrame
 
-local BtnCorner1 = Instance.new("UICorner")
-BtnCorner1.CornerRadius = UDim.new(0, 8)
-BtnCorner1.Parent = FarmToggleBtn
+local BtnCorner = Instance.new("UICorner")
+BtnCorner.CornerRadius = UDim.new(0, 8)
+BtnCorner.Parent = FarmToggleBtn
 
--- 2. Nút Bật/Tắt Fast Attack (Đánh siêu tốc)
-local FastAtkBtn = Instance.new("TextButton")
-FastAtkBtn.Size = UDim2.new(0, 400, 0, 45)
-FastAtkBtn.Position = UDim2.new(0.5, -200, 0, 115)
-FastAtkBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-FastAtkBtn.Text = "Fast Attack: ON"
-FastAtkBtn.TextColor3 = Color3.fromRGB(0, 255, 0)
-FastAtkBtn.TextSize = 13
-FastAtkBtn.Font = Enum.Font.GothamBold
-FastAtkBtn.Parent = MainFrame
+local BtnStroke = Instance.new("UIStroke")
+BtnStroke.Color = Color3.fromRGB(212, 175, 55)
+BtnStroke.Thickness = 1
+BtnStroke.Parent = FarmToggleBtn
 
-local BtnCorner2 = Instance.new("UICorner")
-BtnCorner2.CornerRadius = UDim.new(0, 8)
-BtnCorner2.Parent = FastAtkBtn
-
--- 3. Nút Bật/Tắt ESP Player (Nhìn xuyên tường)
-local EspBtn = Instance.new("TextButton")
-EspBtn.Size = UDim2.new(0, 400, 0, 45)
-EspBtn.Position = UDim2.new(0.5, -200, 0, 170)
-EspBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-EspBtn.Text = "ESP Player: OFF"
-EspBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-EspBtn.TextSize = 13
-EspBtn.Font = Enum.Font.GothamBold
-EspBtn.Parent = MainFrame
-
-local BtnCorner3 = Instance.new("UICorner")
-BtnCorner3.CornerRadius = UDim.new(0, 8)
-BtnCorner3.Parent = EspBtn
-
--- Trạng thái cấu hình Global
+-- Cấu hình Global
 _G.AutoFarm = false
-_G.FastAttack = true
-_G.ESPPlayer = false
 _G.SelectWeapon = "Melee"
-_G.TweenSpeed = 170
-_G.FarmHeight = 15 -- Độ cao ổn định trên đầu quái
+_G.FarmHeight = 16 -- Khoảng cách chiều cao cố định trên đầu quái
 
--- Xử lý bấm nút Auto Farm
 FarmToggleBtn.MouseButton1Click:Connect(function()
     _G.AutoFarm = not _G.AutoFarm
     if _G.AutoFarm then
-        FarmToggleBtn.Text = "Auto Farm: ON (Đang chạy...)"
+        FarmToggleBtn.Text = "Auto Farm: ON (Đang chạy ổn định)"
         FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
     else
-        FarmToggleBtn.Text = "Auto Farm (Quest + Attack Aura): OFF"
+        FarmToggleBtn.Text = "Auto Farm (Attack Aura): OFF"
         FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    end
-end)
-
--- Xử lý bấm nút Fast Attack
-FastAtkBtn.MouseButton1Click:Connect(function()
-    _G.FastAttack = not _G.FastAttack
-    if _G.FastAttack then
-        FastAtkBtn.Text = "Fast Attack: ON"
-        FastAtkBtn.TextColor3 = Color3.fromRGB(0, 255, 0)
-    else
-        FastAtkBtn.Text = "Fast Attack: OFF"
-        FastAtkBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    end
-end)
-
--- Xử lý bấm nút ESP
-EspBtn.MouseButton1Click:Connect(function()
-    _G.ESPPlayer = not _G.ESPPlayer
-    if _G.ESPPlayer then
-        EspBtn.Text = "ESP Player: ON"
-        EspBtn.TextColor3 = Color3.fromRGB(0, 255, 0)
-    else
-        EspBtn.Text = "ESP Player: OFF"
-        EspBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     end
 end)
 
@@ -178,7 +125,7 @@ local function EquipWeapon()
     end)
 end
 
--- Attack Aura & Fast Attack tự động đánh quái xung quanh
+-- Attack Aura: Tự động quét và đánh quái diện rộng liên tục không cần click
 task.spawn(function()
     while task.wait(0.01) do
         if _G.AutoFarm then
@@ -206,93 +153,59 @@ task.spawn(function()
     end
 end)
 
--- Hàm Tween giữ độ cao cố định, mượt mà, không bị giật
-local currentTween = nil
-local function TweenToFixedAltitude(targetPos)
-    pcall(function()
-        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character:FindFirstChild("Humanoid") then
-            local hrp = LocalPlayer.Character.HumanoidRootPart
-            local humanoid = LocalPlayer.Character.Humanoid
-            humanoid.PlatformStand = true
-            
-            local distance = (hrp.Position - targetPos).Magnitude
-            local tweenTime = distance / _G.TweenSpeed
-            local tweenInfo = TweenInfo.new(tweenTime, Enum.EasingStyle.Linear)
-            
-            if currentTween then currentTween:Cancel() end
-            currentTween = TweenService:Create(hrp, tweenInfo, {CFrame = CFrame.new(targetPos)})
-            currentTween:Play()
-            
-            currentTween.Completed:Connect(function()
-                humanoid.PlatformStand = false
-            end)
-        end
-    end)
-end
-
--- Vòng lặp Auto Quest & Farm định vị độ cao
+-- Tự động nhận nhiệm vụ chuẩn
 task.spawn(function()
-    while task.wait(0.2) do
-        if _G.AutoFarm and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+    while task.wait(0.5) do
+        if _G.AutoFarm then
             pcall(function()
-                -- Tự động nhận nhiệm vụ (kiểm tra trạng thái quest trên UI)
                 local questActive = LocalPlayer.PlayerGui.Main.Quest.Visible
                 if not questActive then
                     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StartQuest", "Bandit", 1)
                 end
-
-                -- Bay đến quái gần nhất và giữ nguyên độ cao ổn định
-                local hrp = LocalPlayer.Character.HumanoidRootPart
-                local targetMob = nil
-                local shortestDistance = math.huge
-
-                if workspace:FindFirstChild("Enemies") then
-                    for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-                        if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 and enemy:FindFirstChild("HumanoidRootPart") then
-                            local dist = (enemy.HumanoidRootPart.Position - hrp.Position).Magnitude
-                            if dist < shortestDistance then
-                                shortestDistance = dist
-                                targetMob = enemy
-                            end
-                        end
-                    end
-                end
-
-                if targetMob and targetMob:FindFirstChild("HumanoidRootPart") then
-                    local mobPos = targetMob.HumanoidRootPart.Position
-                    local fixedPosition = Vector3.new(mobPos.X, mobPos.Y + _G.FarmHeight, mobPos.Z)
-                    
-                    if (hrp.Position - fixedPosition).Magnitude > 4 then
-                        TweenToFixedAltitude(fixedPosition)
-                    end
-                end
             end)
         end
     end
 end)
 
--- Xử lý ESP Player
-game:GetService("RunService").RenderStepped:Connect(function()
-    if _G.ESPPlayer then
-        for _, p in pairs(Players:GetPlayers()) do
-            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                if not p.Character:FindFirstChild("LVHighlight") then
-                    local hl = Instance.new("Highlight")
-                    hl.Name = "LVHighlight"
-                    hl.Adornee = p.Character
-                    hl.FillColor = Color3.fromRGB(212, 175, 55)
-                    hl.OutlineColor = Color3.fromRGB(255, 255, 255)
-                    hl.Parent = p.Character
+-- KHÓA CHẶT ĐỘ CAO ỔN ĐỊNH (Triệt tiêu hoàn toàn lỗi bay lên bay xuống)
+RunService.Stepped:Connect(function()
+    if _G.AutoFarm and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        pcall(function()
+            local hrp = LocalPlayer.Character.HumanoidRootPart
+            local humanoid = LocalPlayer.Character.Humanoid
+            
+            -- Tắt ngã người khi bay
+            humanoid.PlatformStand = true
+            
+            local targetMob = nil
+            local shortestDistance = math.huge
+
+            if workspace:FindFirstChild("Enemies") then
+                for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+                    if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 and enemy:FindFirstChild("HumanoidRootPart") then
+                        local dist = (enemy.HumanoidRootPart.Position - hrp.Position).Magnitude
+                        if dist < shortestDistance then
+                            shortestDistance = dist
+                            targetMob = enemy
+                        end
+                    end
                 end
             end
-        end
-    else
-        for _, p in pairs(Players:GetPlayers()) do
-            if p.Character and p.Character:FindFirstChild("LVHighlight") then
-                p.Character.LVHighlight:Destroy()
+
+            if targetMob and targetMob:FindFirstChild("HumanoidRootPart") then
+                local mobPos = targetMob.HumanoidRootPart.Position
+                -- Cố định vị trí ngay trên đầu quái mà không dùng tween giật cục
+                hrp.CFrame = CFrame.new(mobPos.X, mobPos.Y + _G.FarmHeight, mobPos.Z)
+                hrp.Velocity = Vector3.new(0, 0, 0) -- Khóa vận tốc để nhân vật không bị trôi
             end
-        end
+        end)
+    else
+        pcall(function()
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+                LocalPlayer.Character.Humanoid.PlatformStand = false
+            end
+        end)
     end
 end)
 
-print("Louis Vuitton Hub v2.0: Đã khởi chạy thành công!")
+print("Louis Vuitton Hub v3.0: Đã fix lỗi bay lên bay xuống thành công!")
