@@ -1,5 +1,5 @@
 -- ======================================================
--- LOUIS VUITTON HUB v7.0 - TRUE SILENT AURA & FIXED UI
+-- LOUIS VUITTON HUB v8.0 - MELEE ATTACK AURA & SIDEBAR UI
 -- ======================================================
 
 local Players = game:GetService("Players")
@@ -7,141 +7,178 @@ local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualUser = game:GetService("VirtualUser")
 
--- Dọn dẹp GUI cũ
-if PlayerGui:FindFirstChild("LouisVuittonHubV7") then
-    PlayerGui.LouisVuittonHubV7:Destroy()
+-- Xóa GUI cũ nếu có
+if PlayerGui:FindFirstChild("LVHubv8") then
+    PlayerGui.LVHubv8:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "LouisVuittonHubV7"
+ScreenGui.Name = "LVHubv8"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 999999
 
--- Khung Menu Hub chính (Hiển thị to rõ ở giữa màn hình)
+-- Khung tổng thể Hub (Sidebar Style giống Banana Cat Hub)
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 420, 0, 300)
-MainFrame.Position = UDim2.new(0.5, -210, 0.5, -150)
+MainFrame.Size = UDim2.new(0, 520, 0, 320)
+MainFrame.Position = UDim2.new(0.5, -260, 0.5, -160)
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
 MainFrame.Parent = ScreenGui
 
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 12)
-UICorner.Parent = MainFrame
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 10)
+MainCorner.Parent = MainFrame
 
-local UIStroke = Instance.new("UIStroke")
-UIStroke.Color = Color3.fromRGB(212, 175, 55) -- Viền vàng Louis Vuitton
-UIStroke.Thickness = 2.5
-UIStroke.Parent = MainFrame
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(212, 175, 55) -- Viền vàng Louis Vuitton
+MainStroke.Thickness = 2
+MainStroke.Parent = MainFrame
 
--- Tiêu đề Hub
-local TitleLabel = Instance.new("TextLabel")
-TitleLabel.Size = UDim2.new(1, 0, 0, 50)
-TitleLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-TitleLabel.Text = "⚡ LOUIS VUITTON HUB v7.0 ⚡"
-TitleLabel.TextColor3 = Color3.fromRGB(212, 175, 55)
-TitleLabel.TextSize = 16
-TitleLabel.Font = Enum.Font.FredokaOne
-TitleLabel.Parent = MainFrame
+-- Thanh Tiêu đề trên cùng
+local TitleBar = Instance.new("Frame")
+TitleBar.Size = UDim2.new(1, 0, 0, 35)
+TitleBar.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+TitleBar.BorderSizePixel = 0
+TitleBar.Parent = MainFrame
 
 local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 12)
-TitleCorner.Parent = TitleLabel
+TitleCorner.CornerRadius = UDim.new(0, 10)
+TitleCorner.Parent = TitleBar
 
--- 1. Nút Bật/Tắt True Aura
-local FarmToggleBtn = Instance.new("TextButton")
-FarmToggleBtn.Size = UDim2.new(0, 380, 0, 50)
-FarmToggleBtn.Position = UDim2.new(0.5, -190, 0, 65)
-FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-FarmToggleBtn.Text = "True Aura Farm: OFF"
-FarmToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-FarmToggleBtn.TextSize = 14
-FarmToggleBtn.Font = Enum.Font.GothamBold
-FarmToggleBtn.Parent = MainFrame
+local TitleText = Instance.new("TextLabel")
+TitleText.Size = UDim2.new(1, -20, 1, 0)
+TitleText.Position = UDim2.new(0, 10, 0, 0)
+TitleText.BackgroundTransparency = 1
+TitleText.Text = "⚡ Louis Vuitton Hub v8.0 - Blox Fruit ⚡"
+TitleText.TextColor3 = Color3.fromRGB(212, 175, 55)
+TitleText.TextSize = 13
+TitleText.Font = Enum.Font.FredokaOne
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
+TitleText.Parent = TitleBar
 
-local BtnCorner1 = Instance.new("UICorner")
-BtnCorner1.CornerRadius = UDim.new(0, 8)
-BtnCorner1.Parent = FarmToggleBtn
+-- Cột Menu Danh Mục Bên Trái (Sidebar)
+local Sidebar = Instance.new("ScrollingFrame")
+Sidebar.Size = UDim2.new(0, 160, 1, -35)
+Sidebar.Position = UDim2.new(0, 0, 0, 35)
+Sidebar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Sidebar.BorderSizePixel = 0
+Sidebar.ScrollBarThickness = 3
+Sidebar.Parent = MainFrame
 
--- 2. Nút Chọn Vũ Khí
-local WeaponBtn = Instance.new("TextButton")
-WeaponBtn.Size = UDim2.new(0, 380, 0, 50)
-WeaponBtn.Position = UDim2.new(0.5, -190, 0, 125)
-WeaponBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-WeaponBtn.Text = "Vũ Khí: Melee"
-WeaponBtn.TextColor3 = Color3.fromRGB(212, 175, 55)
-WeaponBtn.TextSize = 14
-WeaponBtn.Font = Enum.Font.GothamBold
-WeaponBtn.Parent = MainFrame
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.Parent = Sidebar
 
-local BtnCorner2 = Instance.new("UICorner")
-BtnCorner2.CornerRadius = UDim.new(0, 8)
-BtnCorner2.Parent = WeaponBtn
+-- Khung Nội Dung Bên Phải (Container)
+local ContentContainer = Instance.new("Frame")
+ContentContainer.Size = UDim2.new(1, -165, 1, -40)
+ContentContainer.Position = UDim2.new(0, 165, 0, 40)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.Parent = MainFrame
 
--- 3. Nút Tự Động Nhận Quest
-local QuestToggleBtn = Instance.new("TextButton")
-QuestToggleBtn.Size = UDim2.new(0, 380, 0, 50)
-QuestToggleBtn.Position = UDim2.new(0.5, -190, 0, 185)
-QuestToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-QuestToggleBtn.Text = "Auto Quest: OFF"
-QuestToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-QuestToggleBtn.TextSize = 14
-QuestToggleBtn.Font = Enum.Font.GothamBold
-QuestToggleBtn.Parent = MainFrame
+-- Tạo các trang chức năng bên phải
+local Pages = {}
 
-local BtnCorner3 = Instance.new("UICorner")
-BtnCorner3.CornerRadius = UDim.new(0, 8)
-BtnCorner3.Parent = QuestToggleBtn
+local function CreatePage(name)
+    local page = Instance.new("ScrollingFrame")
+    page.Size = UDim2.new(1, 0, 1, 0)
+    page.BackgroundTransparency = 1
+    page.Visible = false
+    page.ScrollBarThickness = 4
+    page.Parent = ContentContainer
+    
+    local layout = Instance.new("UIListLayout")
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Padding = UDim.new(0, 8)
+    layout.Parent = page
+    
+    Pages[name] = page
+    return page
+end
 
--- Trạng thái biến Global
+local function CreateTabButton(name, targetPage)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.Text = "  " .. name
+    btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    btn.TextSize = 12
+    btn.Font = Enum.Font.GothamBold
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    btn.Parent = Sidebar
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 6)
+    corner.Parent = btn
+    
+    btn.MouseButton1Click:Connect(function()
+        for _, p in pairs(Pages) do p.Visible = false end
+        targetPage.Visible = true
+    end)
+end
+
+-- Các trang chức năng
+local pageSettingFarm = CreatePage("SettingFarm")
+local pageFarming = CreatePage("Farming")
+
+CreateTabButton("Setting Farm", pageSettingFarm)
+CreateTabButton("Melee Attack Aura", pageFarming)
+
+pageFarming.Visible = true
+
+-- Trạng thái biến cấu hình Global
 _G.AutoFarm = false
 _G.AutoQuest = false
-_G.SelectWeapon = "Melee" 
-_G.FarmHeight = 16
+_G.SelectWeapon = "Melee"
 
--- Xử lý nút Auto Farm
-FarmToggleBtn.MouseButton1Click:Connect(function()
-    _G.AutoFarm = not _G.AutoFarm
-    if _G.AutoFarm then
-        FarmToggleBtn.Text = "True Aura Farm: ON (Đang chạy)"
-        FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-    else
-        FarmToggleBtn.Text = "True Aura Farm: OFF"
-        FarmToggleBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    end
+-- Hàm tạo nút Toggle trong trang
+local function CreateToggleInPage(page, text, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 40)
+    btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    btn.Text = text .. ": OFF"
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 12
+    btn.Font = Enum.Font.GothamBold
+    btn.Parent = page
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 6)
+    corner.Parent = btn
+    
+    local active = false
+    btn.MouseButton1Click:Connect(function()
+        active = not active
+        if active then
+            btn.Text = text .. ": ON"
+            btn.BackgroundColor3 = Color3.fromRGB(0, 140, 0)
+        else
+            btn.Text = text .. ": OFF"
+            btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        end
+        callback(active)
+    end)
+end
+
+-- Thêm tính năng
+CreateToggleInPage(pageSettingFarm, "Auto Quest (Nhận nhiệm vụ)", function(state)
+    _G.AutoQuest = state
 end)
 
--- Xử lý nút đổi vũ khí
-WeaponBtn.MouseButton1Click:Connect(function()
-    if _G.SelectWeapon == "Melee" then
-        _G.SelectWeapon = "Sword"
-        WeaponBtn.Text = "Vũ Khí: Sword"
-    else
-        _G.SelectWeapon = "Melee"
-        WeaponBtn.Text = "Vũ Khí: Melee"
-    end
+CreateToggleInPage(pageFarming, "Melee Attack Aura (Đánh lan tại chỗ)", function(state)
+    _G.AutoFarm = state
 end)
 
--- Xử lý nút Auto Quest
-QuestToggleBtn.MouseButton1Click:Connect(function()
-    _G.AutoQuest = not _G.AutoQuest
-    if _G.AutoQuest then
-        QuestToggleBtn.Text = "Auto Quest: ON"
-        QuestToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 0)
-    else
-        QuestToggleBtn.Text = "Auto Quest: OFF"
-        QuestToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    end
-end)
-
--- Nút tròn nổi hình ảnh logo Louis Vuitton ở góc trái màn hình để Ẩn/Hiện Menu
+-- Nút nổi hình ảnh logo Louis Vuitton ở góc màn hình để ẩn/hiện menu
 local ToggleButton = Instance.new("ImageButton")
-ToggleButton.Size = UDim2.new(0, 65, 0, 65)
-ToggleButton.Position = UDim2.new(0.02, 0, 0.2, 0)
+ToggleButton.Size = UDim2.new(0, 60, 0, 60)
+ToggleButton.Position = UDim2.new(0.02, 0, 0.25, 0)
 ToggleButton.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 -- [HƯỚNG DẪN]: Thay "0000000000" bằng Decal ID ảnh Louis Vuitton của bạn
 ToggleButton.Image = "rbxassetid://0000000000" 
@@ -163,34 +200,52 @@ ToggleButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
 
--- Tự động trang bị vũ khí ngầm
+-- Tự động cầm vũ khí Melee lên tay
 local function EquipWeapon()
     pcall(function()
         local char = LocalPlayer.Character
         if not char then return end
         local humanoid = char:FindFirstChildOfClass("Humanoid")
         local currentTool = char:FindFirstChildOfClass("Tool")
-        if currentTool and currentTool.ToolTip == _G.SelectWeapon then return end
+        if currentTool and currentTool.ToolTip == "Melee" then return end
         
         for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
-            if tool:IsA("Tool") and tool.ToolTip == _G.SelectWeapon then
+            if tool:IsA("Tool") and tool.ToolTip == "Melee" then
                 humanoid:EquipTool(tool)
             end
         end
     end)
 end
 
--- TRUE ATTACK AURA: Tự động kích hoạt Tool ngầm, ép quái tự chết hàng loạt trong phạm vi mà không cần click chuột
+-- MELEE ATTACK AURA THỰC THỤ: Tự động cầm Melee và tung đòn đánh lan diện rộng xung quanh vị trí người chơi đứng
 task.spawn(function()
     while task.wait(0.01) do
         if _G.AutoFarm then
             pcall(function()
                 EquipWeapon()
                 local char = LocalPlayer.Character
+                local hrp = char and char:FindFirstChild("HumanoidRootPart")
                 local tool = char and char:FindFirstChildOfClass("Tool")
-                if tool then
-                    -- Kích hoạt Tool liên tục (gây sát thương diện rộng tự động)
+                
+                if hrp and tool then
+                    -- Kích hoạt Tool Melee
                     tool:Activate()
+                    
+                    -- Quét tất cả quái trong bán kính xung quanh nhân vật và gửi lệnh tấn công diện rộng
+                    if workspace:FindFirstChild("Enemies") then
+                        for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+                            local enemyHrp = enemy:FindFirstChild("HumanoidRootPart")
+                            local enemyHum = enemy:FindFirstChild("Humanoid")
+                            if enemyHrp and enemyHum and enemyHum.Health > 0 then
+                                if (enemyHrp.Position - hrp.Position).Magnitude <= 60 then
+                                    -- Gửi tín hiệu sát thương chuẩn Melee đến quái
+                                    VirtualUser:Button1Down(Vector2.new(0,0))
+                                    task.wait(0.02)
+                                    VirtualUser:Button1Up(Vector2.new(0,0))
+                                end
+                            end
+                        end
+                    end
                 end
             end)
         end
@@ -211,44 +266,4 @@ task.spawn(function()
     end
 end)
 
--- KHÓA CHẶT ĐỘ CAO ỔN ĐỊNH TRÊN ĐẦU QUÁI (Không bao giờ bị bay lên bay xuống)
-RunService.Stepped:Connect(function()
-    if _G.AutoFarm and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        pcall(function()
-            local hrp = LocalPlayer.Character.HumanoidRootPart
-            local humanoid = LocalPlayer.Character.Humanoid
-            
-            humanoid.PlatformStand = true
-            
-            local targetMob = nil
-            local shortestDistance = math.huge
-
-            if workspace:FindFirstChild("Enemies") then
-                for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-                    if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 and enemy:FindFirstChild("HumanoidRootPart") then
-                        local dist = (enemy.HumanoidRootPart.Position - hrp.Position).Magnitude
-                        if dist < shortestDistance then
-                            shortestDistance = dist
-                            targetMob = enemy
-                        end
-                    end
-                end
-            end
-
-            if targetMob and targetMob:FindFirstChild("HumanoidRootPart") then
-                local mobPos = targetMob.HumanoidRootPart.Position
-                -- Ghim chặt nhân vật đứng yên trên đầu quái, tuyệt đối không trôi
-                hrp.CFrame = CFrame.new(mobPos.X, mobPos.Y + _G.FarmHeight, mobPos.Z)
-                hrp.Velocity = Vector3.new(0, 0, 0)
-            end
-        end)
-    else
-        pcall(function()
-            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
-                LocalPlayer.Character.Humanoid.PlatformStand = false
-            end
-        end)
-    end
-end)
-
-print("Louis Vuitton Hub v7.0: Đã cập nhật thành công!")
+print("Louis Vuitton Hub v8.0: Đã khởi chạy Melee Attack Aura & Sidebar UI thành công!")
