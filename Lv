@@ -1,308 +1,46 @@
--- ======================================================
--- LOUIS VUITTON HUB v11.0 - FIXED UI & ATTACK AURA
--- ======================================================
+-- Script đơn giản để tự động nhặt trái cây trong Blox Fruits
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-local RunService = game:GetService("RunService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local VirtualUser = game:GetService("VirtualUser")
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local backpack = player.Backpack
 
--- Xóa GUI cũ nếu có
-if PlayerGui:FindFirstChild("LVHubv11") then
-    PlayerGui.LVHubv11:Destroy()
-end
-
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "LVHubv11"
-ScreenGui.Parent = PlayerGui
-ScreenGui.ResetOnSpawn = false
-ScreenGui.DisplayOrder = 999999
-
--- Khung tổng thể Hub (Sidebar Style chuẩn đẹp)
-local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 520, 0, 320)
-MainFrame.Position = UDim2.new(0.5, -260, 0.5, -160)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-MainFrame.BorderSizePixel = 0
-MainFrame.Active = true
-MainFrame.Draggable = true
-MainFrame.Parent = ScreenGui
-
-local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 10)
-MainCorner.Parent = MainFrame
-
-local MainStroke = Instance.new("UIStroke")
-MainStroke.Color = Color3.fromRGB(212, 175, 55) -- Viền vàng Louis Vuitton
-MainStroke.Thickness = 2
-MainStroke.Parent = MainFrame
-
--- Thanh Tiêu đề trên cùng (Đã sửa lỗi font chữ)
-local TitleBar = Instance.new("Frame")
-TitleBar.Size = UDim2.new(1, 0, 0, 35)
-TitleBar.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
-TitleBar.BorderSizePixel = 0
-TitleBar.Parent = MainFrame
-
-local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 10)
-TitleCorner.Parent = TitleBar
-
-local TitleText = Instance.new("TextLabel")
-TitleText.Size = UDim2.new(1, -20, 1, 0)
-TitleText.Position = UDim2.new(0, 10, 0, 0)
-TitleText.BackgroundTransparency = 1
-TitleText.Text = "LOUIS VUITTON HUB v11.0 - BLOX FRUITS"
-TitleText.TextColor3 = Color3.fromRGB(212, 175, 55)
-TitleText.TextSize = 13
-TitleText.Font = Enum.Font.GothamBold
-TitleText.TextXAlignment = Enum.TextXAlignment.Left
-TitleText.Parent = TitleBar
-
--- Cột Menu Danh Mục Bên Trái (Sidebar)
-local Sidebar = Instance.new("ScrollingFrame")
-Sidebar.Size = UDim2.new(0, 160, 1, -35)
-Sidebar.Position = UDim2.new(0, 0, 0, 35)
-Sidebar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Sidebar.BorderSizePixel = 0
-Sidebar.ScrollBarThickness = 3
-Sidebar.Parent = MainFrame
-
-local SidebarLayout = Instance.new("UIListLayout")
-SidebarLayout.SortOrder = Enum.SortOrder.LayoutOrder
-SidebarLayout.Padding = UDim.new(0, 5)
-SidebarLayout.Parent = Sidebar
-
--- Khung Nội Dung Bên Phải (Container)
-local ContentContainer = Instance.new("Frame")
-ContentContainer.Size = UDim2.new(1, -165, 1, -40)
-ContentContainer.Position = UDim2.new(0, 165, 0, 40)
-ContentContainer.BackgroundTransparency = 1
-ContentContainer.Parent = MainFrame
-
--- Tạo các trang chức năng bên phải
-local Pages = {}
-
-local function CreatePage(name)
-    local page = Instance.new("ScrollingFrame")
-    page.Size = UDim2.new(1, 0, 1, 0)
-    page.BackgroundTransparency = 1
-    page.Visible = false
-    page.ScrollBarThickness = 4
-    page.CanvasSize = UDim2.new(0, 0, 0, 200)
-    page.Parent = ContentContainer
-    
-    local layout = Instance.new("UIListLayout")
-    layout.SortOrder = Enum.SortOrder.LayoutOrder
-    layout.Padding = UDim.new(0, 8)
-    layout.Parent = page
-    
-    Pages[name] = page
-    return page
-end
-
-local function CreateTabButton(name, targetPage)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -10, 0, 35)
-    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    btn.Text = "  " .. name
-    btn.TextColor3 = Color3.fromRGB(200, 200, 200)
-    btn.TextSize = 12
-    btn.Font = Enum.Font.GothamBold
-    btn.TextXAlignment = Enum.TextXAlignment.Left
-    btn.Parent = Sidebar
-    
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 6)
-    corner.Parent = btn
-    
-    btn.MouseButton1Click:Connect(function()
-        for _, p in pairs(Pages) do p.Visible = false end
-        targetPage.Visible = true
-    end)
-end
-
--- Các trang chức năng
-local pageSettingFarm = CreatePage("SettingFarm")
-local pageFarming = CreatePage("Farming")
-
-CreateTabButton("Setting Farm", pageSettingFarm)
-CreateTabButton("Auto Farm + Aura", pageFarming)
-
-pageFarming.Visible = true
-
--- Trạng thái biến Global
-_G.AutoFarm = false
-_G.AutoQuest = false
-_G.FarmHeight = 16
-
--- Hàm tạo nút Toggle trong trang
-local function CreateToggleInPage(page, text, callback)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -10, 0, 40)
-    btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    btn.Text = text .. ": OFF"
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 12
-    btn.Font = Enum.Font.GothamBold
-    btn.Parent = page
-    
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 6)
-    corner.Parent = btn
-    
-    local active = false
-    btn.MouseButton1Click:Connect(function()
-        active = not active
-        if active then
-            btn.Text = text .. ": ON"
-            btn.BackgroundColor3 = Color3.fromRGB(0, 140, 0)
-        else
-            btn.Text = text .. ": OFF"
-            btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-        end
-        callback(active)
-    end)
-end
-
--- Thêm tính năng vào menu
-CreateToggleInPage(pageSettingFarm, "Auto Quest (Nhận nhiệm vụ)", function(state)
-    _G.AutoQuest = state
-end)
-
-CreateToggleInPage(pageFarming, "Auto Farm (Bay đến quái + Aura)", function(state)
-    _G.AutoFarm = state
-end)
-
--- Nút nổi hình ảnh logo Louis Vuitton ở góc màn hình để ẩn/hiện menu
-local ToggleButton = Instance.new("ImageButton")
-ToggleButton.Size = UDim2.new(0, 60, 0, 60)
-ToggleButton.Position = UDim2.new(0.02, 0, 0.25, 0)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
--- [HƯỚNG DẪN]: Thay "0000000000" bằng Decal ID ảnh Louis Vuitton của bạn
-ToggleButton.Image = "rbxassetid://0000000000" 
-ToggleButton.ScaleType = Enum.ScaleType.Stretch
-ToggleButton.Active = true
-ToggleButton.Draggable = true
-ToggleButton.Parent = ScreenGui
-
-local LogoCorner = Instance.new("UICorner")
-LogoCorner.CornerRadius = UDim.new(1, 0)
-LogoCorner.Parent = ToggleButton
-
-local LogoStroke = Instance.new("UIStroke")
-LogoStroke.Color = Color3.fromRGB(212, 175, 55)
-LogoStroke.Thickness = 2.5
-LogoStroke.Parent = ToggleButton
-
-ToggleButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = not MainFrame.Visible
-end)
-
--- Tự động trang bị Melee lên tay
-local function EquipMelee()
-    pcall(function()
-        local char = LocalPlayer.Character
-        if not char then return end
-        local humanoid = char:FindFirstChildOfClass("Humanoid")
-        local currentTool = char:FindFirstChildOfClass("Tool")
-        if currentTool and currentTool.ToolTip == "Melee" then return end
-        
-        for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
-            if tool:IsA("Tool") and tool.ToolTip == "Melee" then
-                humanoid:EquipTool(tool)
+-- Hàm kiểm tra xem có trái cây nào gần đó không
+local function findFruit()
+    for _, instance in ipairs(workspace:GetChildren()) do
+        if instance:IsA("Model") and instance.Name == "Fruit" then
+            -- Kiểm tra xem trái cây có thuộc về người chơi khác không (tùy chọn)
+            if not instance.Parent:FindFirstChild("Humanoid") then
+                return instance
             end
-        end
-    end)
-end
-
--- ATTACK AURA & TỰ ĐỘNG BAY ĐẾN QUÁI
-task.spawn(function()
-    while task.wait(0.01) do
-        if _G.AutoFarm then
-            pcall(function()
-                EquipMelee()
-                local char = LocalPlayer.Character
-                local tool = char and char:FindFirstChildOfClass("Tool")
-                
-                if tool then
-                    tool:Activate()
-                end
-                
-                if char and char:FindFirstChild("HumanoidRootPart") then
-                    local hrp = char.HumanoidRootPart
-                    if workspace:FindFirstChild("Enemies") then
-                        for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-                            local enemyHrp = enemy:FindFirstChild("HumanoidRootPart")
-                            local enemyHum = enemy:FindFirstChild("Humanoid")
-                            if enemyHrp and enemyHum and enemyHum.Health > 0 then
-                                if (enemyHrp.Position - hrp.Position).Magnitude <= 70 then
-                                    VirtualUser:Button1Down(Vector2.new(0,0))
-                                    task.wait(0.01)
-                                    VirtualUser:Button1Up(Vector2.new(0,0))
-                                end
-                            end
-                        end
-                    end
-                end
-            end)
         end
     end
-end)
+    return nil
+end
 
--- KHÓA ĐỘ CAO VÀ BAY ĐẾN QUÁI GẦN NHẤT ỔN ĐỊNH
-RunService.Stepped:Connect(function()
-    if _G.AutoFarm and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        pcall(function()
-            local hrp = LocalPlayer.Character.HumanoidRootPart
-            local humanoid = LocalPlayer.Character.Humanoid
-            
-            humanoid.PlatformStand = true
-            
-            local targetMob = nil
-            local shortestDistance = math.huge
+-- Hàm di chuyển đến vị trí của trái cây và nhặt nó
+local function pickUpFruit()
+    local fruit = findFruit()
+    if fruit then
+        print("Tìm thấy trái cây: " .. fruit.Name)
+        -- Di chuyển nhân vật đến vị trí của trái cây
+        -- (Cần thêm logic di chuyển phức tạp hơn ở đây nếu cần)
+        -- Ví dụ đơn giản: Teleport đến gần trái cây
+        character.HumanoidRootPart.CFrame = CFrame.new(fruit.PrimaryPart.Position - Vector3.new(0, 5, 0))
 
-            if workspace:FindFirstChild("Enemies") then
-                for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-                    if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 and enemy:FindFirstChild("HumanoidRootPart") then
-                        local dist = (enemy.HumanoidRootPart.Position - hrp.Position).Magnitude
-                        if dist < shortestDistance then
-                            shortestDistance = dist
-                            targetMob = enemy
-                        end
-                    end
-                end
-            end
+        -- Chờ một chút để nhân vật đến nơi
+        wait(1)
 
-            if targetMob and targetMob:FindFirstChild("HumanoidRootPart") then
-                local mobPos = targetMob.HumanoidRootPart.Position
-                hrp.CFrame = CFrame.new(mobPos.X, mobPos.Y + _G.FarmHeight, mobPos.Z)
-                hrp.Velocity = Vector3.new(0, 0, 0)
-            end
-        end)
+        -- Tương tác để nhặt trái cây
+        -- (Cần tìm cách tương tác với trái cây, có thể là click vào nó hoặc sử dụng một sự kiện)
+        -- Ví dụ giả định:
+        -- game:GetService("ReplicatedStorage").Events.PickUpFruit:FireServer(fruit)
+        print("Đang cố gắng nhặt trái cây...")
     else
-        pcall(function()
-            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
-                LocalPlayer.Character.Humanoid.PlatformStand = false
-            end
-        end)
+        print("Không tìm thấy trái cây nào gần đây.")
     end
-end)
+end
 
--- Tự động nhận nhiệm vụ
-task.spawn(function()
-    while task.wait(0.5) do
-        if _G.AutoQuest and _G.AutoFarm then
-            pcall(function()
-                local questActive = LocalPlayer.PlayerGui.Main.Quest.Visible
-                if not questActive then
-                    ReplicatedStorage.Remotes.CommF_:InvokeServer("StartQuest", "Bandit", 1)
-                end
-            end)
-        end
-    end
-end)
-
-print("Louis Vuitton Hub v11.0: Đã sửa lỗi hiển thị menu và khởi chạy thành công!")
+-- Vòng lặp chính để liên tục tìm và nhặt trái cây
+while wait(5) do -- Kiểm tra mỗi 5 giây
+    pickUpFruit()
+end
