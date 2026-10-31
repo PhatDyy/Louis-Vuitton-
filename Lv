@@ -1,42 +1,42 @@
 --[[
     Tên Script: Louis Vuitton Hub Menu
-    Mô tả: Một hub menu đơn giản cho Blox Fruits, tập trung vào chức năng farm level.
-    Tác giả: [Tên của bạn hoặc biệt danh GitHub]
+    Mô tả: A simple hub menu for Blox Fruits, focusing on level farming functionality.
+    Tác giả: [Your Name or GitHub Alias]
     Phiên bản: 1.0
 ]]
 
--- Khai báo các biến toàn cục và các dịch vụ cần thiết
+-- Declare global variables and necessary services
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
-local HttpService = game:GetService("HttpService") -- Thêm HttpService để có thể tải cấu hình từ xa
+local HttpService = game:GetService("HttpService") -- Add HttpService to load remote configurations
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
 
--- Biến cấu hình cho chức năng farm level
+-- Configuration variables for level farming functionality
 local config = {
-    autoFarmLevel = false, -- Bật/tắt tự động farm level
-    targetLevel = 1000,    -- Mục tiêu level cần đạt
-    farmArea = "Sea 1",    -- Khu vực farm (ví dụ: "Sea 1", "Sea 2", "Sea 3")
-    mobToFarm = "Kitsune", -- Tên mob để farm (cần khớp chính xác với tên trong game)
-    teleportToFarm = true, -- Tự động dịch chuyển đến khu vực farm
-    useSkillsToFarm = true, -- Sử dụng kỹ năng để farm (nếu có)
-    skillKeybind = Enum.KeyCode.Q, -- Phím để sử dụng kỹ năng (ví dụ: Q)
-    autoAttack = true,     -- Tự động tấn công khi đến gần mob
-    attackKeybind = Enum.KeyCode.X, -- Phím để tấn công cơ bản (ví dụ: X)
-    autoPickUpLoot = true, -- Tự động nhặt vật phẩm rơi ra
-    safeZoneDistance = 50, -- Khoảng cách an toàn để quay lại farm
-    farmDelay = 0.5,       -- Độ trễ giữa các lần farm
-    skillDelay = 1,        -- Độ trễ giữa các lần sử dụng kỹ năng
-    attackDelay = 0.2      -- Độ trễ giữa các lần tấn công cơ bản
+    autoFarmLevel = false, -- Enable/disable auto level farming
+    targetLevel = 1000,    -- Target level to reach
+    farmArea = "Sea 1",    -- Farming area (e.g., "Sea 1", "Sea 2", "Sea 3")
+    mobToFarm = "Kitsune", -- Name of the mob to farm (must match exactly in-game)
+    teleportToFarm = true, -- Automatically teleport to the farming area
+    useSkillsToFarm = true, -- Use skills to farm (if available)
+    skillKeybind = Enum.KeyCode.Q, -- Key to use skills (e.g., Q)
+    autoAttack = true,     -- Automatically attack when near a mob
+    attackKeybind = Enum.KeyCode.X, -- Key for basic attack (e.g., X)
+    autoPickUpLoot = true, -- Automatically pick up dropped loot
+    safeZoneDistance = 50, -- Safe distance to return to farming
+    farmDelay = 0.5,       -- Delay between farming actions
+    skillDelay = 1,        -- Delay between skill uses
+    attackDelay = 0.2      -- Delay between basic attacks
 }
 
--- Biến trạng thái
+-- State variables
 local isFarming = false
 local currentTarget = nil
 local mobSpawned = false
@@ -44,9 +44,9 @@ local lastAttackTime = 0
 local lastSkillTime = 0
 local isDead = false
 
--- Hàm để tải cấu hình từ xa (ví dụ: từ Pastebin hoặc GitHub Gist)
+-- Function to load remote configuration (e.g., from Pastebin or GitHub Gist)
 local function loadRemoteConfig()
-    local pastebinUrl = "YOUR_PASTEBIN_URL_HERE" -- Thay thế bằng URL Pastebin của bạn
+    local pastebinUrl = "YOUR_PASTEBIN_URL_HERE" -- Replace with your Pastebin URL
     local success, data = pcall(function()
         return HttpService:GetAsync(pastebinUrl)
     end)
@@ -54,32 +54,32 @@ local function loadRemoteConfig()
     if success then
         local decodedData = HttpService:JSONDecode(data)
         if decodedData then
-            -- Cập nhật các giá trị trong config từ dữ liệu tải về
+            -- Update config values from the downloaded data
             for key, value in pairs(decodedData) do
                 if config[key] ~= nil then
                     config[key] = value
                 end
             end
-            print("Đã tải cấu hình từ xa thành công!")
+            print("Successfully loaded remote configuration!")
         else
-            warn("Không thể giải mã dữ liệu cấu hình từ xa.")
+            warn("Failed to decode remote configuration data.")
         end
     else
-        warn("Không thể tải cấu hình từ xa: " .. data)
+        warn("Failed to load remote configuration: " .. data)
     end
 end
 
--- Hàm để tạo giao diện người dùng (UI) đơn giản
+-- Function to create a simple user interface (UI)
 local function createUI()
     local gui = Instance.new("ScreenGui")
     gui.Name = "LouisVuittonHub"
     gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 250, 0, 350) -- Tăng kích thước frame để chứa thêm các tùy chọn
+    mainFrame.Size = UDim2.new(0, 250, 0, 350) -- Increased frame size to accommodate more options
     mainFrame.Position = UDim2.new(0.01, 0, 0.5, 0)
     mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 0) -- Viền vàng
+    mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 0) -- Yellow border
     mainFrame.BorderSizePixel = 2
     mainFrame.Draggable = true
     mainFrame.Parent = gui
@@ -88,18 +88,18 @@ local function createUI()
     titleLabel.Size = UDim2.new(1, 0, 0, 30)
     titleLabel.Position = UDim2.new(0, 0, 0, 0)
     titleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    titleLabel.Text = "LV Hub - Farm Level"
+    titleLabel.Text = "LV Hub - Level Farm"
     titleLabel.Font = "SourceSansBold"
     titleLabel.TextSize = 18
     titleLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
     titleLabel.Parent = mainFrame
 
-    -- Nút Bật/Tắt Farm
+    -- Farm Toggle Button
     local farmToggle = Instance.new("TextButton")
     farmToggle.Size = UDim2.new(0.8, 0, 0, 40)
     farmToggle.Position = UDim2.new(0.1, 0, 0.15, 0)
     farmToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    farmToggle.Text = "BẬT FARM LEVEL"
+    farmToggle.Text = "ENABLE LEVEL FARM"
     farmToggle.Font = "SourceSansBold"
     farmToggle.TextSize = 16
     farmToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -108,19 +108,19 @@ local function createUI()
     farmToggle.MouseButton1Click:Connect(function()
         config.autoFarmLevel = not config.autoFarmLevel
         if config.autoFarmLevel then
-            farmToggle.Text = "TẮT FARM LEVEL"
+            farmToggle.Text = "DISABLE LEVEL FARM"
             farmToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-            print("Tự động farm level đã được BẬT.")
+            print("Auto level farming enabled.")
             startFarming()
         else
-            farmToggle.Text = "BẬT FARM LEVEL"
+            farmToggle.Text = "ENABLE LEVEL FARM"
             farmToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            print("Tự động farm level đã được TẮT.")
+            print("Auto level farming disabled.")
             stopFarming()
         end
     end)
 
-    -- Input cho Mob
+    -- Mob Input
     local mobLabel = Instance.new("TextLabel")
     mobLabel.Size = UDim2.new(0.3, 0, 0, 25)
     mobLabel.Position = UDim2.new(0.1, 0, 0.35, 0)
@@ -145,12 +145,12 @@ local function createUI()
         config.mobToFarm = mobInput.Text
     end)
 
-    -- Input cho Khu vực Farm
+    -- Farm Area Input
     local farmAreaLabel = Instance.new("TextLabel")
     farmAreaLabel.Size = UDim2.new(0.3, 0, 0, 25)
     farmAreaLabel.Position = UDim2.new(0.1, 0, 0.45, 0)
     farmAreaLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    farmAreaLabel.Text = "Khu vực:"
+    farmAreaLabel.Text = "Area:"
     farmAreaLabel.Font = "SourceSans"
     farmAreaLabel.TextSize = 14
     farmAreaLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -170,12 +170,12 @@ local function createUI()
         config.farmArea = farmAreaInput.Text
     end)
 
-    -- Input cho Mục tiêu Level
+    -- Target Level Input
     local targetLevelLabel = Instance.new("TextLabel")
     targetLevelLabel.Size = UDim2.new(0.3, 0, 0, 25)
     targetLevelLabel.Position = UDim2.new(0.1, 0, 0.55, 0)
     targetLevelLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    targetLevelLabel.Text = "Mục tiêu:"
+    targetLevelLabel.Text = "Target:"
     targetLevelLabel.Font = "SourceSans"
     targetLevelLabel.TextSize = 14
     targetLevelLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -198,12 +198,12 @@ local function createUI()
         end
     end)
 
-    -- Toggle cho Tự động dịch chuyển
+    -- Teleport Toggle
     local teleportToggle = Instance.new("TextButton")
     teleportToggle.Size = UDim2.new(0.8, 0, 0, 30)
-    teleportToggle.Position = UDim2.new(0.1, 0, 0.70, 0)
+    teleportToggle.Position = UDim2.new(0.1, 0, 0.68, 0)
     teleportToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    teleportToggle.Text = "Tự động dịch chuyển: " .. tostring(config.teleportToFarm)
+    teleportToggle.Text = "Auto Teleport: " .. tostring(config.teleportToFarm)
     teleportToggle.Font = "SourceSans"
     teleportToggle.TextSize = 14
     teleportToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -211,15 +211,15 @@ local function createUI()
 
     teleportToggle.MouseButton1Click:Connect(function()
         config.teleportToFarm = not config.teleportToFarm
-        teleportToggle.Text = "Tự động dịch chuyển: " .. tostring(config.teleportToFarm)
+        teleportToggle.Text = "Auto Teleport: " .. tostring(config.teleportToFarm)
     end)
 
-    -- Toggle cho Sử dụng kỹ năng
+    -- Use Skills Toggle
     local useSkillsToggle = Instance.new("TextButton")
     useSkillsToggle.Size = UDim2.new(0.8, 0, 0, 30)
-    useSkillsToggle.Position = UDim2.new(0.1, 0, 0.80, 0)
+    useSkillsToggle.Position = UDim2.new(0.1, 0, 0.78, 0)
     useSkillsToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    useSkillsToggle.Text = "Sử dụng kỹ năng: " .. tostring(config.useSkillsToFarm)
+    useSkillsToggle.Text = "Use Skills: " .. tostring(config.useSkillsToFarm)
     useSkillsToggle.Font = "SourceSans"
     useSkillsToggle.TextSize = 14
     useSkillsToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -227,15 +227,15 @@ local function createUI()
 
     useSkillsToggle.MouseButton1Click:Connect(function()
         config.useSkillsToFarm = not config.useSkillsToFarm
-        useSkillsToggle.Text = "Sử dụng kỹ năng: " .. tostring(config.useSkillsToFarm)
+        useSkillsToggle.Text = "Use Skills: " .. tostring(config.useSkillsToFarm)
     end)
 
-    -- Toggle cho Tự động tấn công
+    -- Auto Attack Toggle
     local autoAttackToggle = Instance.new("TextButton")
     autoAttackToggle.Size = UDim2.new(0.8, 0, 0, 30)
-    autoAttackToggle.Position = UDim2.new(0.1, 0, 0.90, 0)
+    autoAttackToggle.Position = UDim2.new(0.1, 0, 0.88, 0)
     autoAttackToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    autoAttackToggle.Text = "Tự động tấn công: " .. tostring(config.autoAttack)
+    autoAttackToggle.Text = "Auto Attack: " .. tostring(config.autoAttack)
     autoAttackToggle.Font = "SourceSans"
     autoAttackToggle.TextSize = 14
     autoAttackToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -243,19 +243,19 @@ local function createUI()
 
     autoAttackToggle.MouseButton1Click:Connect(function()
         config.autoAttack = not config.autoAttack
-        autoAttackToggle.Text = "Tự động tấn công: " .. tostring(config.autoAttack)
+        autoAttackToggle.Text = "Auto Attack: " .. tostring(config.autoAttack)
     end)
 
-    -- Tải cấu hình từ xa khi script bắt đầu
-    -- loadRemoteConfig() -- Bỏ comment dòng này nếu bạn muốn tải cấu hình từ xa
-end
-
--- Hàm để tìm mob gần nhất
-local function findNearestMob()
-    local nearestMob = nil
-    local minDistance = math.huge
-
-    for _, mob
+    -- Auto Pick Up Loot Toggle
+    local autoPickUpLootToggle = Instance.new("TextButton")
+    autoPickUpLootToggle.Size = UDim2.new(0.8, 0, 0, 30)
+    autoPickUpLootToggle.Position = UDim2.new(0.1, 0, 0.98, 0) -- Adjusted position
+    autoPickUpLootToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    autoPickUpLootToggle.Text = "Auto Pick Up Loot: " .. tostring(config.autoPickUpLoot)
+    autoPickUpLootToggle.Font = "SourceSans"
+    autoPickUpLootToggle.TextSize = 14
+    autoPickUpLootToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    autoPickUpLootToggle.Parent =
 
 
 
