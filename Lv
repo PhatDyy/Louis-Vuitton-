@@ -1,7 +1,6 @@
 --[[
     Tên Script: Louis Vuitton Hub Menu
     Mô tả: Một hub menu đơn giản cho Blox Fruits, tập trung vào chức năng farm level.
-    Lấy cảm hứng từ: banana old
     Tác giả: [Tên của bạn hoặc biệt danh GitHub]
     Phiên bản: 1.0
 ]]
@@ -77,7 +76,7 @@ local function createUI()
     gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 250, 0, 200) -- Tăng kích thước frame
+    mainFrame.Size = UDim2.new(0, 250, 0, 350) -- Tăng kích thước frame để chứa thêm các tùy chọn
     mainFrame.Position = UDim2.new(0.01, 0, 0.5, 0)
     mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 0) -- Viền vàng
@@ -121,9 +120,6 @@ local function createUI()
         end
     end)
 
-    -- Thêm các tùy chọn khác vào UI
-    -- Ví dụ: Input cho Mob, Input cho Level, Toggle Skill, Toggle Teleport, v.v.
-
     -- Input cho Mob
     local mobLabel = Instance.new("TextLabel")
     mobLabel.Size = UDim2.new(0.3, 0, 0, 25)
@@ -149,57 +145,97 @@ local function createUI()
         config.mobToFarm = mobInput.Text
     end)
 
-    -- Input cho Level Mục Tiêu
-    local levelLabel = Instance.new("TextLabel")
-    levelLabel.Size = UDim2.new(0.3, 0, 0, 25)
-    levelLabel.Position = UDim2.new(0.1, 0, 0.45, 0)
-    levelLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    levelLabel.Text = "Level:"
-    levelLabel.Font = "SourceSans"
-    levelLabel.TextSize = 14
-    levelLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    levelLabel.Parent = mainFrame
+    -- Input cho Khu vực Farm
+    local farmAreaLabel = Instance.new("TextLabel")
+    farmAreaLabel.Size = UDim2.new(0.3, 0, 0, 25)
+    farmAreaLabel.Position = UDim2.new(0.1, 0, 0.45, 0)
+    farmAreaLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    farmAreaLabel.Text = "Khu vực:"
+    farmAreaLabel.Font = "SourceSans"
+    farmAreaLabel.TextSize = 14
+    farmAreaLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    farmAreaLabel.Parent = mainFrame
 
-    local levelInput = Instance.new("TextBox")
-    levelInput.Size = UDim2.new(0.5, 0, 0, 25)
-    levelInput.Position = UDim2.new(0.4, 0, 0.45, 0)
-    levelInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    levelInput.Text = tostring(config.targetLevel)
-    levelInput.Font = "SourceSans"
-    levelInput.TextSize = 14
-    levelInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-    levelInput.Parent = mainFrame
+    local farmAreaInput = Instance.new("TextBox")
+    farmAreaInput.Size = UDim2.new(0.5, 0, 0, 25)
+    farmAreaInput.Position = UDim2.new(0.4, 0, 0.45, 0)
+    farmAreaInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    farmAreaInput.Text = config.farmArea
+    farmAreaInput.Font = "SourceSans"
+    farmAreaInput.TextSize = 14
+    farmAreaInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    farmAreaInput.Parent = mainFrame
 
-    levelInput.Changed:Connect(function()
-        local newLevel = tonumber(levelInput.Text)
-        if newLevel then
-            config.targetLevel = newLevel
+    farmAreaInput.Changed:Connect(function()
+        config.farmArea = farmAreaInput.Text
+    end)
+
+    -- Input cho Mục tiêu Level
+    local targetLevelLabel = Instance.new("TextLabel")
+    targetLevelLabel.Size = UDim2.new(0.3, 0, 0, 25)
+    targetLevelLabel.Position = UDim2.new(0.1, 0, 0.55, 0)
+    targetLevelLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    targetLevelLabel.Text = "Mục tiêu:"
+    targetLevelLabel.Font = "SourceSans"
+    targetLevelLabel.TextSize = 14
+    targetLevelLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    targetLevelLabel.Parent = mainFrame
+
+    local targetLevelInput = Instance.new("TextBox")
+    targetLevelInput.Size = UDim2.new(0.5, 0, 0, 25)
+    targetLevelInput.Position = UDim2.new(0.4, 0, 0.55, 0)
+    targetLevelInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    targetLevelInput.Text = tostring(config.targetLevel)
+    targetLevelInput.Font = "SourceSans"
+    targetLevelInput.TextSize = 14
+    targetLevelInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    targetLevelInput.Parent = mainFrame
+
+    targetLevelInput.Changed:Connect(function()
+        local level = tonumber(targetLevelInput.Text)
+        if level then
+            config.targetLevel = level
         end
     end)
 
-    -- Toggle Sử dụng Kỹ năng
-    local skillToggle = Instance.new("TextButton")
-    skillToggle.Size = UDim2.new(0.8, 0, 0, 35)
-    skillToggle.Position = UDim2.new(0.1, 0, 0.6, 0)
-    skillToggle.BackgroundColor3 = config.useSkillsToFarm and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(50, 50, 50)
-    skillToggle.Text = "Sử dụng Kỹ năng: " .. (config.useSkillsToFarm and "BẬT" or "TẮT")
-    skillToggle.Font = "SourceSans"
-    skillToggle.TextSize = 14
-    skillToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    skillToggle.Parent = mainFrame
+    -- Toggle cho Tự động dịch chuyển
+    local teleportToggle = Instance.new("TextButton")
+    teleportToggle.Size = UDim2.new(0.8, 0, 0, 30)
+    teleportToggle.Position = UDim2.new(0.1, 0, 0.70, 0)
+    teleportToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    teleportToggle.Text = "Tự động dịch chuyển: " .. tostring(config.teleportToFarm)
+    teleportToggle.Font = "SourceSans"
+    teleportToggle.TextSize = 14
+    teleportToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    teleportToggle.Parent = mainFrame
 
-    skillToggle.MouseButton1Click:Connect(function()
-        config.useSkillsToFarm = not config.useSkillsToFarm
-        skillToggle.BackgroundColor3 = config.useSkillsToFarm and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(50, 50, 50)
-        skillToggle.Text = "Sử dụng Kỹ năng: " .. (config.useSkillsToFarm and "BẬT" or "TẮT")
+    teleportToggle.MouseButton1Click:Connect(function()
+        config.teleportToFarm = not config.teleportToFarm
+        teleportToggle.Text = "Tự động dịch chuyển: " .. tostring(config.teleportToFarm)
     end)
 
-    -- Toggle Tự động Tấn công
+    -- Toggle cho Sử dụng kỹ năng
+    local useSkillsToggle = Instance.new("TextButton")
+    useSkillsToggle.Size = UDim2.new(0.8, 0, 0, 30)
+    useSkillsToggle.Position = UDim2.new(0.1, 0, 0.80, 0)
+    useSkillsToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    useSkillsToggle.Text = "Sử dụng kỹ năng: " .. tostring(config.useSkillsToFarm)
+    useSkillsToggle.Font = "SourceSans"
+    useSkillsToggle.TextSize = 14
+    useSkillsToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    useSkillsToggle.Parent = mainFrame
+
+    useSkillsToggle.MouseButton1Click:Connect(function()
+        config.useSkillsToFarm = not config.useSkillsToFarm
+        useSkillsToggle.Text = "Sử dụng kỹ năng: " .. tostring(config.useSkillsToFarm)
+    end)
+
+    -- Toggle cho Tự động tấn công
     local autoAttackToggle = Instance.new("TextButton")
-    autoAttackToggle.Size = UDim2.new(0.8, 0, 0, 35)
-    autoAttackToggle.Position = UDim2.new(0.1, 0, 0.72, 0)
-    autoAttackToggle.BackgroundColor3 = config.autoAttack and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(50, 50, 50)
-    autoAttackToggle.Text = "Tự động Tấn công: " .. (config.autoAttack and "BẬT" or "TẮT")
+    autoAttackToggle.Size = UDim2.new(0.8, 0, 0, 30)
+    autoAttackToggle.Position = UDim2.new(0.1, 0, 0.90, 0)
+    autoAttackToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    autoAttackToggle.Text = "Tự động tấn công: " .. tostring(config.autoAttack)
     autoAttackToggle.Font = "SourceSans"
     autoAttackToggle.TextSize = 14
     autoAttackToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -207,45 +243,19 @@ local function createUI()
 
     autoAttackToggle.MouseButton1Click:Connect(function()
         config.autoAttack = not config.autoAttack
-        autoAttackToggle.BackgroundColor3 = config.autoAttack and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(50, 50, 50)
-        autoAttackToggle.Text = "Tự động Tấn công: " .. (config.autoAttack and "BẬT" or "TẮT")
+        autoAttackToggle.Text = "Tự động tấn công: " .. tostring(config.autoAttack)
     end)
 
-    -- Thêm nút để tải cấu hình từ xa
-    local loadConfigBtn = Instance.new("TextButton")
-    loadConfigBtn.Size = UDim2.new(0.8, 0, 0, 30)
-    loadConfigBtn.Position = UDim2.new(0.1, 0, 0.85, 0)
-    loadConfigBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    loadConfigBtn.Text = "Tải Cấu hình Từ xa"
-    loadConfigBtn.Font = "SourceSansBold"
-    loadConfigBtn.TextSize = 14
-    loadConfigBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    loadConfigBtn.Parent = mainFrame
-
-    loadConfigBtn.MouseButton1Click:Connect(loadRemoteConfig)
-
-    -- Khởi tạo UI khi script được chạy
-    -- loadRemoteConfig() -- Tự động tải cấu hình khi khởi động (tùy chọn)
+    -- Tải cấu hình từ xa khi script bắt đầu
+    -- loadRemoteConfig() -- Bỏ comment dòng này nếu bạn muốn tải cấu hình từ xa
 end
 
--- Hàm để bắt đầu quá trình farm
-local function startFarming()
-    if isFarming then return end
-    isFarming = true
-    print("Bắt đầu farm...")
+-- Hàm để tìm mob gần nhất
+local function findNearestMob()
+    local nearestMob = nil
+    local minDistance = math.huge
 
-    -- Đảm bảo nhân vật đã sẵn sàng
-    Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    Humanoid = Character:WaitForChild("Humanoid")
-    HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
-
-    -- Kiểm tra xem có cần teleport đến khu vực farm không
-    if config.teleportToFarm then
-        -- Logic teleport đến khu vực farm (ví dụ: đến đảo đầu tiên)
-        -- Cần thêm tọa độ cụ thể cho từng khu vực
-        print("Teleport đến khu vực farm...")
-        -- Ví dụ: Teleport đến Spawn Island (cần tọa độ chính xác)
-        HumanoidRootPart.CFrame = CFrame
+    for _, mob
 
 
 
