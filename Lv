@@ -1,75 +1,216 @@
--- Blox Fruits Auto Farm Level
--- Script for educational purposes only. Use at your own risk.
+--[[
+	Louis Hub Auto Farm Script for Blox Fruits
+	Automates leveling by attacking and healing.
+]]
 
+-- ## Configuration ##
+local targetLevel = 2000 -- Set your desired level
+local autoAttack = true -- Enable/disable auto attacking
+local autoHeal = true -- Enable/disable auto healing
+local healThreshold = 0.5 -- Health percentage to trigger healing (e.g., 0.5 for 50%)
+local attackRange = 50 -- Maximum distance to an enemy to target
+local attackDelay = 1 -- Seconds between attacks
+
+-- ## Local Variables ##
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
-local rootPart = character:WaitForChild("HumanoidRootPart")
+local camera = game.Workspace.CurrentCamera
 
--- Configuration
-local settings = {
-    melee = true,          -- Use melee (Z)
-    sword = true,          -- Use sword (X)
-    abilities = true,      -- Use abilities (C, V, F, G)
-    collectDrops = true,   -- Collect dropped items
-    teleportToEnemy = true, -- Teleport to enemy for faster farming
-    attackRange = 20,      -- Distance to start attacking
-    teleportRange = 50     -- Distance to teleport to enemy
-}
+local farmingActive = false
+local currentTarget = nil
+local lastAttackTime = 0
 
--- Find the nearest enemy
-function getNearestEnemy()
-    local nearest = nil
-    local minDist = math.huge
-    local enemiesFolder = workspace:FindFirstChild("Enemies")
-    if not enemiesFolder then return nil, minDist end
+-- ## Helper Functions ##
 
-    for _, enemy in ipairs(enemiesFolder:GetChildren()) do
-        local enemyHumanoid = enemy:FindFirstChild("Humanoid")
-        local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
-        if enemyHumanoid and enemyRoot and enemyHumanoid.Health > 0 then
-            local dist = (rootPart.Position - enemyRoot.Position).Magnitude
-            if dist < minDist then
-                minDist = dist
-                nearest = enemy
-            end
-        end
-    end
-    return nearest, minDist
+-- Finds the closest valid enemy within range
+local function findTarget()
+	local closestEnemy = nil
+	local minDistance = math.huge
+
+	for _, enemy in pairs(game.Workspace:GetDescendants()) do
+		if enemy.Name ~= player.Name and enemy:IsA("Model") and enemy.Parent and enemy:FindFirstChildOfClass("Humanoid") and enemy.Humanoid.Health > 0 then
+			local enemyHumanoid = enemy:FindFirstChildOfClass("Humanoid")
+			if enemyHumanoid and enemyHumanoid.Health > 0 then
+				local enemyRootPart = enemy:FindFirstChild("HumanoidRootPart")
+				if enemyRootPart then
+					local distance = (character.HumanoidRootPart.Position - enemyRootPart.Position).Magnitude
+					if distance <= attackRange and distance < minDistance then
+						minDistance = distance
+						closestEnemy = enemy
+					end
+				end
+			end
+		end
+	end
+	return closestEnemy
 end
 
--- Send a key press event
-function pressKey(key)
-    local vim = game:GetService("VirtualInputManager")
-    vim:SendKeyEvent(true, key, false, game)
-    wait(0.1)
-    vim:SendKeyEvent(false, key, false, game)
+-- Attacks the given enemy (NEEDS CUSTOMIZATION)
+local function attackTarget(enemy)
+	if not enemy or not enemy.Parent or not enemy:FindFirstChild("Humanoid") or enemy.Humanoid.Health <= 0 then
+		currentTarget = nil
+		return
+	end
+
+	local enemyRootPart = enemy:FindFirstChild("HumanoidRootPart")
+	if not enemyRootPart then
+		currentTarget = nil
+		return
+	end
+
+	-- Move to face the enemy
+	character.HumanoidRootPart.CFrame = CFrame.new(character.HumanoidRootPart.Position, enemyRootPart.Position)
+
+	-- ## CUSTOMIZE ATTACK LOGIC HERE ##
+	-- This is a placeholder. You'll need to implement how to use abilities or basic attacks.
+	-- This often involves firing RemoteEvents.
+	-- Example: If you have an ability that uses a RemoteEvent named "UseAbility1"
+	-- game.ReplicatedStorage.RemoteEvents.UseAbility1:FireServer(enemyRootPart.Position)
+
+	print("Attacking:", enemy.Name)
+	lastAttackTime = tick()
 end
 
--- Attack the target enemy
-function attack(target)
-    local enemyRoot = target:FindFirstChild("HumanoidRootPart")
-    if not enemyRoot then return end
+-- Heals if health is low (NEEDS CUSTOMIZATION)
+local function healIfNecessary()
+	if not autoHeal then return end
 
-    -- Face the enemy
-    rootPart.CFrame = CFrame.lookAt(rootPart.Position, enemyRoot.Position)
-
-    -- Use melee and sword
-    if settings.melee then pressKey("Z") end
-    if settings.sword then pressKey("X") end
-
-    -- Use abilities
-    if settings.abilities then
-        for _, key in ipairs({"C", "V", "F", "G"}) do
-            pressKey(key)
-        end
-    end
+	if humanoid.Health / humanoid.MaxHealth < healThreshold then
+		print("Health low, healing needed!")
+		-- ## CUSTOMIZE HEALING LOGIC HERE ##
+		-- Implement how your character heals. This might involve using a specific skill
+		-- or consuming an item if the game has such mechanics.
+		-- Example: If you have a healing skill that uses a RemoteEvent named "HealSkill"
+		-- game.ReplicatedStorage.RemoteEvents.HealSkill:FireServer()
+	end
 end
 
--- Collect dropped items (fruits, chests, etc.)
-function collectDrops()
-    local dropsFolder = workspace:
+-- Main farming loop
+local function farmLevel()
+	while farmingActive and humanoid.Health > 0 do
+		-- Check if character and humanoid are still valid
+		if not character or not character.Parent or not humanoid or humanoid.Health <= 0 then
+			print("Character or Humanoid lost, stopping farm.")
+			farmingActive = false
+			break
+		end
 
+		-- Check if target level is reached
+		if humanoid.Level >= targetLevel then
+			print("Target level reached! Stopping farm.")
+			farmingActive = false
+			break
+		end
 
+		-- Heal if necessary
+		healIfNecessary()
 
-Write "continue" to complete the response
+		-- Find a new target if we don't have one or the current one is dead/invalid
+		if not currentTarget or not currentTarget.Parent or not currentTarget:FindFirstChild("Humanoid") or currentTarget.Humanoid.Health <= 0 then
+			currentTarget = findTarget()
+		end
+
+		-- If we have a target, proceed with attacking or moving
+		if currentTarget then
+			local targetRootPart = currentTarget:FindFirstChild("HumanoidRootPart")
+			if targetRootPart then
+				local distance = (character.HumanoidRootPart.Position - targetRootPart.Position).Magnitude
+
+				if distance <= attackRange then
+					-- If within range and attack delay has passed, attack
+					if autoAttack and tick() - lastAttackTime > attackDelay then
+						attackTarget(currentTarget)
+					else
+						-- Optional: Move slightly to ensure target is in view if not attacking
+						character.HumanoidRootPart.CFrame = CFrame.new(character.HumanoidRootPart.Position, targetRootPart.Position)
+					end
+				else
+					-- Move towards the target if too far
+					character.Humanoid:MoveTo(targetRootPart.Position)
+				end
+			else
+				-- Target root part not found, clear target
+				currentTarget = nil
+			end
+		else
+			-- No target found, stop moving
+			character.Humanoid:MoveTo(character.HumanoidRootPart.Position) -- Stand still
+		end
+
+		wait(0.1) -- Small wait to prevent excessive looping
+	end
+
+	if not farmingActive then
+		print("Farming stopped.")
+		character.Humanoid:MoveTo(character.HumanoidRootPart.Position) -- Ensure character stops moving
+	end
+end
+
+-- ## Input Handling ##
+local farmingThread = nil
+
+-- Function to toggle farming
+local function toggleFarming()
+	farmingActive = not farmingActive
+	if farmingActive then
+		print("Auto-farming ENABLED. Target Level:", targetLevel)
+		-- Ensure character and humanoid are up-to-date before starting
+		character = player.Character
+		humanoid = character:WaitForChild("Humanoid")
+		if farmingThread then
+			coroutine.resume(farmingThread) -- Resume if it was paused
+		else
+			farmingThread = coroutine.wrap(farmLevel)() -- Start new thread
+		end
+	else
+		print("Auto-farming DISABLED.")
+		-- Stop movement if farming is disabled
+		if character and character.Humanoid then
+			character.Humanoid:MoveTo(character.HumanoidRootPart.Position)
+		end
+		-- Optionally, you could pause the coroutine here if you want to resume later
+		-- but for simplicity, we'll just let it finish its current loop iteration
+		-- and the `while farmingActive` condition will stop it.
+	end
+end
+
+-- ## Event Listeners ##
+-- Listen for character added/respawned
+player.CharacterAdded:Connect(function(newCharacter)
+	character = newCharacter
+	humanoid = character:WaitForChild("Humanoid")
+	print("Character respawned. Updating references.")
+	-- If farming was active, try to continue
+	if farmingActive then
+		print("Attempting to resume farming after respawn.")
+		-- Resetting farmingThread might be necessary if it got garbage collected or errored
+		farmingThread = coroutine.wrap(farmLevel)()
+	end
+end)
+
+-- ## Keybind ##
+-- F5 key to toggle farming
+UserInputService = game:GetService("UserInputService")
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+	if input.KeyCode == Enum.KeyCode.F5 and not gameProcessedEvent then
+		toggleFarming()
+	end
+end)
+
+-- ## Initial Setup ##
+print("------------------------------------")
+print("Louis Hub Auto Farm Script Loaded!")
+print("Press F5 to toggle auto-farming.")
+print("Target Level:", targetLevel)
+print("------------------------------------")
+
+-- Ensure initial character and humanoid are set
+character = player.Character
+if character then
+	humanoid = character:WaitForChild("Humanoid")
+else
+	player.CharacterAdded:Wait()
+	character = player.Character
+	humanoid = character:WaitForChild("Humanoid")
+end
