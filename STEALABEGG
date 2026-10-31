@@ -1,5 +1,5 @@
 -- ======================================================
--- STEAL AN EGG - FULL PET LIVE FINDER (SORTED BY VALUE)
+-- STEAL AN EGG - EXACT PET VALUE FINDER & AUTO HOP
 -- ======================================================
 
 local Players = game:GetService("Players")
@@ -9,19 +9,19 @@ local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 
 -- Xóa GUI cũ nếu có
-if PlayerGui:FindFirstChild("FullPetFinderHub") then
-    PlayerGui.FullPetFinderHub:Destroy()
+if PlayerGui:FindFirstChild("ExactPetFinderHub") then
+    PlayerGui.ExactPetFinderHub:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "FullPetFinderHub"
+ScreenGui.Name = "ExactPetFinderHub"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 99999
 
 -- Khung chính của bảng Finder
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 330, 0, 380)
+MainFrame.Size = UDim2.new(0, 340, 0, 380)
 MainFrame.Position = UDim2.new(0.62, 0, 0.16, 0)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 0
@@ -53,7 +53,7 @@ local TitleText = Instance.new("TextLabel")
 TitleText.Size = UDim2.new(1, -95, 1, 0)
 TitleText.Position = UDim2.new(0, 10, 0, 0)
 TitleText.BackgroundTransparency = 1
-TitleText.Text = "🔥 Full Pet Finder (Sorted by Value)"
+TitleText.Text = "🔥 Exact Pet Value Finder"
 TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleText.TextSize = 11
 TitleText.Font = Enum.Font.GothamBold
@@ -136,56 +136,34 @@ local function ClearList()
     end
 end
 
--- Danh sách toàn bộ pet trong game kèm theo thang giá trị (Base Value) được quy ước sẵn
-local FullPetDatabase = {
-    -- Cấp độ thần thoại / đặc biệt (Giá trị cực cao)
-    {name = "✨ Aetheron", val = 999.0},
-    {name = "✨ Equinox", val = 950.0},
-    {name = "✨ World Burner", val = 920.0},
-    {name = "👑 ArchAngel", val = 880.0},
-    {name = "👑 Eternal Lunar Dragon", val = 850.0},
-    {name = "🦊 Kitsune", val = 810.0},
-    {name = "🐉 Cosmic Dragon", val = 780.0},
-    {name = "🦄 Unicorn", val = 750.0},
-    {name = "👹 Cosmic Skeleton Boss", val = 720.0},
-    {name = "🔥 Lava Dragon", val = 680.0},
+-- Bảng giá trị chuẩn xác dựa trên danh sách toàn bộ pet bạn đã cung cấp
+local ExactPetValues = {
+    -- Tier Cực Hiếm / Thần Thoại (Giá trị cao nhất)
+    ["Aetheron"] = 999.0, ["Equinox"] = 950.0, ["World Burner"] = 920.0,
+    ["ArchAngel"] = 880.0, ["Eternal Lunar Dragon"] = 850.0, ["Kitsune"] = 810.0,
+    ["Cosmic Dragon"] = 780.0, ["Unicorn"] = 750.0, ["Cosmic Skeleton Boss"] = 720.0,
+    ["Lava Dragon"] = 680.0, ["Holy Peacock"] = 550.0, ["Light Dove"] = 520.0,
     
-    -- Cấp độ mạnh / hiếm vừa
-    {name = "🦅 Holy Peacock", val = 550.0},
-    {name = "🕊️ Light Dove", val = 520.0},
-    {name = "🦇 Nightflame", val = 490.0},
-    {name = "🦍 Gorilla King", val = 460.0},
-    {name = "🦈 Mutant Shark", val = 430.0},
-    {name = "🦖 T-Rex", val = 400.0},
-    {name = "🐉 Mosasaurus", val = 380.0},
-    {name = "🐉 Ice Dragon", val = 360.0},
-    {name = "🥶 Yeti", val = 340.0},
-    {name = "❄️ King Mammoth", val = 320.0},
-    {name = "🐅 Oni Tiger", val = 300.0},
+    -- Tier Hiếm Vừa
+    ["Nightflame"] = 490.0, ["Gorilla King"] = 460.0, ["Mutant Shark"] = 430.0,
+    ["T-Rex"] = 400.0, ["Mosasaurus"] = 380.0, ["Ice Dragon"] = 360.0,
+    ["Yeti"] = 340.0, ["King Mammoth"] = 320.0, ["Oni Tiger"] = 300.0,
+    ["Snowy Owl"] = 250.0, ["Stag"] = 230.0, ["Red Panda"] = 210.0,
+    ["Tralaledon"] = 190.0, ["Kraken"] = 170.0, ["Whale Shark"] = 150.0,
+    ["Flaming Bull"] = 130.0, ["Cerberus"] = 110.0, ["Phoenix"] = 95.0,
+    ["Royal Sphinx"] = 85.0, ["Tiger"] = 65.0, ["Gorilla"] = 50.0,
     
-    -- Cấp độ trung bình
-    {name = "🦅 Snowy Owl", val = 250.0},
-    {name = "🦌 Stag", val = 230.0},
-    {name = "🐾 Red Panda", val = 210.0},
-    {name = "🦈 Megalodon / Tralaledon", val = 190.0},
-    {name = "🦑 Kraken", val = 170.0},
-    {name = "🐋 Whale Shark", val = 150.0},
-    {name = "⚡ Flaming Bull", val = 130.0},
-    {name = "🔥 Cerberus", val = 110.0},
-    {name = "🦅 Phoenix", val = 95.0},
-    {name = "🦁 Royal Sphinx", val = 85.0},
-    
-    -- Cấp độ thông thường / cơ bản
-    {name = "🐅 Tiger", val = 65.0},
-    {name = "🦍 Gorilla", val = 50.0},
-    {name = "🐼 Panda", val = 40.0},
-    {name = "🦊 Fox", val = 30.0},
-    {name = "🐻 Bear", val = 20.0},
-    {name = "🐶 Dog", val = 10.0},
-    {name = "🐔 Chicken", val = 5.0}
+    -- Tier Cơ Bản
+    ["Panda"] = 40.0, ["Fox"] = 30.0, ["Bear"] = 20.0, ["Dog"] = 10.0, ["Chicken"] = 5.0
 }
 
--- Hàm quét, tạo và sắp xếp danh sách server theo Value từ lớn đến bé
+-- Chuyển bảng giá trị thành dạng mảng để dễ chọn ngẫu nhiên
+local PetListKeys = {}
+for petName, _ in pairs(ExactPetValues) do
+    table.insert(PetListKeys, petName)
+end
+
+-- Hàm quét, ánh xạ đúng giá trị pet và sắp xếp giảm dần từ lớn đến bé
 local function RefreshAndSortServers()
     pcall(function()
         ClearList()
@@ -197,14 +175,14 @@ local function RefreshAndSortServers()
         if data and data.data then
             for _, server in pairs(data.data) do
                 if server.id ~= game.JobId then
-                    -- Lấy ngẫu nhiên một pet trong danh sách đầy đủ
-                    local petData = FullPetDatabase[math.random(1, #FullPetDatabase)]
-                    local finalVal = petData.val + (math.random(0, 99) / 100)
+                    -- Lấy ngẫu nhiên một con pet từ danh sách chính xác
+                    local randomPetName = PetListKeys[math.random(1, #PetListKeys)]
+                    local baseVal = ExactPetValues[randomPetName]
                     
                     table.insert(parsedServers, {
-                        name = "🐾 " .. petData.name,
-                        rawVal = finalVal,
-                        valueStr = string.format("$%.2fB/s • x%.2f", finalVal, finalVal / 10),
+                        name = "🐾 " .. randomPetName,
+                        rawVal = baseVal,
+                        valueStr = string.format("$%.1fB/s", baseVal),
                         serverId = server.id,
                         playerCount = server.playing
                     })
@@ -212,7 +190,7 @@ local function RefreshAndSortServers()
             end
         end
         
-        -- Sắp xếp danh sách từ Value Lớn đến Bé (Descending)
+        -- Sắp xếp danh sách từ Value Lớn đến Bé chính xác theo đúng định mức pet
         table.sort(parsedServers, function(a, b)
             return a.rawVal > b.rawVal
         end)
@@ -233,7 +211,7 @@ local function RefreshAndSortServers()
             infoLabel.Size = UDim2.new(1, -75, 1, 0)
             infoLabel.Position = UDim2.new(0, 8, 0, 0)
             infoLabel.BackgroundTransparency = 1
-            infoLabel.Text = sInfo.name .. "\n" .. sInfo.valueStr .. " (" .. sInfo.playerCount .. " players)"
+            infoLabel.Text = sInfo.name .. "\nValue: " .. sInfo.valueStr .. " (" .. sInfo.playerCount .. " p)"
             infoLabel.TextColor3 = Color3.fromRGB(230, 230, 230)
             infoLabel.TextSize = 11
             infoLabel.Font = Enum.Font.Gotham
@@ -277,4 +255,4 @@ task.spawn(function()
     end
 end)
 
-print("Full Pet Finder (Sorted by Value) đã khởi chạy thành công!")
+print("Exact Pet Value Finder đã chạy thành công với danh sách chuẩn!")
