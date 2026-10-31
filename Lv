@@ -1,46 +1,266 @@
--- Script đơn giản để tự động nhặt trái cây trong Blox Fruits
+--[[
+    Tên Script: Louis Vuitton Hub Menu
+    Mô tả: Một hub menu đơn giản cho Blox Fruits, tập trung vào chức năng farm level.
+    Lấy cảm hứng từ: banana old
+    Tác giả: [Tên của bạn hoặc biệt danh GitHub]
+    Phiên bản: 1.0
+]]
 
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local backpack = player.Backpack
+-- Khai báo các biến toàn cục và các dịch vụ cần thiết
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 
--- Hàm kiểm tra xem có trái cây nào gần đó không
-local function findFruit()
-    for _, instance in ipairs(workspace:GetChildren()) do
-        if instance:IsA("Model") and instance.Name == "Fruit" then
-            -- Kiểm tra xem trái cây có thuộc về người chơi khác không (tùy chọn)
-            if not instance.Parent:FindFirstChild("Humanoid") then
-                return instance
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+
+-- Biến cấu hình cho chức năng farm level
+local config = {
+    autoFarmLevel = false, -- Bật/tắt tự động farm level
+    targetLevel = 1000,    -- Mục tiêu level cần đạt
+    farmArea = "Sea 1",    -- Khu vực farm (ví dụ: "Sea 1", "Sea 2", "Sea 3")
+    mobToFarm = "Kitsune", -- Tên mob để farm (cần khớp chính xác với tên trong game)
+    teleportToFarm = true, -- Tự động dịch chuyển đến khu vực farm
+    useSkillsToFarm = true, -- Sử dụng kỹ năng để farm (nếu có)
+    skillKeybind = Enum.KeyCode.Q -- Phím để sử dụng kỹ năng (ví dụ: Q)
+}
+
+-- Biến trạng thái
+local isFarming = false
+local currentTarget = nil
+local mobSpawned = false
+
+-- Hàm để tạo giao diện người dùng (UI) đơn giản
+local function createUI()
+    -- Đây là phần bạn sẽ thêm code để tạo một GUI (ví dụ: Frame, TextButton, CheckBox)
+    -- Sử dụng thư viện GUI hoặc tạo thủ công bằng các đối tượng Roblox.
+    -- Ví dụ: Tạo một nút để bật/tắt farm
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "LouisVuittonHub"
+    gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(0, 200, 0, 150)
+    mainFrame.Position = UDim2.new(0.01, 0, 0.5, 0)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    mainFrame.BorderSizePixel = 2
+    mainFrame.Draggable = true
+    mainFrame.Parent = gui
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.Position = UDim2.new(0, 0, 0, 0)
+    titleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    titleLabel.Text = "Louis Vuitton Hub"
+    titleLabel.Font = "SourceSansBold"
+    titleLabel.TextSize = 18
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 0) -- Màu vàng cho tên
+    titleLabel.Parent = mainFrame
+
+    local farmToggle = Instance.new("TextButton")
+    farmToggle.Size = UDim2.new(0.8, 0, 0, 40)
+    farmToggle.Position = UDim2.new(0.1, 0, 0.2, 0)
+    farmToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    farmToggle.Text = "Bật Farm Level"
+    farmToggle.Font = "SourceSansBold"
+    farmToggle.TextSize = 16
+    farmToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    farmToggle.Parent = mainFrame
+
+    farmToggle.MouseButton1Click:Connect(function()
+        config.autoFarmLevel = not config.autoFarmLevel
+        if config.autoFarmLevel then
+            farmToggle.Text = "Tắt Farm Level"
+            farmToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Màu xanh khi bật
+            print("Tự động farm level đã được BẬT.")
+            startFarming()
+        else
+            farmToggle.Text = "Bật Farm Level"
+            farmToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Màu xám khi tắt
+            print("Tự động farm level đã được TẮT.")
+            stopFarming()
+        end
+    end)
+
+    -- Thêm các nút hoặc tùy chọn khác tại đây (ví dụ: chọn mob, chọn khu vực, v.v.)
+end
+
+-- Hàm tìm kiếm và di chuyển đến mob mục tiêu
+local function findAndAttackMob()
+    if not config.autoFarmLevel then return end
+
+    local mobs = Workspace:GetChildren()
+    local closestMob = nil
+    local minDistance = math.huge
+
+    for _, instance in ipairs(mobs) do
+        -- Kiểm tra xem đây có phải là mob chúng ta muốn farm không
+        -- Cần điều chỉnh logic này dựa trên cách mob được đặt tên trong Blox Fruits
+        -- Thường thì mob là các Model có Humanoid và thuộc về một Folder (ví dụ: "Enemies")
+        if instance:IsA("Model") and instance:FindFirstChild("Humanoid") and instance.Name == config.mobToFarm then
+            -- Kiểm tra xem mob có thuộc về người chơi khác không (tùy chọn, để tránh tranh chấp)
+            -- Logic này có thể phức tạp và cần kiểm tra thuộc tính của mob.
+            -- Ví dụ đơn giản: bỏ qua nếu mob đã bị tấn công bởi người khác (cần thêm logic)
+
+            local mobPosition = instance.PrimaryPart.Position
+            local distance = (HumanoidRootPart.Position - mobPosition).Magnitude
+
+            if distance < minDistance then
+                minDistance = distance
+                closestMob = instance
             end
         end
     end
-    return nil
-end
 
--- Hàm di chuyển đến vị trí của trái cây và nhặt nó
-local function pickUpFruit()
-    local fruit = findFruit()
-    if fruit then
-        print("Tìm thấy trái cây: " .. fruit.Name)
-        -- Di chuyển nhân vật đến vị trí của trái cây
-        -- (Cần thêm logic di chuyển phức tạp hơn ở đây nếu cần)
-        -- Ví dụ đơn giản: Teleport đến gần trái cây
-        character.HumanoidRootPart.CFrame = CFrame.new(fruit.PrimaryPart.Position - Vector3.new(0, 5, 0))
+    if closestMob then
+        currentTarget = closestMob
+        mobSpawned = true
+        print("Tìm thấy mob mục tiêu: " .. currentTarget.Name)
 
-        -- Chờ một chút để nhân vật đến nơi
-        wait(1)
+        -- Di chuyển đến mob
+        -- Sử dụng pathfinding hoặc teleport đơn giản
+        if config.teleportToFarm then
+            -- Teleport đến gần mob
+            HumanoidRootPart.CFrame = CFrame.new(currentTarget.PrimaryPart.Position - Vector3.new(0, 10, 0))
+            wait(0.5) -- Chờ một chút để nhân vật đến nơi
+        else
+            -- Logic di chuyển phức tạp hơn (sử dụng pathfinding) sẽ cần thêm code
+            print("Di chuyển đến mob...")
+        end
 
-        -- Tương tác để nhặt trái cây
-        -- (Cần tìm cách tương tác với trái cây, có thể là click vào nó hoặc sử dụng một sự kiện)
-        -- Ví dụ giả định:
-        -- game:GetService("ReplicatedStorage").Events.PickUpFruit:FireServer(fruit)
-        print("Đang cố gắng nhặt trái cây...")
+        -- Tấn công mob
+        if config.useSkillsToFarm and Character:FindFirstChild("Humanoid") then
+            -- Kích hoạt kỹ năng (ví dụ: nhấn phím)
+            -- Cần tìm cách mô phỏng việc nhấn phím hoặc gọi trực tiếp hàm của kỹ năng
+            -- Đây là phần phức tạp và phụ thuộc vào cách game xử lý kỹ năng
+            print("Sử dụng kỹ năng để tấn công...")
+            -- Ví dụ giả định:
+            -- game:GetService("UserInputService"):SendEvent(Enum.UserInputType.Keyboard, Enum.KeyCode.Q, Enum.UserInputState.Begin)
+            -- wait(0.1)
+            -- game:GetService("UserInputService"):SendEvent(Enum.UserInputType.Keyboard, Enum.KeyCode.Q, Enum.UserInputState.End)
+
+            -- Nếu không có kỹ năng hoặc không muốn dùng, tấn công bằng tay (nếu có)
+            -- Cần tìm cách tấn công mặc định của nhân vật
+        end
     else
-        print("Không tìm thấy trái cây nào gần đây.")
+        currentTarget = nil
+        mobSpawned = false
+        print("Không tìm thấy mob mục tiêu nào.")
+        -- Có thể thêm logic để di chuyển đến khu vực farm nếu không có mob
     end
 end
 
--- Vòng lặp chính để liên tục tìm và nhặt trái cây
-while wait(5) do -- Kiểm tra mỗi 5 giây
-    pickUpFruit()
+-- Hàm kiểm tra xem nhân vật có đang ở khu vực farm không
+local function isInFarmArea()
+    -- Logic này cần được tùy chỉnh dựa trên cách xác định khu vực trong game.
+    -- Ví dụ: Kiểm tra vị trí của HumanoidRootPart hoặc tên của khu vực hiện tại.
+    -- Nếu game có cách để lấy tên khu vực hiện tại, sẽ dễ dàng hơn.
+    print("Kiểm tra khu vực farm...")
+    -- Ví dụ:
+    -- return Workspace.CurrentArea.Name == config.farmArea
+    return true -- Giả định luôn ở khu vực farm để đơn giản hóa
 end
+
+-- Hàm chính để bắt đầu quá trình farm
+local function startFarming()
+    if isFarming then return end
+    isFarming = true
+    print("Bắt đầu quá trình farm level...")
+
+    -- Chờ nhân vật sẵn sàng
+    Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    Humanoid = Character:WaitForChild("Humanoid")
+    HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+
+    -- Nếu bật tự động dịch chuyển, hãy di chuyển đến khu vực farm trước
+    if config.teleportToFarm then
+        -- Cần thêm logic để dịch chuyển đến vị trí của khu vực farm
+        -- Ví dụ: Teleport đến một điểm cố định trong "Sea 1"
+        print("Đang dịch chuyển đến khu vực farm: " .. config.farmArea)
+        -- HumanoidRootPart.CFrame = CFrame.new(x, y, z) -- Thay x, y, z bằng tọa độ của khu vực farm
+        wait(2) -- Chờ di chuyển
+    end
+
+    -- Vòng lặp farm
+    RunService.Heartbeat:Connect(function()
+        if not isFarming or not config.autoFarmLevel then
+            return
+        end
+
+        -- Kiểm tra xem nhân vật còn sống không
+        if Humanoid.Health <= 0 then
+            print("Nhân vật đã chết. Đang chờ hồi sinh...")
+            isFarming = false -- Tạm dừng farm cho đến khi hồi sinh
+            return
+        end
+
+        -- Kiểm tra xem có cần farm level không
+        if LocalPlayer.Level >= config.targetLevel then
+            print("Đã đạt mục tiêu level: " .. config.targetLevel)
+            stopFarming()
+            return
+        end
+
+        -- Kiểm tra xem có đang ở khu vực farm không
+        if not isInFarmArea() then
+            print("Không ở trong khu vực farm. Đang di chuyển...")
+            -- Thêm logic di chuyển về khu vực farm nếu cần
+            return
+        end
+
+        -- Tìm và tấn công mob
+        if not currentTarget or currentTarget.Parent == nil or currentTarget.Humanoid.Health <= 0 then
+            -- Mob đã chết hoặc không còn tồn tại, tìm mob mới
+            findAndAttackMob()
+        else
+            -- Mob vẫn còn, tiếp tục tấn công hoặc di chuyển đến gần nếu đã ở xa
+            local distanceToMob = (HumanoidRootPart.Position - currentTarget.PrimaryPart.Position).Magnitude
+            if distanceToMob > 15 then -- Nếu quá xa mob
+                print("Di chuyển lại gần mob...")
+                HumanoidRootPart.CFrame = CFrame.new(currentTarget.PrimaryPart.Position - Vector3.new(0, 10, 0))
+            end
+
+            -- Tấn công mob nếu đang ở gần
+            if config.useSkillsToFarm and Character:FindFirstChild("Humanoid") then
+                -- Kích hoạt kỹ năng
+                -- (Logic tương tự như trong findAndAttackMob)
+            end
+        end
+    end)
+end
+
+-- Hàm để dừng quá trình farm
+local function stopFarming()
+    isFarming = false
+    currentTarget = nil
+    print("Quá trình farm đã dừng.")
+end
+
+-- Khởi tạo script khi người chơi vào game
+LocalPlayer.CharacterAdded:Connect(function(char)
+    Character = char
+    Humanoid = Character:WaitForChild("Humanoid")
+    HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+    if config.autoFarmLevel and isFarming then
+        -- Nếu farm đang bật và nhân vật mới xuất hiện, tiếp tục farm
+        startFarming()
+    end
+end)
+
+-- Tạo UI khi script được chạy
+createUI()
+
+-- Thông báo khi script đã sẵn sàng
+print("Louis Vuitton Hub Menu đã được tải. Sử dụng UI để điều khiển.")
+
+-- Bạn có thể thêm các chức năng khác vào đây, ví dụ:
+-- - Tự động nhặt trái cây
+-- - Tự động nhận nhiệm vụ
+-- - Teleport menu
+-- - Farm boss
+-- - Auto-skill
