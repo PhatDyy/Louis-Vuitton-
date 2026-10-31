@@ -12,6 +12,7 @@ local Workspace = game:GetService("Workspace")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService") -- Thêm HttpService để có thể tải cấu hình từ xa
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -26,28 +27,60 @@ local config = {
     mobToFarm = "Kitsune", -- Tên mob để farm (cần khớp chính xác với tên trong game)
     teleportToFarm = true, -- Tự động dịch chuyển đến khu vực farm
     useSkillsToFarm = true, -- Sử dụng kỹ năng để farm (nếu có)
-    skillKeybind = Enum.KeyCode.Q -- Phím để sử dụng kỹ năng (ví dụ: Q)
+    skillKeybind = Enum.KeyCode.Q, -- Phím để sử dụng kỹ năng (ví dụ: Q)
+    autoAttack = true,     -- Tự động tấn công khi đến gần mob
+    attackKeybind = Enum.KeyCode.X, -- Phím để tấn công cơ bản (ví dụ: X)
+    autoPickUpLoot = true, -- Tự động nhặt vật phẩm rơi ra
+    safeZoneDistance = 50, -- Khoảng cách an toàn để quay lại farm
+    farmDelay = 0.5,       -- Độ trễ giữa các lần farm
+    skillDelay = 1,        -- Độ trễ giữa các lần sử dụng kỹ năng
+    attackDelay = 0.2      -- Độ trễ giữa các lần tấn công cơ bản
 }
 
 -- Biến trạng thái
 local isFarming = false
 local currentTarget = nil
 local mobSpawned = false
+local lastAttackTime = 0
+local lastSkillTime = 0
+local isDead = false
+
+-- Hàm để tải cấu hình từ xa (ví dụ: từ Pastebin hoặc GitHub Gist)
+local function loadRemoteConfig()
+    local pastebinUrl = "YOUR_PASTEBIN_URL_HERE" -- Thay thế bằng URL Pastebin của bạn
+    local success, data = pcall(function()
+        return HttpService:GetAsync(pastebinUrl)
+    end)
+
+    if success then
+        local decodedData = HttpService:JSONDecode(data)
+        if decodedData then
+            -- Cập nhật các giá trị trong config từ dữ liệu tải về
+            for key, value in pairs(decodedData) do
+                if config[key] ~= nil then
+                    config[key] = value
+                end
+            end
+            print("Đã tải cấu hình từ xa thành công!")
+        else
+            warn("Không thể giải mã dữ liệu cấu hình từ xa.")
+        end
+    else
+        warn("Không thể tải cấu hình từ xa: " .. data)
+    end
+end
 
 -- Hàm để tạo giao diện người dùng (UI) đơn giản
 local function createUI()
-    -- Đây là phần bạn sẽ thêm code để tạo một GUI (ví dụ: Frame, TextButton, CheckBox)
-    -- Sử dụng thư viện GUI hoặc tạo thủ công bằng các đối tượng Roblox.
-    -- Ví dụ: Tạo một nút để bật/tắt farm
     local gui = Instance.new("ScreenGui")
     gui.Name = "LouisVuittonHub"
     gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 200, 0, 150)
+    mainFrame.Size = UDim2.new(0, 250, 0, 200) -- Tăng kích thước frame
     mainFrame.Position = UDim2.new(0.01, 0, 0.5, 0)
     mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 0) -- Viền vàng
     mainFrame.BorderSizePixel = 2
     mainFrame.Draggable = true
     mainFrame.Parent = gui
@@ -56,17 +89,18 @@ local function createUI()
     titleLabel.Size = UDim2.new(1, 0, 0, 30)
     titleLabel.Position = UDim2.new(0, 0, 0, 0)
     titleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    titleLabel.Text = "Louis Vuitton Hub"
+    titleLabel.Text = "LV Hub - Farm Level"
     titleLabel.Font = "SourceSansBold"
     titleLabel.TextSize = 18
-    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 0) -- Màu vàng cho tên
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
     titleLabel.Parent = mainFrame
 
+    -- Nút Bật/Tắt Farm
     local farmToggle = Instance.new("TextButton")
     farmToggle.Size = UDim2.new(0.8, 0, 0, 40)
-    farmToggle.Position = UDim2.new(0.1, 0, 0.2, 0)
+    farmToggle.Position = UDim2.new(0.1, 0, 0.15, 0)
     farmToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    farmToggle.Text = "Bật Farm Level"
+    farmToggle.Text = "BẬT FARM LEVEL"
     farmToggle.Font = "SourceSansBold"
     farmToggle.TextSize = 16
     farmToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -75,192 +109,144 @@ local function createUI()
     farmToggle.MouseButton1Click:Connect(function()
         config.autoFarmLevel = not config.autoFarmLevel
         if config.autoFarmLevel then
-            farmToggle.Text = "Tắt Farm Level"
-            farmToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Màu xanh khi bật
+            farmToggle.Text = "TẮT FARM LEVEL"
+            farmToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
             print("Tự động farm level đã được BẬT.")
             startFarming()
         else
-            farmToggle.Text = "Bật Farm Level"
-            farmToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Màu xám khi tắt
+            farmToggle.Text = "BẬT FARM LEVEL"
+            farmToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
             print("Tự động farm level đã được TẮT.")
             stopFarming()
         end
     end)
 
-    -- Thêm các nút hoặc tùy chọn khác tại đây (ví dụ: chọn mob, chọn khu vực, v.v.)
+    -- Thêm các tùy chọn khác vào UI
+    -- Ví dụ: Input cho Mob, Input cho Level, Toggle Skill, Toggle Teleport, v.v.
+
+    -- Input cho Mob
+    local mobLabel = Instance.new("TextLabel")
+    mobLabel.Size = UDim2.new(0.3, 0, 0, 25)
+    mobLabel.Position = UDim2.new(0.1, 0, 0.35, 0)
+    mobLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    mobLabel.Text = "Mob:"
+    mobLabel.Font = "SourceSans"
+    mobLabel.TextSize = 14
+    mobLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    mobLabel.Parent = mainFrame
+
+    local mobInput = Instance.new("TextBox")
+    mobInput.Size = UDim2.new(0.5, 0, 0, 25)
+    mobInput.Position = UDim2.new(0.4, 0, 0.35, 0)
+    mobInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    mobInput.Text = config.mobToFarm
+    mobInput.Font = "SourceSans"
+    mobInput.TextSize = 14
+    mobInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    mobInput.Parent = mainFrame
+
+    mobInput.Changed:Connect(function()
+        config.mobToFarm = mobInput.Text
+    end)
+
+    -- Input cho Level Mục Tiêu
+    local levelLabel = Instance.new("TextLabel")
+    levelLabel.Size = UDim2.new(0.3, 0, 0, 25)
+    levelLabel.Position = UDim2.new(0.1, 0, 0.45, 0)
+    levelLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    levelLabel.Text = "Level:"
+    levelLabel.Font = "SourceSans"
+    levelLabel.TextSize = 14
+    levelLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    levelLabel.Parent = mainFrame
+
+    local levelInput = Instance.new("TextBox")
+    levelInput.Size = UDim2.new(0.5, 0, 0, 25)
+    levelInput.Position = UDim2.new(0.4, 0, 0.45, 0)
+    levelInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    levelInput.Text = tostring(config.targetLevel)
+    levelInput.Font = "SourceSans"
+    levelInput.TextSize = 14
+    levelInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    levelInput.Parent = mainFrame
+
+    levelInput.Changed:Connect(function()
+        local newLevel = tonumber(levelInput.Text)
+        if newLevel then
+            config.targetLevel = newLevel
+        end
+    end)
+
+    -- Toggle Sử dụng Kỹ năng
+    local skillToggle = Instance.new("TextButton")
+    skillToggle.Size = UDim2.new(0.8, 0, 0, 35)
+    skillToggle.Position = UDim2.new(0.1, 0, 0.6, 0)
+    skillToggle.BackgroundColor3 = config.useSkillsToFarm and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(50, 50, 50)
+    skillToggle.Text = "Sử dụng Kỹ năng: " .. (config.useSkillsToFarm and "BẬT" or "TẮT")
+    skillToggle.Font = "SourceSans"
+    skillToggle.TextSize = 14
+    skillToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    skillToggle.Parent = mainFrame
+
+    skillToggle.MouseButton1Click:Connect(function()
+        config.useSkillsToFarm = not config.useSkillsToFarm
+        skillToggle.BackgroundColor3 = config.useSkillsToFarm and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(50, 50, 50)
+        skillToggle.Text = "Sử dụng Kỹ năng: " .. (config.useSkillsToFarm and "BẬT" or "TẮT")
+    end)
+
+    -- Toggle Tự động Tấn công
+    local autoAttackToggle = Instance.new("TextButton")
+    autoAttackToggle.Size = UDim2.new(0.8, 0, 0, 35)
+    autoAttackToggle.Position = UDim2.new(0.1, 0, 0.72, 0)
+    autoAttackToggle.BackgroundColor3 = config.autoAttack and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(50, 50, 50)
+    autoAttackToggle.Text = "Tự động Tấn công: " .. (config.autoAttack and "BẬT" or "TẮT")
+    autoAttackToggle.Font = "SourceSans"
+    autoAttackToggle.TextSize = 14
+    autoAttackToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    autoAttackToggle.Parent = mainFrame
+
+    autoAttackToggle.MouseButton1Click:Connect(function()
+        config.autoAttack = not config.autoAttack
+        autoAttackToggle.BackgroundColor3 = config.autoAttack and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(50, 50, 50)
+        autoAttackToggle.Text = "Tự động Tấn công: " .. (config.autoAttack and "BẬT" or "TẮT")
+    end)
+
+    -- Thêm nút để tải cấu hình từ xa
+    local loadConfigBtn = Instance.new("TextButton")
+    loadConfigBtn.Size = UDim2.new(0.8, 0, 0, 30)
+    loadConfigBtn.Position = UDim2.new(0.1, 0, 0.85, 0)
+    loadConfigBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    loadConfigBtn.Text = "Tải Cấu hình Từ xa"
+    loadConfigBtn.Font = "SourceSansBold"
+    loadConfigBtn.TextSize = 14
+    loadConfigBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    loadConfigBtn.Parent = mainFrame
+
+    loadConfigBtn.MouseButton1Click:Connect(loadRemoteConfig)
+
+    -- Khởi tạo UI khi script được chạy
+    -- loadRemoteConfig() -- Tự động tải cấu hình khi khởi động (tùy chọn)
 end
 
--- Hàm tìm kiếm và di chuyển đến mob mục tiêu
-local function findAndAttackMob()
-    if not config.autoFarmLevel then return end
-
-    local mobs = Workspace:GetChildren()
-    local closestMob = nil
-    local minDistance = math.huge
-
-    for _, instance in ipairs(mobs) do
-        -- Kiểm tra xem đây có phải là mob chúng ta muốn farm không
-        -- Cần điều chỉnh logic này dựa trên cách mob được đặt tên trong Blox Fruits
-        -- Thường thì mob là các Model có Humanoid và thuộc về một Folder (ví dụ: "Enemies")
-        if instance:IsA("Model") and instance:FindFirstChild("Humanoid") and instance.Name == config.mobToFarm then
-            -- Kiểm tra xem mob có thuộc về người chơi khác không (tùy chọn, để tránh tranh chấp)
-            -- Logic này có thể phức tạp và cần kiểm tra thuộc tính của mob.
-            -- Ví dụ đơn giản: bỏ qua nếu mob đã bị tấn công bởi người khác (cần thêm logic)
-
-            local mobPosition = instance.PrimaryPart.Position
-            local distance = (HumanoidRootPart.Position - mobPosition).Magnitude
-
-            if distance < minDistance then
-                minDistance = distance
-                closestMob = instance
-            end
-        end
-    end
-
-    if closestMob then
-        currentTarget = closestMob
-        mobSpawned = true
-        print("Tìm thấy mob mục tiêu: " .. currentTarget.Name)
-
-        -- Di chuyển đến mob
-        -- Sử dụng pathfinding hoặc teleport đơn giản
-        if config.teleportToFarm then
-            -- Teleport đến gần mob
-            HumanoidRootPart.CFrame = CFrame.new(currentTarget.PrimaryPart.Position - Vector3.new(0, 10, 0))
-            wait(0.5) -- Chờ một chút để nhân vật đến nơi
-        else
-            -- Logic di chuyển phức tạp hơn (sử dụng pathfinding) sẽ cần thêm code
-            print("Di chuyển đến mob...")
-        end
-
-        -- Tấn công mob
-        if config.useSkillsToFarm and Character:FindFirstChild("Humanoid") then
-            -- Kích hoạt kỹ năng (ví dụ: nhấn phím)
-            -- Cần tìm cách mô phỏng việc nhấn phím hoặc gọi trực tiếp hàm của kỹ năng
-            -- Đây là phần phức tạp và phụ thuộc vào cách game xử lý kỹ năng
-            print("Sử dụng kỹ năng để tấn công...")
-            -- Ví dụ giả định:
-            -- game:GetService("UserInputService"):SendEvent(Enum.UserInputType.Keyboard, Enum.KeyCode.Q, Enum.UserInputState.Begin)
-            -- wait(0.1)
-            -- game:GetService("UserInputService"):SendEvent(Enum.UserInputType.Keyboard, Enum.KeyCode.Q, Enum.UserInputState.End)
-
-            -- Nếu không có kỹ năng hoặc không muốn dùng, tấn công bằng tay (nếu có)
-            -- Cần tìm cách tấn công mặc định của nhân vật
-        end
-    else
-        currentTarget = nil
-        mobSpawned = false
-        print("Không tìm thấy mob mục tiêu nào.")
-        -- Có thể thêm logic để di chuyển đến khu vực farm nếu không có mob
-    end
-end
-
--- Hàm kiểm tra xem nhân vật có đang ở khu vực farm không
-local function isInFarmArea()
-    -- Logic này cần được tùy chỉnh dựa trên cách xác định khu vực trong game.
-    -- Ví dụ: Kiểm tra vị trí của HumanoidRootPart hoặc tên của khu vực hiện tại.
-    -- Nếu game có cách để lấy tên khu vực hiện tại, sẽ dễ dàng hơn.
-    print("Kiểm tra khu vực farm...")
-    -- Ví dụ:
-    -- return Workspace.CurrentArea.Name == config.farmArea
-    return true -- Giả định luôn ở khu vực farm để đơn giản hóa
-end
-
--- Hàm chính để bắt đầu quá trình farm
+-- Hàm để bắt đầu quá trình farm
 local function startFarming()
     if isFarming then return end
     isFarming = true
-    print("Bắt đầu quá trình farm level...")
+    print("Bắt đầu farm...")
 
-    -- Chờ nhân vật sẵn sàng
+    -- Đảm bảo nhân vật đã sẵn sàng
     Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     Humanoid = Character:WaitForChild("Humanoid")
     HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
 
-    -- Nếu bật tự động dịch chuyển, hãy di chuyển đến khu vực farm trước
+    -- Kiểm tra xem có cần teleport đến khu vực farm không
     if config.teleportToFarm then
-        -- Cần thêm logic để dịch chuyển đến vị trí của khu vực farm
-        -- Ví dụ: Teleport đến một điểm cố định trong "Sea 1"
-        print("Đang dịch chuyển đến khu vực farm: " .. config.farmArea)
-        -- HumanoidRootPart.CFrame = CFrame.new(x, y, z) -- Thay x, y, z bằng tọa độ của khu vực farm
-        wait(2) -- Chờ di chuyển
-    end
+        -- Logic teleport đến khu vực farm (ví dụ: đến đảo đầu tiên)
+        -- Cần thêm tọa độ cụ thể cho từng khu vực
+        print("Teleport đến khu vực farm...")
+        -- Ví dụ: Teleport đến Spawn Island (cần tọa độ chính xác)
+        HumanoidRootPart.CFrame = CFrame
 
-    -- Vòng lặp farm
-    RunService.Heartbeat:Connect(function()
-        if not isFarming or not config.autoFarmLevel then
-            return
-        end
 
-        -- Kiểm tra xem nhân vật còn sống không
-        if Humanoid.Health <= 0 then
-            print("Nhân vật đã chết. Đang chờ hồi sinh...")
-            isFarming = false -- Tạm dừng farm cho đến khi hồi sinh
-            return
-        end
 
-        -- Kiểm tra xem có cần farm level không
-        if LocalPlayer.Level >= config.targetLevel then
-            print("Đã đạt mục tiêu level: " .. config.targetLevel)
-            stopFarming()
-            return
-        end
-
-        -- Kiểm tra xem có đang ở khu vực farm không
-        if not isInFarmArea() then
-            print("Không ở trong khu vực farm. Đang di chuyển...")
-            -- Thêm logic di chuyển về khu vực farm nếu cần
-            return
-        end
-
-        -- Tìm và tấn công mob
-        if not currentTarget or currentTarget.Parent == nil or currentTarget.Humanoid.Health <= 0 then
-            -- Mob đã chết hoặc không còn tồn tại, tìm mob mới
-            findAndAttackMob()
-        else
-            -- Mob vẫn còn, tiếp tục tấn công hoặc di chuyển đến gần nếu đã ở xa
-            local distanceToMob = (HumanoidRootPart.Position - currentTarget.PrimaryPart.Position).Magnitude
-            if distanceToMob > 15 then -- Nếu quá xa mob
-                print("Di chuyển lại gần mob...")
-                HumanoidRootPart.CFrame = CFrame.new(currentTarget.PrimaryPart.Position - Vector3.new(0, 10, 0))
-            end
-
-            -- Tấn công mob nếu đang ở gần
-            if config.useSkillsToFarm and Character:FindFirstChild("Humanoid") then
-                -- Kích hoạt kỹ năng
-                -- (Logic tương tự như trong findAndAttackMob)
-            end
-        end
-    end)
-end
-
--- Hàm để dừng quá trình farm
-local function stopFarming()
-    isFarming = false
-    currentTarget = nil
-    print("Quá trình farm đã dừng.")
-end
-
--- Khởi tạo script khi người chơi vào game
-LocalPlayer.CharacterAdded:Connect(function(char)
-    Character = char
-    Humanoid = Character:WaitForChild("Humanoid")
-    HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
-    if config.autoFarmLevel and isFarming then
-        -- Nếu farm đang bật và nhân vật mới xuất hiện, tiếp tục farm
-        startFarming()
-    end
-end)
-
--- Tạo UI khi script được chạy
-createUI()
-
--- Thông báo khi script đã sẵn sàng
-print("Louis Vuitton Hub Menu đã được tải. Sử dụng UI để điều khiển.")
-
--- Bạn có thể thêm các chức năng khác vào đây, ví dụ:
--- - Tự động nhặt trái cây
--- - Tự động nhận nhiệm vụ
--- - Teleport menu
--- - Farm boss
--- - Auto-skill
+Write "continue" to complete the response
