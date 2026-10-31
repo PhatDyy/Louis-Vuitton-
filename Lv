@@ -1,262 +1,53 @@
---[[
-    Tên Script: Louis Vuitton Hub Menu
-    Mô tả: A simple hub menu for Blox Fruits, focusing on level farming functionality.
-    Tác giả: [Your Name or GitHub Alias]
-    Phiên bản: 1.0
-]]
+-- ServerScriptService/LevelService (ModuleScript)
+local LevelService = {}
 
--- Declare global variables and necessary services
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
-local HttpService = game:GetService("HttpService") -- Add HttpService to load remote configurations
+local MAX_LEVEL = 100
+local XP_PER_LEVEL = 100 -- XP cần = level hiện tại * XP_PER_LEVEL
 
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
-local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
-
--- Configuration variables for level farming functionality
-local config = {
-    autoFarmLevel = false, -- Enable/disable auto level farming
-    targetLevel = 1000,    -- Target level to reach
-    farmArea = "Sea 1",    -- Farming area (e.g., "Sea 1", "Sea 2", "Sea 3")
-    mobToFarm = "Kitsune", -- Name of the mob to farm (must match exactly in-game)
-    teleportToFarm = true, -- Automatically teleport to the farming area
-    useSkillsToFarm = true, -- Use skills to farm (if available)
-    skillKeybind = Enum.KeyCode.Q, -- Key to use skills (e.g., Q)
-    autoAttack = true,     -- Automatically attack when near a mob
-    attackKeybind = Enum.KeyCode.X, -- Key for basic attack (e.g., X)
-    autoPickUpLoot = true, -- Automatically pick up dropped loot
-    safeZoneDistance = 50, -- Safe distance to return to farming
-    farmDelay = 0.5,       -- Delay between farming actions
-    skillDelay = 1,        -- Delay between skill uses
-    attackDelay = 0.2      -- Delay between basic attacks
-}
-
--- State variables
-local isFarming = false
-local currentTarget = nil
-local mobSpawned = false
-local lastAttackTime = 0
-local lastSkillTime = 0
-local isDead = false
-
--- Function to load remote configuration (e.g., from Pastebin or GitHub Gist)
-local function loadRemoteConfig()
-    local pastebinUrl = "YOUR_PASTEBIN_URL_HERE" -- Replace with your Pastebin URL
-    local success, data = pcall(function()
-        return HttpService:GetAsync(pastebinUrl)
-    end)
-
-    if success then
-        local decodedData = HttpService:JSONDecode(data)
-        if decodedData then
-            -- Update config values from the downloaded data
-            for key, value in pairs(decodedData) do
-                if config[key] ~= nil then
-                    config[key] = value
-                end
-            end
-            print("Successfully loaded remote configuration!")
-        else
-            warn("Failed to decode remote configuration data.")
-        end
-    else
-        warn("Failed to load remote configuration: " .. data)
-    end
+local function xpNeeded(level)
+	return level * XP_PER_LEVEL
 end
 
--- Function to create a simple user interface (UI)
-local function createUI()
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "LouisVuittonHub"
-    gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+function LevelService.setup(player)
+	if player:FindFirstChild("leaderstats") then return end
 
-    local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 250, 0, 350) -- Increased frame size to accommodate more options
-    mainFrame.Position = UDim2.new(0.01, 0, 0.5, 0)
-    mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 0) -- Yellow border
-    mainFrame.BorderSizePixel = 2
-    mainFrame.Draggable = true
-    mainFrame.Parent = gui
+	local stats = Instance.new("Folder")
+	stats.Name = "leaderstats"
 
-    local titleLabel = Instance.new("TextLabel")
-    titleLabel.Size = UDim2.new(1, 0, 0, 30)
-    titleLabel.Position = UDim2.new(0, 0, 0, 0)
-    titleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    titleLabel.Text = "LV Hub - Level Farm"
-    titleLabel.Font = "SourceSansBold"
-    titleLabel.TextSize = 18
-    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
-    titleLabel.Parent = mainFrame
+	local level = Instance.new("IntValue")
+	level.Name = "Level"
+	level.Value = 1
+	level.Parent = stats
 
-    -- Farm Toggle Button
-    local farmToggle = Instance.new("TextButton")
-    farmToggle.Size = UDim2.new(0.8, 0, 0, 40)
-    farmToggle.Position = UDim2.new(0.1, 0, 0.15, 0)
-    farmToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    farmToggle.Text = "ENABLE LEVEL FARM"
-    farmToggle.Font = "SourceSansBold"
-    farmToggle.TextSize = 16
-    farmToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    farmToggle.Parent = mainFrame
+	local xp = Instance.new("IntValue")
+	xp.Name = "XP"
+	xp.Value = 0
+	xp.Parent = stats
 
-    farmToggle.MouseButton1Click:Connect(function()
-        config.autoFarmLevel = not config.autoFarmLevel
-        if config.autoFarmLevel then
-            farmToggle.Text = "DISABLE LEVEL FARM"
-            farmToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-            print("Auto level farming enabled.")
-            startFarming()
-        else
-            farmToggle.Text = "ENABLE LEVEL FARM"
-            farmToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            print("Auto level farming disabled.")
-            stopFarming()
-        end
-    end)
+	stats.Parent = player
+end
 
-    -- Mob Input
-    local mobLabel = Instance.new("TextLabel")
-    mobLabel.Size = UDim2.new(0.3, 0, 0, 25)
-    mobLabel.Position = UDim2.new(0.1, 0, 0.35, 0)
-    mobLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    mobLabel.Text = "Mob:"
-    mobLabel.Font = "SourceSans"
-    mobLabel.TextSize = 14
-    mobLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    mobLabel.Parent = mainFrame
+function LevelService.addXP(player, amount)
+	if typeof(amount) ~= "number" or amount <= 0 then return end
 
-    local mobInput = Instance.new("TextBox")
-    mobInput.Size = UDim2.new(0.5, 0, 0, 25)
-    mobInput.Position = UDim2.new(0.4, 0, 0.35, 0)
-    mobInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    mobInput.Text = config.mobToFarm
-    mobInput.Font = "SourceSans"
-    mobInput.TextSize = 14
-    mobInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-    mobInput.Parent = mainFrame
+	local stats = player:FindFirstChild("leaderstats")
+	local level = stats and stats:FindFirstChild("Level")
+	local xp = stats and stats:FindFirstChild("XP")
+	if not (level and xp) then return end
 
-    mobInput.Changed:Connect(function()
-        config.mobToFarm = mobInput.Text
-    end)
+	if level.Value >= MAX_LEVEL then
+		xp.Value = 0
+		return
+	end
 
-    -- Farm Area Input
-    local farmAreaLabel = Instance.new("TextLabel")
-    farmAreaLabel.Size = UDim2.new(0.3, 0, 0, 25)
-    farmAreaLabel.Position = UDim2.new(0.1, 0, 0.45, 0)
-    farmAreaLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    farmAreaLabel.Text = "Area:"
-    farmAreaLabel.Font = "SourceSans"
-    farmAreaLabel.TextSize = 14
-    farmAreaLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    farmAreaLabel.Parent = mainFrame
+	xp.Value += math.floor(amount)
+	while level.Value < MAX_LEVEL and xp.Value >= xpNeeded(level.Value) do
+		xp.Value -= xpNeeded(level.Value)
+		level.Value += 1
+	end
+	if level.Value >= MAX_LEVEL then
+		xp.Value = 0
+	end
+end
 
-    local farmAreaInput = Instance.new("TextBox")
-    farmAreaInput.Size = UDim2.new(0.5, 0, 0, 25)
-    farmAreaInput.Position = UDim2.new(0.4, 0, 0.45, 0)
-    farmAreaInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    farmAreaInput.Text = config.farmArea
-    farmAreaInput.Font = "SourceSans"
-    farmAreaInput.TextSize = 14
-    farmAreaInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-    farmAreaInput.Parent = mainFrame
-
-    farmAreaInput.Changed:Connect(function()
-        config.farmArea = farmAreaInput.Text
-    end)
-
-    -- Target Level Input
-    local targetLevelLabel = Instance.new("TextLabel")
-    targetLevelLabel.Size = UDim2.new(0.3, 0, 0, 25)
-    targetLevelLabel.Position = UDim2.new(0.1, 0, 0.55, 0)
-    targetLevelLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    targetLevelLabel.Text = "Target:"
-    targetLevelLabel.Font = "SourceSans"
-    targetLevelLabel.TextSize = 14
-    targetLevelLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    targetLevelLabel.Parent = mainFrame
-
-    local targetLevelInput = Instance.new("TextBox")
-    targetLevelInput.Size = UDim2.new(0.5, 0, 0, 25)
-    targetLevelInput.Position = UDim2.new(0.4, 0, 0.55, 0)
-    targetLevelInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    targetLevelInput.Text = tostring(config.targetLevel)
-    targetLevelInput.Font = "SourceSans"
-    targetLevelInput.TextSize = 14
-    targetLevelInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-    targetLevelInput.Parent = mainFrame
-
-    targetLevelInput.Changed:Connect(function()
-        local level = tonumber(targetLevelInput.Text)
-        if level then
-            config.targetLevel = level
-        end
-    end)
-
-    -- Teleport Toggle
-    local teleportToggle = Instance.new("TextButton")
-    teleportToggle.Size = UDim2.new(0.8, 0, 0, 30)
-    teleportToggle.Position = UDim2.new(0.1, 0, 0.68, 0)
-    teleportToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    teleportToggle.Text = "Auto Teleport: " .. tostring(config.teleportToFarm)
-    teleportToggle.Font = "SourceSans"
-    teleportToggle.TextSize = 14
-    teleportToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    teleportToggle.Parent = mainFrame
-
-    teleportToggle.MouseButton1Click:Connect(function()
-        config.teleportToFarm = not config.teleportToFarm
-        teleportToggle.Text = "Auto Teleport: " .. tostring(config.teleportToFarm)
-    end)
-
-    -- Use Skills Toggle
-    local useSkillsToggle = Instance.new("TextButton")
-    useSkillsToggle.Size = UDim2.new(0.8, 0, 0, 30)
-    useSkillsToggle.Position = UDim2.new(0.1, 0, 0.78, 0)
-    useSkillsToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    useSkillsToggle.Text = "Use Skills: " .. tostring(config.useSkillsToFarm)
-    useSkillsToggle.Font = "SourceSans"
-    useSkillsToggle.TextSize = 14
-    useSkillsToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    useSkillsToggle.Parent = mainFrame
-
-    useSkillsToggle.MouseButton1Click:Connect(function()
-        config.useSkillsToFarm = not config.useSkillsToFarm
-        useSkillsToggle.Text = "Use Skills: " .. tostring(config.useSkillsToFarm)
-    end)
-
-    -- Auto Attack Toggle
-    local autoAttackToggle = Instance.new("TextButton")
-    autoAttackToggle.Size = UDim2.new(0.8, 0, 0, 30)
-    autoAttackToggle.Position = UDim2.new(0.1, 0, 0.88, 0)
-    autoAttackToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    autoAttackToggle.Text = "Auto Attack: " .. tostring(config.autoAttack)
-    autoAttackToggle.Font = "SourceSans"
-    autoAttackToggle.TextSize = 14
-    autoAttackToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    autoAttackToggle.Parent = mainFrame
-
-    autoAttackToggle.MouseButton1Click:Connect(function()
-        config.autoAttack = not config.autoAttack
-        autoAttackToggle.Text = "Auto Attack: " .. tostring(config.autoAttack)
-    end)
-
-    -- Auto Pick Up Loot Toggle
-    local autoPickUpLootToggle = Instance.new("TextButton")
-    autoPickUpLootToggle.Size = UDim2.new(0.8, 0, 0, 30)
-    autoPickUpLootToggle.Position = UDim2.new(0.1, 0, 0.98, 0) -- Adjusted position
-    autoPickUpLootToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    autoPickUpLootToggle.Text = "Auto Pick Up Loot: " .. tostring(config.autoPickUpLoot)
-    autoPickUpLootToggle.Font = "SourceSans"
-    autoPickUpLootToggle.TextSize = 14
-    autoPickUpLootToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    autoPickUpLootToggle.Parent =
-
-
-
-Write "continue" to complete the response
+return LevelService
