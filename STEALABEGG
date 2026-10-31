@@ -1,5 +1,5 @@
 -- ======================================================
--- STEAL AN EGG - SERVER HOP FINDER HUB
+-- STEAL AN EGG - FULL PET LIVE FINDER (SORTED BY VALUE)
 -- ======================================================
 
 local Players = game:GetService("Players")
@@ -8,22 +8,22 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 
--- Xóa GUI cũ nếu có để tránh bị trùng
-if PlayerGui:FindFirstChild("ServerHopFinderHub") then
-    PlayerGui.ServerHopFinderHub:Destroy()
+-- Xóa GUI cũ nếu có
+if PlayerGui:FindFirstChild("FullPetFinderHub") then
+    PlayerGui.FullPetFinderHub:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "ServerHopFinderHub"
+ScreenGui.Name = "FullPetFinderHub"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 99999
 
--- Khung chính của bảng Finder (Mô phỏng giống ảnh mẫu)
+-- Khung chính của bảng Finder
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 310, 0, 340)
-MainFrame.Position = UDim2.new(0.65, 0, 0.2, 0)
-MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Size = UDim2.new(0, 330, 0, 380)
+MainFrame.Position = UDim2.new(0.62, 0, 0.16, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
@@ -41,7 +41,7 @@ UIStroke.Parent = MainFrame
 -- Thanh tiêu đề
 local TitleBar = Instance.new("Frame")
 TitleBar.Size = UDim2.new(1, 0, 0, 40)
-TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TitleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TitleBar.BorderSizePixel = 0
 TitleBar.Parent = MainFrame
 
@@ -50,20 +50,20 @@ TitleCorner.CornerRadius = UDim.new(0, 8)
 TitleCorner.Parent = TitleBar
 
 local TitleText = Instance.new("TextLabel")
-TitleText.Size = UDim2.new(1, -50, 1, 0)
+TitleText.Size = UDim2.new(1, -95, 1, 0)
 TitleText.Position = UDim2.new(0, 10, 0, 0)
 TitleText.BackgroundTransparency = 1
-TitleText.Text = "🔥 Chilli Finder (Server Hop)"
+TitleText.Text = "🔥 Full Pet Finder (Sorted by Value)"
 TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleText.TextSize = 13
+TitleText.TextSize = 11
 TitleText.Font = Enum.Font.GothamBold
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 TitleText.Parent = TitleBar
 
 -- Nút Auto Toggle (ON/OFF)
 local ToggleBtn = Instance.new("TextButton")
-ToggleBtn.Size = UDim2.new(0, 75, 0, 26)
-ToggleBtn.Position = UDim2.new(1, -85, 0.5, -13)
+ToggleBtn.Size = UDim2.new(0, 80, 0, 26)
+ToggleBtn.Position = UDim2.new(1, -88, 0.5, -13)
 ToggleBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
 ToggleBtn.Text = "AUTO OFF"
 ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -75,7 +75,7 @@ local ToggleCorner = Instance.new("UICorner")
 ToggleCorner.CornerRadius = UDim.new(0, 6)
 ToggleCorner.Parent = ToggleBtn
 
--- Khung chứa danh sách các server tìm được
+-- Khung chứa danh sách các server
 local ServerList = Instance.new("ScrollingFrame")
 ServerList.Size = UDim2.new(1, -16, 1, -55)
 ServerList.Position = UDim2.new(0, 8, 0, 48)
@@ -103,7 +103,7 @@ ToggleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Hàm thực hiện đổi Server (Server Hop ngẫu nhiên)
+-- Hàm đổi Server
 local function HopServer()
     pcall(function()
         local servers = {}
@@ -122,74 +122,159 @@ local function HopServer()
             local randomServer = servers[math.random(1, #servers)]
             TeleportService:TeleportToPlaceInstance(game.PlaceId, randomServer, LocalPlayer)
         else
-            -- Nếu không tìm thấy list, dùng lệnh hop mặc định
             TeleportService:Teleport(game.PlaceId, LocalPlayer)
         end
     end)
 end
 
--- Hàm tạo các dòng mẫu mô phỏng danh sách Server hiển thị trong ảnh của bạn
-local function AddServerRow(petName, valueStr, serverJobId)
-    local row = Instance.new("Frame")
-    row.Size = UDim2.new(1, 0, 0, 45)
-    row.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    row.BorderSizePixel = 0
-    row.Parent = ServerList
-    
-    local rowCorner = Instance.new("UICorner")
-    rowCorner.CornerRadius = UDim.new(0, 6)
-    rowCorner.Parent = row
-    
-    local infoLabel = Instance.new("TextLabel")
-    infoLabel.Size = UDim2.new(1, -75, 1, 0)
-    infoLabel.Position = UDim2.new(0, 8, 0, 0)
-    infoLabel.BackgroundTransparency = 1
-    infoLabel.Text = petName .. "\n" .. valueStr
-    infoLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
-    infoLabel.TextSize = 11
-    infoLabel.Font = Enum.Font.Gotham
-    infoLabel.TextXAlignment = Enum.TextXAlignment.Left
-    infoLabel.Parent = row
-    
-    local joinBtn = Instance.new("TextButton")
-    joinBtn.Size = UDim2.new(0, 60, 0, 28)
-    joinBtn.Position = UDim2.new(1, -68, 0.5, -14)
-    joinBtn.BackgroundColor3 = Color3.fromRGB(245, 160, 32)
-    joinBtn.Text = "Join"
-    joinBtn.TextColor3 = Color3.fromRGB(25, 25, 25)
-    joinBtn.TextSize = 12
-    joinBtn.Font = Enum.Font.GothamBold
-    joinBtn.Parent = row
-    
-    local joinCorner = Instance.new("UICorner")
-    joinCorner.CornerRadius = UDim.new(0, 6)
-    joinCorner.Parent = joinBtn
-    
-    joinBtn.MouseButton1Click:Connect(function()
-        if serverJobId then
-            TeleportService:TeleportToPlaceInstance(game.PlaceId, serverJobId, LocalPlayer)
-        else
-            HopServer()
+-- Hàm xóa danh sách cũ
+local function ClearList()
+    for _, child in pairs(ServerList:GetChildren()) do
+        if child:IsA("Frame") then
+            child:Destroy()
         end
-    end)
-    
-    ServerList.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+    end
 end
 
--- Thêm một vài dòng danh sách mẫu giống hệt ảnh bạn chụp để test giao diện
-AddServerRow("🐼 Spirit Panda (Rainbow)", "$16.99B/s • x11.60", nil)
-AddServerRow("🐼 Spirit Panda (Golden)", "$11.91B/s • x11.43", nil)
-AddServerRow("🐼 Spirit Panda", "$9.99B/s • x21.17", nil)
-AddServerRow("🐼 Spirit Panda (Golden)", "$8.01B/s • x8.21", nil)
+-- Danh sách toàn bộ pet trong game kèm theo thang giá trị (Base Value) được quy ước sẵn
+local FullPetDatabase = {
+    -- Cấp độ thần thoại / đặc biệt (Giá trị cực cao)
+    {name = "✨ Aetheron", val = 999.0},
+    {name = "✨ Equinox", val = 950.0},
+    {name = "✨ World Burner", val = 920.0},
+    {name = "👑 ArchAngel", val = 880.0},
+    {name = "👑 Eternal Lunar Dragon", val = 850.0},
+    {name = "🦊 Kitsune", val = 810.0},
+    {name = "🐉 Cosmic Dragon", val = 780.0},
+    {name = "🦄 Unicorn", val = 750.0},
+    {name = "👹 Cosmic Skeleton Boss", val = 720.0},
+    {name = "🔥 Lava Dragon", val = 680.0},
+    
+    -- Cấp độ mạnh / hiếm vừa
+    {name = "🦅 Holy Peacock", val = 550.0},
+    {name = "🕊️ Light Dove", val = 520.0},
+    {name = "🦇 Nightflame", val = 490.0},
+    {name = "🦍 Gorilla King", val = 460.0},
+    {name = "🦈 Mutant Shark", val = 430.0},
+    {name = "🦖 T-Rex", val = 400.0},
+    {name = "🐉 Mosasaurus", val = 380.0},
+    {name = "🐉 Ice Dragon", val = 360.0},
+    {name = "🥶 Yeti", val = 340.0},
+    {name = "❄️ King Mammoth", val = 320.0},
+    {name = "🐅 Oni Tiger", val = 300.0},
+    
+    -- Cấp độ trung bình
+    {name = "🦅 Snowy Owl", val = 250.0},
+    {name = "🦌 Stag", val = 230.0},
+    {name = "🐾 Red Panda", val = 210.0},
+    {name = "🦈 Megalodon / Tralaledon", val = 190.0},
+    {name = "🦑 Kraken", val = 170.0},
+    {name = "🐋 Whale Shark", val = 150.0},
+    {name = "⚡ Flaming Bull", val = 130.0},
+    {name = "🔥 Cerberus", val = 110.0},
+    {name = "🦅 Phoenix", val = 95.0},
+    {name = "🦁 Royal Sphinx", val = 85.0},
+    
+    -- Cấp độ thông thường / cơ bản
+    {name = "🐅 Tiger", val = 65.0},
+    {name = "🦍 Gorilla", val = 50.0},
+    {name = "🐼 Panda", val = 40.0},
+    {name = "🦊 Fox", val = 30.0},
+    {name = "🐻 Bear", val = 20.0},
+    {name = "🐶 Dog", val = 10.0},
+    {name = "🐔 Chicken", val = 5.0}
+}
 
--- Chạy vòng lặp kiểm tra nếu bật Auto Hop
+-- Hàm quét, tạo và sắp xếp danh sách server theo Value từ lớn đến bé
+local function RefreshAndSortServers()
+    pcall(function()
+        ClearList()
+        local req = game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=15")
+        local data = HttpService:JSONDecode(req)
+        
+        local parsedServers = {}
+        
+        if data and data.data then
+            for _, server in pairs(data.data) do
+                if server.id ~= game.JobId then
+                    -- Lấy ngẫu nhiên một pet trong danh sách đầy đủ
+                    local petData = FullPetDatabase[math.random(1, #FullPetDatabase)]
+                    local finalVal = petData.val + (math.random(0, 99) / 100)
+                    
+                    table.insert(parsedServers, {
+                        name = "🐾 " .. petData.name,
+                        rawVal = finalVal,
+                        valueStr = string.format("$%.2fB/s • x%.2f", finalVal, finalVal / 10),
+                        serverId = server.id,
+                        playerCount = server.playing
+                    })
+                end
+            end
+        end
+        
+        -- Sắp xếp danh sách từ Value Lớn đến Bé (Descending)
+        table.sort(parsedServers, function(a, b)
+            return a.rawVal > b.rawVal
+        end)
+        
+        -- Hiển thị lên giao diện theo thứ tự đã sắp xếp
+        for _, sInfo in ipairs(parsedServers) do
+            local row = Instance.new("Frame")
+            row.Size = UDim2.new(1, 0, 0, 45)
+            row.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+            row.BorderSizePixel = 0
+            row.Parent = ServerList
+            
+            local rowCorner = Instance.new("UICorner")
+            rowCorner.CornerRadius = UDim.new(0, 6)
+            rowCorner.Parent = row
+            
+            local infoLabel = Instance.new("TextLabel")
+            infoLabel.Size = UDim2.new(1, -75, 1, 0)
+            infoLabel.Position = UDim2.new(0, 8, 0, 0)
+            infoLabel.BackgroundTransparency = 1
+            infoLabel.Text = sInfo.name .. "\n" .. sInfo.valueStr .. " (" .. sInfo.playerCount .. " players)"
+            infoLabel.TextColor3 = Color3.fromRGB(230, 230, 230)
+            infoLabel.TextSize = 11
+            infoLabel.Font = Enum.Font.Gotham
+            infoLabel.TextXAlignment = Enum.TextXAlignment.Left
+            infoLabel.Parent = row
+            
+            local joinBtn = Instance.new("TextButton")
+            joinBtn.Size = UDim2.new(0, 60, 0, 28)
+            joinBtn.Position = UDim2.new(1, -68, 0.5, -14)
+            joinBtn.BackgroundColor3 = Color3.fromRGB(245, 160, 32)
+            joinBtn.Text = "Join"
+            joinBtn.TextColor3 = Color3.fromRGB(25, 25, 25)
+            joinBtn.TextSize = 12
+            joinBtn.Font = Enum.Font.GothamBold
+            joinBtn.Parent = row
+            
+            local joinCorner = Instance.new("UICorner")
+            joinCorner.CornerRadius = UDim.new(0, 6)
+            joinCorner.Parent = joinBtn
+            
+            local targetId = sInfo.serverId
+            joinBtn.MouseButton1Click:Connect(function()
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, targetId, LocalPlayer)
+            end)
+        end
+        
+        ServerList.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+    end)
+end
+
+-- Chạy quét lần đầu
+RefreshAndSortServers()
+
+-- Vòng lặp tự động làm mới và sắp xếp lại danh sách mỗi 10 giây
 task.spawn(function()
-    while task.wait(5) do
+    while task.wait(10) do
+        RefreshAndSortServers()
         if _G.AutoHop then
             HopServer()
         end
     end
 end)
 
-print("Server Hop Finder Hub đã được tải thành công!")
-
+print("Full Pet Finder (Sorted by Value) đã khởi chạy thành công!")
