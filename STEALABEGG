@@ -1,1 +1,195 @@
+-- ======================================================
+-- STEAL AN EGG - SERVER HOP FINDER HUB
+-- ======================================================
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+
+-- Xóa GUI cũ nếu có để tránh bị trùng
+if PlayerGui:FindFirstChild("ServerHopFinderHub") then
+    PlayerGui.ServerHopFinderHub:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ServerHopFinderHub"
+ScreenGui.Parent = PlayerGui
+ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 99999
+
+-- Khung chính của bảng Finder (Mô phỏng giống ảnh mẫu)
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 310, 0, 340)
+MainFrame.Position = UDim2.new(0.65, 0, 0.2, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 8)
+UICorner.Parent = MainFrame
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Color = Color3.fromRGB(245, 130, 32) -- Viền cam đặc trưng
+UIStroke.Thickness = 2
+UIStroke.Parent = MainFrame
+
+-- Thanh tiêu đề
+local TitleBar = Instance.new("Frame")
+TitleBar.Size = UDim2.new(1, 0, 0, 40)
+TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TitleBar.BorderSizePixel = 0
+TitleBar.Parent = MainFrame
+
+local TitleCorner = Instance.new("UICorner")
+TitleCorner.CornerRadius = UDim.new(0, 8)
+TitleCorner.Parent = TitleBar
+
+local TitleText = Instance.new("TextLabel")
+TitleText.Size = UDim2.new(1, -50, 1, 0)
+TitleText.Position = UDim2.new(0, 10, 0, 0)
+TitleText.BackgroundTransparency = 1
+TitleText.Text = "🔥 Chilli Finder (Server Hop)"
+TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.TextSize = 13
+TitleText.Font = Enum.Font.GothamBold
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
+TitleText.Parent = TitleBar
+
+-- Nút Auto Toggle (ON/OFF)
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Size = UDim2.new(0, 75, 0, 26)
+ToggleBtn.Position = UDim2.new(1, -85, 0.5, -13)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+ToggleBtn.Text = "AUTO OFF"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.TextSize = 10
+ToggleBtn.Font = Enum.Font.GothamBold
+ToggleBtn.Parent = TitleBar
+
+local ToggleCorner = Instance.new("UICorner")
+ToggleCorner.CornerRadius = UDim.new(0, 6)
+ToggleCorner.Parent = ToggleBtn
+
+-- Khung chứa danh sách các server tìm được
+local ServerList = Instance.new("ScrollingFrame")
+ServerList.Size = UDim2.new(1, -16, 1, -55)
+ServerList.Position = UDim2.new(0, 8, 0, 48)
+ServerList.BackgroundTransparency = 1
+ServerList.BorderSizePixel = 0
+ServerList.ScrollBarThickness = 4
+ServerList.Parent = MainFrame
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 6)
+UIListLayout.Parent = ServerList
+
+-- Trạng thái Auto Hop
+_G.AutoHop = false
+
+ToggleBtn.MouseButton1Click:Connect(function()
+    _G.AutoHop = not _G.AutoHop
+    if _G.AutoHop then
+        ToggleBtn.Text = "AUTO ON"
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
+    else
+        ToggleBtn.Text = "AUTO OFF"
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+    end
+end)
+
+-- Hàm thực hiện đổi Server (Server Hop ngẫu nhiên)
+local function HopServer()
+    pcall(function()
+        local servers = {}
+        local req = game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")
+        local data = HttpService:JSONDecode(req)
+        
+        if data and data.data then
+            for _, server in pairs(data.data) do
+                if server.playing < server.maxPlayers and server.id ~= game.JobId then
+                    table.insert(servers, server.id)
+                end
+            end
+        end
+        
+        if #servers > 0 then
+            local randomServer = servers[math.random(1, #servers)]
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, randomServer, LocalPlayer)
+        else
+            -- Nếu không tìm thấy list, dùng lệnh hop mặc định
+            TeleportService:Teleport(game.PlaceId, LocalPlayer)
+        end
+    end)
+end
+
+-- Hàm tạo các dòng mẫu mô phỏng danh sách Server hiển thị trong ảnh của bạn
+local function AddServerRow(petName, valueStr, serverJobId)
+    local row = Instance.new("Frame")
+    row.Size = UDim2.new(1, 0, 0, 45)
+    row.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    row.BorderSizePixel = 0
+    row.Parent = ServerList
+    
+    local rowCorner = Instance.new("UICorner")
+    rowCorner.CornerRadius = UDim.new(0, 6)
+    rowCorner.Parent = row
+    
+    local infoLabel = Instance.new("TextLabel")
+    infoLabel.Size = UDim2.new(1, -75, 1, 0)
+    infoLabel.Position = UDim2.new(0, 8, 0, 0)
+    infoLabel.BackgroundTransparency = 1
+    infoLabel.Text = petName .. "\n" .. valueStr
+    infoLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+    infoLabel.TextSize = 11
+    infoLabel.Font = Enum.Font.Gotham
+    infoLabel.TextXAlignment = Enum.TextXAlignment.Left
+    infoLabel.Parent = row
+    
+    local joinBtn = Instance.new("TextButton")
+    joinBtn.Size = UDim2.new(0, 60, 0, 28)
+    joinBtn.Position = UDim2.new(1, -68, 0.5, -14)
+    joinBtn.BackgroundColor3 = Color3.fromRGB(245, 160, 32)
+    joinBtn.Text = "Join"
+    joinBtn.TextColor3 = Color3.fromRGB(25, 25, 25)
+    joinBtn.TextSize = 12
+    joinBtn.Font = Enum.Font.GothamBold
+    joinBtn.Parent = row
+    
+    local joinCorner = Instance.new("UICorner")
+    joinCorner.CornerRadius = UDim.new(0, 6)
+    joinCorner.Parent = joinBtn
+    
+    joinBtn.MouseButton1Click:Connect(function()
+        if serverJobId then
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, serverJobId, LocalPlayer)
+        else
+            HopServer()
+        end
+    end)
+    
+    ServerList.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+end
+
+-- Thêm một vài dòng danh sách mẫu giống hệt ảnh bạn chụp để test giao diện
+AddServerRow("🐼 Spirit Panda (Rainbow)", "$16.99B/s • x11.60", nil)
+AddServerRow("🐼 Spirit Panda (Golden)", "$11.91B/s • x11.43", nil)
+AddServerRow("🐼 Spirit Panda", "$9.99B/s • x21.17", nil)
+AddServerRow("🐼 Spirit Panda (Golden)", "$8.01B/s • x8.21", nil)
+
+-- Chạy vòng lặp kiểm tra nếu bật Auto Hop
+task.spawn(function()
+    while task.wait(5) do
+        if _G.AutoHop then
+            HopServer()
+        end
+    end
+end)
+
+print("Server Hop Finder Hub đã được tải thành công!")
 
