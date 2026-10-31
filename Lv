@@ -1,53 +1,75 @@
--- ServerScriptService/LevelService (ModuleScript)
-local LevelService = {}
+-- Blox Fruits Auto Farm Level
+-- Script for educational purposes only. Use at your own risk.
 
-local MAX_LEVEL = 100
-local XP_PER_LEVEL = 100 -- XP cần = level hiện tại * XP_PER_LEVEL
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local rootPart = character:WaitForChild("HumanoidRootPart")
 
-local function xpNeeded(level)
-	return level * XP_PER_LEVEL
+-- Configuration
+local settings = {
+    melee = true,          -- Use melee (Z)
+    sword = true,          -- Use sword (X)
+    abilities = true,      -- Use abilities (C, V, F, G)
+    collectDrops = true,   -- Collect dropped items
+    teleportToEnemy = true, -- Teleport to enemy for faster farming
+    attackRange = 20,      -- Distance to start attacking
+    teleportRange = 50     -- Distance to teleport to enemy
+}
+
+-- Find the nearest enemy
+function getNearestEnemy()
+    local nearest = nil
+    local minDist = math.huge
+    local enemiesFolder = workspace:FindFirstChild("Enemies")
+    if not enemiesFolder then return nil, minDist end
+
+    for _, enemy in ipairs(enemiesFolder:GetChildren()) do
+        local enemyHumanoid = enemy:FindFirstChild("Humanoid")
+        local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
+        if enemyHumanoid and enemyRoot and enemyHumanoid.Health > 0 then
+            local dist = (rootPart.Position - enemyRoot.Position).Magnitude
+            if dist < minDist then
+                minDist = dist
+                nearest = enemy
+            end
+        end
+    end
+    return nearest, minDist
 end
 
-function LevelService.setup(player)
-	if player:FindFirstChild("leaderstats") then return end
-
-	local stats = Instance.new("Folder")
-	stats.Name = "leaderstats"
-
-	local level = Instance.new("IntValue")
-	level.Name = "Level"
-	level.Value = 1
-	level.Parent = stats
-
-	local xp = Instance.new("IntValue")
-	xp.Name = "XP"
-	xp.Value = 0
-	xp.Parent = stats
-
-	stats.Parent = player
+-- Send a key press event
+function pressKey(key)
+    local vim = game:GetService("VirtualInputManager")
+    vim:SendKeyEvent(true, key, false, game)
+    wait(0.1)
+    vim:SendKeyEvent(false, key, false, game)
 end
 
-function LevelService.addXP(player, amount)
-	if typeof(amount) ~= "number" or amount <= 0 then return end
+-- Attack the target enemy
+function attack(target)
+    local enemyRoot = target:FindFirstChild("HumanoidRootPart")
+    if not enemyRoot then return end
 
-	local stats = player:FindFirstChild("leaderstats")
-	local level = stats and stats:FindFirstChild("Level")
-	local xp = stats and stats:FindFirstChild("XP")
-	if not (level and xp) then return end
+    -- Face the enemy
+    rootPart.CFrame = CFrame.lookAt(rootPart.Position, enemyRoot.Position)
 
-	if level.Value >= MAX_LEVEL then
-		xp.Value = 0
-		return
-	end
+    -- Use melee and sword
+    if settings.melee then pressKey("Z") end
+    if settings.sword then pressKey("X") end
 
-	xp.Value += math.floor(amount)
-	while level.Value < MAX_LEVEL and xp.Value >= xpNeeded(level.Value) do
-		xp.Value -= xpNeeded(level.Value)
-		level.Value += 1
-	end
-	if level.Value >= MAX_LEVEL then
-		xp.Value = 0
-	end
+    -- Use abilities
+    if settings.abilities then
+        for _, key in ipairs({"C", "V", "F", "G"}) do
+            pressKey(key)
+        end
+    end
 end
 
-return LevelService
+-- Collect dropped items (fruits, chests, etc.)
+function collectDrops()
+    local dropsFolder = workspace:
+
+
+
+Write "continue" to complete the response
