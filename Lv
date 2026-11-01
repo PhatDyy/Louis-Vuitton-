@@ -1,216 +1,198 @@
---[[
-	Louis Hub Auto Farm Script for Blox Fruits
-	Automates leveling by attacking and healing.
-]]
+-- ======================================================
+-- RAISE ANIMAL 2 - AUTOMATION HUB
+-- ======================================================
 
--- ## Configuration ##
-local targetLevel = 2000 -- Set your desired level
-local autoAttack = true -- Enable/disable auto attacking
-local autoHeal = true -- Enable/disable auto healing
-local healThreshold = 0.5 -- Health percentage to trigger healing (e.g., 0.5 for 50%)
-local attackRange = 50 -- Maximum distance to an enemy to target
-local attackDelay = 1 -- Seconds between attacks
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local RunService = game:GetService("RunService")
+local VirtualUser = game:GetService("VirtualUser")
 
--- ## Local Variables ##
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-local camera = game.Workspace.CurrentCamera
-
-local farmingActive = false
-local currentTarget = nil
-local lastAttackTime = 0
-
--- ## Helper Functions ##
-
--- Finds the closest valid enemy within range
-local function findTarget()
-	local closestEnemy = nil
-	local minDistance = math.huge
-
-	for _, enemy in pairs(game.Workspace:GetDescendants()) do
-		if enemy.Name ~= player.Name and enemy:IsA("Model") and enemy.Parent and enemy:FindFirstChildOfClass("Humanoid") and enemy.Humanoid.Health > 0 then
-			local enemyHumanoid = enemy:FindFirstChildOfClass("Humanoid")
-			if enemyHumanoid and enemyHumanoid.Health > 0 then
-				local enemyRootPart = enemy:FindFirstChild("HumanoidRootPart")
-				if enemyRootPart then
-					local distance = (character.HumanoidRootPart.Position - enemyRootPart.Position).Magnitude
-					if distance <= attackRange and distance < minDistance then
-						minDistance = distance
-						closestEnemy = enemy
-					end
-				end
-			end
-		end
-	end
-	return closestEnemy
+-- Xóa GUI cũ nếu có để tránh bị lỗi trùng lặp
+if PlayerGui:FindFirstChild("RaiseAnimal2Hub") then
+    PlayerGui.RaiseAnimal2Hub:Destroy()
 end
 
--- Attacks the given enemy (NEEDS CUSTOMIZATION)
-local function attackTarget(enemy)
-	if not enemy or not enemy.Parent or not enemy:FindFirstChild("Humanoid") or enemy.Humanoid.Health <= 0 then
-		currentTarget = nil
-		return
-	end
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "RaiseAnimal2Hub"
+ScreenGui.Parent = PlayerGui
+ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 999999
 
-	local enemyRootPart = enemy:FindFirstChild("HumanoidRootPart")
-	if not enemyRootPart then
-		currentTarget = nil
-		return
-	end
+-- Khung Menu chính
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 360, 0, 260)
+MainFrame.Position = UDim2.new(0.5, -180, 0.5, -130)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
 
-	-- Move to face the enemy
-	character.HumanoidRootPart.CFrame = CFrame.new(character.HumanoidRootPart.Position, enemyRootPart.Position)
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = MainFrame
 
-	-- ## CUSTOMIZE ATTACK LOGIC HERE ##
-	-- This is a placeholder. You'll need to implement how to use abilities or basic attacks.
-	-- This often involves firing RemoteEvents.
-	-- Example: If you have an ability that uses a RemoteEvent named "UseAbility1"
-	-- game.ReplicatedStorage.RemoteEvents.UseAbility1:FireServer(enemyRootPart.Position)
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Color = Color3.fromRGB(0, 170, 255) -- Viền xanh dương chủ đạo
+UIStroke.Thickness = 2
+UIStroke.Parent = MainFrame
 
-	print("Attacking:", enemy.Name)
-	lastAttackTime = tick()
+-- Tiêu đề Hub
+local TitleBar = Instance.new("Frame")
+TitleBar.Size = UDim2.new(1, 0, 0, 40)
+TitleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TitleBar.BorderSizePixel = 0
+TitleBar.Parent = MainFrame
+
+local TitleCorner = Instance.new("UICorner")
+TitleCorner.CornerRadius = UDim.new(0, 10)
+TitleCorner.Parent = TitleBar
+
+local TitleText = Instance.new("TextLabel")
+TitleText.Size = UDim2.new(1, -20, 1, 0)
+TitleText.Position = UDim2.new(0, 10, 0, 0)
+TitleText.BackgroundTransparency = 1
+TitleText.Text = "🐾 Raise Animal 2 - Auto Hub"
+TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.TextSize = 13
+TitleText.Font = Enum.Font.GothamBold
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
+TitleText.Parent = TitleBar
+
+-- Khung chứa các nút chức năng
+local ContentFrame = Instance.new("ScrollingFrame")
+ContentFrame.Size = UDim2.new(1, -20, 1, -55)
+ContentFrame.Position = UDim2.new(0, 10, 0, 48)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.BorderSizePixel = 0
+ContentFrame.ScrollBarThickness = 4
+ContentFrame.Parent = MainFrame
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 8)
+UIListLayout.Parent = ContentFrame
+
+-- Biến trạng thái Global
+_G.AutoFeed = false
+_G.AutoCollect = false
+_G.AntiAfk = true
+
+-- Hàm tạo nút Toggle (Bật/Tắt)
+local function CreateToggle(text, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, 0, 0, 40)
+    btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    btn.Text = text .. ": OFF"
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 12
+    btn.Font = Enum.Font.GothamBold
+    btn.Parent = ContentFrame
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 6)
+    corner.Parent = btn
+    
+    local active = false
+    btn.MouseButton1Click:Connect(function()
+        active = not active
+        if active then
+            btn.Text = text .. ": ON"
+            btn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+        else
+            btn.Text = text .. ": OFF"
+            btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        end
+        callback(active)
+    end)
+    
+    ContentFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
 end
 
--- Heals if health is low (NEEDS CUSTOMIZATION)
-local function healIfNecessary()
-	if not autoHeal then return end
-
-	if humanoid.Health / humanoid.MaxHealth < healThreshold then
-		print("Health low, healing needed!")
-		-- ## CUSTOMIZE HEALING LOGIC HERE ##
-		-- Implement how your character heals. This might involve using a specific skill
-		-- or consuming an item if the game has such mechanics.
-		-- Example: If you have a healing skill that uses a RemoteEvent named "HealSkill"
-		-- game.ReplicatedStorage.RemoteEvents.HealSkill:FireServer()
-	end
-end
-
--- Main farming loop
-local function farmLevel()
-	while farmingActive and humanoid.Health > 0 do
-		-- Check if character and humanoid are still valid
-		if not character or not character.Parent or not humanoid or humanoid.Health <= 0 then
-			print("Character or Humanoid lost, stopping farm.")
-			farmingActive = false
-			break
-		end
-
-		-- Check if target level is reached
-		if humanoid.Level >= targetLevel then
-			print("Target level reached! Stopping farm.")
-			farmingActive = false
-			break
-		end
-
-		-- Heal if necessary
-		healIfNecessary()
-
-		-- Find a new target if we don't have one or the current one is dead/invalid
-		if not currentTarget or not currentTarget.Parent or not currentTarget:FindFirstChild("Humanoid") or currentTarget.Humanoid.Health <= 0 then
-			currentTarget = findTarget()
-		end
-
-		-- If we have a target, proceed with attacking or moving
-		if currentTarget then
-			local targetRootPart = currentTarget:FindFirstChild("HumanoidRootPart")
-			if targetRootPart then
-				local distance = (character.HumanoidRootPart.Position - targetRootPart.Position).Magnitude
-
-				if distance <= attackRange then
-					-- If within range and attack delay has passed, attack
-					if autoAttack and tick() - lastAttackTime > attackDelay then
-						attackTarget(currentTarget)
-					else
-						-- Optional: Move slightly to ensure target is in view if not attacking
-						character.HumanoidRootPart.CFrame = CFrame.new(character.HumanoidRootPart.Position, targetRootPart.Position)
-					end
-				else
-					-- Move towards the target if too far
-					character.Humanoid:MoveTo(targetRootPart.Position)
-				end
-			else
-				-- Target root part not found, clear target
-				currentTarget = nil
-			end
-		else
-			-- No target found, stop moving
-			character.Humanoid:MoveTo(character.HumanoidRootPart.Position) -- Stand still
-		end
-
-		wait(0.1) -- Small wait to prevent excessive looping
-	end
-
-	if not farmingActive then
-		print("Farming stopped.")
-		character.Humanoid:MoveTo(character.HumanoidRootPart.Position) -- Ensure character stops moving
-	end
-end
-
--- ## Input Handling ##
-local farmingThread = nil
-
--- Function to toggle farming
-local function toggleFarming()
-	farmingActive = not farmingActive
-	if farmingActive then
-		print("Auto-farming ENABLED. Target Level:", targetLevel)
-		-- Ensure character and humanoid are up-to-date before starting
-		character = player.Character
-		humanoid = character:WaitForChild("Humanoid")
-		if farmingThread then
-			coroutine.resume(farmingThread) -- Resume if it was paused
-		else
-			farmingThread = coroutine.wrap(farmLevel)() -- Start new thread
-		end
-	else
-		print("Auto-farming DISABLED.")
-		-- Stop movement if farming is disabled
-		if character and character.Humanoid then
-			character.Humanoid:MoveTo(character.HumanoidRootPart.Position)
-		end
-		-- Optionally, you could pause the coroutine here if you want to resume later
-		-- but for simplicity, we'll just let it finish its current loop iteration
-		-- and the `while farmingActive` condition will stop it.
-	end
-end
-
--- ## Event Listeners ##
--- Listen for character added/respawned
-player.CharacterAdded:Connect(function(newCharacter)
-	character = newCharacter
-	humanoid = character:WaitForChild("Humanoid")
-	print("Character respawned. Updating references.")
-	-- If farming was active, try to continue
-	if farmingActive then
-		print("Attempting to resume farming after respawn.")
-		-- Resetting farmingThread might be necessary if it got garbage collected or errored
-		farmingThread = coroutine.wrap(farmLevel)()
-	end
+-- Thêm tính năng 1: Tự động cho động vật ăn (Auto Feed)
+CreateToggle("Auto Feed Animals", function(state)
+    _G.AutoFeed = state
 end)
 
--- ## Keybind ##
--- F5 key to toggle farming
-UserInputService = game:GetService("UserInputService")
-UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-	if input.KeyCode == Enum.KeyCode.F5 and not gameProcessedEvent then
-		toggleFarming()
-	end
+-- Thêm tính năng 2: Tự động nhặt tiền/vật phẩm (Auto Collect)
+CreateToggle("Auto Collect Rewards", function(state)
+    _G.AutoCollect = state
 end)
 
--- ## Initial Setup ##
-print("------------------------------------")
-print("Louis Hub Auto Farm Script Loaded!")
-print("Press F5 to toggle auto-farming.")
-print("Target Level:", targetLevel)
-print("------------------------------------")
+-- Nút thu nhỏ/mở rộng menu nổi trên màn hình
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Size = UDim2.new(0, 50, 0, 50)
+ToggleButton.Position = UDim2.new(0.02, 0, 0.2, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ToggleButton.Text = "UI"
+ToggleButton.TextColor3 = Color3.fromRGB(0, 170, 255)
+ToggleButton.TextSize = 14
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.Active = true
+ToggleButton.Draggable = true
+ToggleButton.Parent = ScreenGui
 
--- Ensure initial character and humanoid are set
-character = player.Character
-if character then
-	humanoid = character:WaitForChild("Humanoid")
-else
-	player.CharacterAdded:Wait()
-	character = player.Character
-	humanoid = character:WaitForChild("Humanoid")
-end
+local BtnCorner = Instance.new("UICorner")
+BtnCorner.CornerRadius = UDim.new(1, 0)
+BtnCorner.Parent = ToggleButton
+
+local BtnStroke = Instance.new("UIStroke")
+BtnStroke.Color = Color3.fromRGB(0, 170, 255)
+BtnStroke.Thickness = 2
+BtnStroke.Parent = ToggleButton
+
+ToggleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+-- Chống AFK (Idle Kick) tự động
+task.spawn(function()
+    while task.wait(60) do
+        if _G.AntiAfk then
+            pcall(function()
+                VirtualUser:Button1Down(Vector2.new(0,0))
+                task.wait(0.1)
+                VirtualUser:Button1Up(Vector2.new(0,0))
+            end)
+        end
+    end
+end)
+
+-- Tiến trình Auto Feed ngầm
+task.spawn(function()
+    while task.wait(1) do
+        if _G.AutoFeed then
+            pcall(function()
+                -- Thêm logic tương tác cho ăn tùy theo cấu trúc game
+                for _, obj in pairs(workspace:GetDescendants()) do
+                    if obj.Name:lower():find("feed") or obj.Name:lower():find("food") then
+                        if obj:IsA("Model") and obj.PrimaryPart then
+                            LocalPlayer.Character.HumanoidRootPart.CFrame = obj.PrimaryPart.CFrame + Vector3.new(0, 3, 0)
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Tiến trình Auto Collect ngầm
+task.spawn(function()
+    while task.wait(0.5) do
+        if _G.AutoCollect then
+            pcall(function()
+                for _, obj in pairs(workspace:GetDescendants()) do
+                    if obj.Name:lower():find("coin") or obj.Name:lower():find("cash") or obj.Name:lower():find("collect") then
+                        if obj:IsA("BasePart") then
+                            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, obj, 0)
+                            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, obj, 1)
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+print("Raise Animal 2 Hub đã được khởi chạy thành công!")
