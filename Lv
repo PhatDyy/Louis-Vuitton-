@@ -4,6 +4,7 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
 local VirtualUser = game:GetService("VirtualUser")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 if PlayerGui:FindFirstChild("LouisVuittonHub") then
     PlayerGui.LouisVuittonHub:Destroy()
@@ -69,7 +70,6 @@ UIListLayout.Parent = ContentFrame
 
 _G.AutoFarmLevel = false
 _G.AutoQuest = false
-_G.AttackAura = false
 _G.AntiAfk = true
 
 local function CreateToggle(text, callback)
@@ -117,10 +117,6 @@ CreateToggle("Auto Quest", function(state)
     _G.AutoQuest = state
 end)
 
-CreateToggle("Attack Aura (Hitbox/Aura)", function(state)
-    _G.AttackAura = state
-end)
-
 local ToggleButton = Instance.new("TextButton")
 ToggleButton.Size = UDim2.new(0, 45, 0, 45)
 ToggleButton.Position = UDim2.new(0.02, 0, 0.15, 0)
@@ -158,38 +154,6 @@ task.spawn(function()
     end
 end)
 
-task.spawn(function()
-    while task.wait(0.2) do
-        if _G.AttackAura then
-            pcall(function()
-                local char = LocalPlayer.Character
-                if char then
-                    local weapon
-                    for _, t in pairs(char:GetChildren()) do
-                        if t:IsA("Tool") then
-                            weapon = t
-                            break
-                        end
-                    end
-                    
-                    for _, v in pairs(workspace.Enemies:GetChildren()) do
-                        local hrp = v:FindFirstChild("HumanoidRootPart")
-                        local hum = v:FindFirstChild("Humanoid")
-                        if hrp and hum and hum.Health > 0 and char:FindFirstChild("HumanoidRootPart") then
-                            if (char.HumanoidRootPart.Position - hrp.Position).Magnitude <= 60 then
-                                if weapon and weapon:FindFirstChild("Handle") then
-                                    firetouchinterest(weapon.Handle, hrp, 0)
-                                    firetouchinterest(weapon.Handle, hrp, 1)
-                                end
-                            end
-                        end
-                    end
-                end
-            end)
-        end
-    end
-end)
-
 local function HasActiveQuest()
     local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
     if playerGui then
@@ -208,21 +172,39 @@ local function GetQuestGiverCFrame()
     return CFrame.new(0, 10, 0) 
 end
 
-local tween
-local function TweenTo(targetCFrame)
+local activeTween = nil
+local function StopTween()
+    if activeTween then
+        activeTween:Cancel()
+        activeTween = nil
+    end
+end
+
+local function LinearTweenTo(targetCFrame)
     local char = LocalPlayer.Character
     if not char or not char:FindFirstChild("HumanoidRootPart") then return end
     local hrp = char.HumanoidRootPart
     
+    StopTween()
+    
     local distance = (hrp.Position - targetCFrame.Position).Magnitude
     local speed = 170
-    local timeTravel = distance / speed
+    local duration = distance / speed
     
-    if tween then tween:Cancel() end
-    local info = TweenInfo.new(timeTravel, Enum.EasingStyle.Linear)
-    tween = TweenService:Create(hrp, info, {CFrame = targetCFrame})
-    tween:Play()
-    task.wait(timeTravel)
+    if duration <= 0 then return end
+    
+    local info = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+    activeTween = TweenService:Create(hrp, info, {CFrame = targetCFrame})
+    activeTween:Play()
+    
+    local elapsed = 0
+    while elapsed < duration and activeTween and activeTween.PlaybackState == Enum.PlaybackState.Playing do
+        if not _G.AutoFarmLevel then
+            StopTween()
+            break
+        end
+        elapsed += RunService.Heartbeat:Wait()
+    end
 end
 
 task.spawn(function()
@@ -232,9 +214,14 @@ task.spawn(function()
                 local char = LocalPlayer.Character
                 if char and char:FindFirstChild("HumanoidRootPart") then
                     local hrp = char.HumanoidRootPart
+                    local hum = char:FindFirstChildOfClass("Humanoid")
+                    
+                    if hum then
+                        hum.PlatformStand = true
+                    end
                     
                     if _G.AutoQuest and not HasActiveQuest() then
-                        TweenTo(GetQuestGiverCFrame())
+                        LinearTweenTo(GetQuestGiverCFrame())
                         local rem = ReplicatedStorage:FindFirstChild("Remotes") and ReplicatedStorage.Remotes:FindFirstChild("CommF_")
                         if rem then
                             rem:InvokeServer("StartQuest", "LevelQuest", 1)
@@ -243,27 +230,25 @@ task.spawn(function()
                     end
 
                     for _, v in pairs(workspace.Enemies:GetChildren()) do
-                        if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
-                            local targetCFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 35, 0)
-                            
-                            local distance = (hrp.Position - targetCFrame.Position).Magnitude
-                            local speed = 170
-                            local timeTravel = distance / speed
-                            
-                            if tween then tween:Cancel() end
-                            local info = TweenInfo.new(timeTravel, Enum.EasingStyle.Linear)
-                            tween = TweenService:Create(hrp, info, {CFrame = targetCFrame})
-                            tween:Play()
-                            
-                            task.wait(timeTravel)
+                        if not _G.AutoFarmLevel then break end
+                        local enemyHrp = v:FindFirstChild("HumanoidRootPart")
+                        local enemyHum = v:FindFirstChild("Humanoid")
+                        if enemyHrp and enemyHum and enemyHum.Health > 0 then
+                            local targetCFrame = enemyHrp.CFrame * CFrame.new(0, 20, 0)
+                            LinearTweenTo(targetCFrame)
                             break
                         end
                     end
                 end
             end)
         else
-            if tween then
-                tween:Cancel()
+            StopTween()
+            local char = LocalPlayer.Character
+            if char then
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                if hum then
+                    hum.PlatformStand = false
+                end
             end
         end
     end
