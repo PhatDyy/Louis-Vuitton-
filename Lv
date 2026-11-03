@@ -1,69 +1,61 @@
--- ======================================================
--- RAISE ANIMAL 2 - AUTOMATION HUB
--- ======================================================
-
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 local VirtualUser = game:GetService("VirtualUser")
 
--- Xóa GUI cũ nếu có để tránh bị lỗi trùng lặp
-if PlayerGui:FindFirstChild("RaiseAnimal2Hub") then
-    PlayerGui.RaiseAnimal2Hub:Destroy()
+if PlayerGui:FindFirstChild("LouisVuittonHub") then
+    PlayerGui.LouisVuittonHub:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "RaiseAnimal2Hub"
+ScreenGui.Name = "LouisVuittonHub"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 999999
 
--- Khung Menu chính
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 360, 0, 260)
-MainFrame.Position = UDim2.new(0.5, -180, 0.5, -130)
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Size = UDim2.new(0, 420, 0, 320)
+MainFrame.Position = UDim2.new(0.5, -210, 0.5, -160)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
 MainFrame.Parent = ScreenGui
 
 local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.CornerRadius = UDim.new(0, 8)
 UICorner.Parent = MainFrame
 
 local UIStroke = Instance.new("UIStroke")
-UIStroke.Color = Color3.fromRGB(0, 170, 255) -- Viền xanh dương chủ đạo
+UIStroke.Color = Color3.fromRGB(212, 175, 55)
 UIStroke.Thickness = 2
 UIStroke.Parent = MainFrame
 
--- Tiêu đề Hub
 local TitleBar = Instance.new("Frame")
-TitleBar.Size = UDim2.new(1, 0, 0, 40)
-TitleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TitleBar.Size = UDim2.new(1, 0, 0, 45)
+TitleBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 TitleBar.BorderSizePixel = 0
 TitleBar.Parent = MainFrame
 
 local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 10)
+TitleCorner.CornerRadius = UDim.new(0, 8)
 TitleCorner.Parent = TitleBar
 
 local TitleText = Instance.new("TextLabel")
 TitleText.Size = UDim2.new(1, -20, 1, 0)
-TitleText.Position = UDim2.new(0, 10, 0, 0)
+TitleText.Position = UDim2.new(0, 15, 0, 0)
 TitleText.BackgroundTransparency = 1
-TitleText.Text = "🐾 Raise Animal 2 - Auto Hub"
-TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleText.TextSize = 13
+TitleText.Text = "⚡ Louis Vuitton Hub - Blox Fruits"
+TitleText.TextColor3 = Color3.fromRGB(212, 175, 55)
+TitleText.TextSize = 14
 TitleText.Font = Enum.Font.GothamBold
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 TitleText.Parent = TitleBar
 
--- Khung chứa các nút chức năng
 local ContentFrame = Instance.new("ScrollingFrame")
-ContentFrame.Size = UDim2.new(1, -20, 1, -55)
-ContentFrame.Position = UDim2.new(0, 10, 0, 48)
+ContentFrame.Size = UDim2.new(1, -20, 1, -60)
+ContentFrame.Position = UDim2.new(0, 10, 0, 52)
 ContentFrame.BackgroundTransparency = 1
 ContentFrame.BorderSizePixel = 0
 ContentFrame.ScrollBarThickness = 4
@@ -74,19 +66,19 @@ UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIListLayout.Padding = UDim.new(0, 8)
 UIListLayout.Parent = ContentFrame
 
--- Biến trạng thái Global
-_G.AutoFeed = false
-_G.AutoCollect = false
+_G.AutoFarmLevel = false
+_G.AutoQuest = false
+_G.FastAttack = false
+_G.AttackAura = false
 _G.AntiAfk = true
 
--- Hàm tạo nút Toggle (Bật/Tắt)
 local function CreateToggle(text, callback)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
-    btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     btn.Text = text .. ": OFF"
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 12
+    btn.TextColor3 = Color3.fromRGB(220, 220, 220)
+    btn.TextSize = 13
     btn.Font = Enum.Font.GothamBold
     btn.Parent = ContentFrame
     
@@ -94,15 +86,22 @@ local function CreateToggle(text, callback)
     corner.CornerRadius = UDim.new(0, 6)
     corner.Parent = btn
     
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(50, 50, 50)
+    stroke.Thickness = 1
+    stroke.Parent = btn
+    
     local active = false
     btn.MouseButton1Click:Connect(function()
         active = not active
         if active then
             btn.Text = text .. ": ON"
-            btn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+            btn.TextColor3 = Color3.fromRGB(212, 175, 55)
+            stroke.Color = Color3.fromRGB(212, 175, 55)
         else
             btn.Text = text .. ": OFF"
-            btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+            btn.TextColor3 = Color3.fromRGB(220, 220, 220)
+            stroke.Color = Color3.fromRGB(50, 50, 50)
         end
         callback(active)
     end)
@@ -110,24 +109,29 @@ local function CreateToggle(text, callback)
     ContentFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
 end
 
--- Thêm tính năng 1: Tự động cho động vật ăn (Auto Feed)
-CreateToggle("Auto Feed Animals", function(state)
-    _G.AutoFeed = state
+CreateToggle("Auto Farm Level", function(state)
+    _G.AutoFarmLevel = state
 end)
 
--- Thêm tính năng 2: Tự động nhặt tiền/vật phẩm (Auto Collect)
-CreateToggle("Auto Collect Rewards", function(state)
-    _G.AutoCollect = state
+CreateToggle("Auto Quest", function(state)
+    _G.AutoQuest = state
 end)
 
--- Nút thu nhỏ/mở rộng menu nổi trên màn hình
+CreateToggle("Fast Attack", function(state)
+    _G.FastAttack = state
+end)
+
+CreateToggle("Attack Aura (Buso)", function(state)
+    _G.AttackAura = state
+end)
+
 local ToggleButton = Instance.new("TextButton")
-ToggleButton.Size = UDim2.new(0, 50, 0, 50)
-ToggleButton.Position = UDim2.new(0.02, 0, 0.2, 0)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-ToggleButton.Text = "UI"
-ToggleButton.TextColor3 = Color3.fromRGB(0, 170, 255)
-ToggleButton.TextSize = 14
+ToggleButton.Size = UDim2.new(0, 45, 0, 45)
+ToggleButton.Position = UDim2.new(0.02, 0, 0.15, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+ToggleButton.Text = "LV"
+ToggleButton.TextColor3 = Color3.fromRGB(212, 175, 55)
+ToggleButton.TextSize = 13
 ToggleButton.Font = Enum.Font.GothamBold
 ToggleButton.Active = true
 ToggleButton.Draggable = true
@@ -138,7 +142,7 @@ BtnCorner.CornerRadius = UDim.new(1, 0)
 BtnCorner.Parent = ToggleButton
 
 local BtnStroke = Instance.new("UIStroke")
-BtnStroke.Color = Color3.fromRGB(0, 170, 255)
+BtnStroke.Color = Color3.fromRGB(212, 175, 55)
 BtnStroke.Thickness = 2
 BtnStroke.Parent = ToggleButton
 
@@ -146,7 +150,6 @@ ToggleButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
 
--- Chống AFK (Idle Kick) tự động
 task.spawn(function()
     while task.wait(60) do
         if _G.AntiAfk then
@@ -159,17 +162,17 @@ task.spawn(function()
     end
 end)
 
--- Tiến trình Auto Feed ngầm
+-- Attack Aura Handler
 task.spawn(function()
     while task.wait(1) do
-        if _G.AutoFeed then
+        if _G.AttackAura then
             pcall(function()
-                -- Thêm logic tương tác cho ăn tùy theo cấu trúc game
-                for _, obj in pairs(workspace:GetDescendants()) do
-                    if obj.Name:lower():find("feed") or obj.Name:lower():find("food") then
-                        if obj:IsA("Model") and obj.PrimaryPart then
-                            LocalPlayer.Character.HumanoidRootPart.CFrame = obj.PrimaryPart.CFrame + Vector3.new(0, 3, 0)
-                        end
+                local char = LocalPlayer.Character
+                if char and not char:FindFirstChild("Buso") then
+                    local args = { [1] = "Buso" }
+                    local rem = ReplicatedStorage:FindFirstChild("Remotes") and ReplicatedStorage.Remotes:FindFirstChild("CommF_")
+                    if rem then
+                        rem:InvokeServer(unpack(args))
                     end
                 end
             end)
@@ -177,22 +180,35 @@ task.spawn(function()
     end
 end)
 
--- Tiến trình Auto Collect ngầm
+-- Tween Auto Farm Level
+local tween
 task.spawn(function()
-    while task.wait(0.5) do
-        if _G.AutoCollect then
+    while task.wait() do
+        if _G.AutoFarmLevel then
             pcall(function()
-                for _, obj in pairs(workspace:GetDescendants()) do
-                    if obj.Name:lower():find("coin") or obj.Name:lower():find("cash") or obj.Name:lower():find("collect") then
-                        if obj:IsA("BasePart") then
-                            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, obj, 0)
-                            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, obj, 1)
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    for _, v in pairs(workspace.Enemies:GetChildren()) do
+                        if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                            local targetCFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 30, 3)
+                            local distance = (char.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude
+                            local speed = 300
+                            local timeTravel = distance / speed
+                            
+                            local info = TweenInfo.new(timeTravel, Enum.EasingStyle.Linear)
+                            tween = TweenService:Create(char.HumanoidRootPart, info, {CFrame = targetCFrame})
+                            tween:Play()
+                            
+                            task.wait(timeTravel)
+                            break
                         end
                     end
                 end
             end)
+        else
+            if tween then
+                tween:Cancel()
+            end
         end
     end
 end)
-
-print("Raise Animal 2 Hub đã được khởi chạy thành công!")
