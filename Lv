@@ -3,6 +3,7 @@ local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
 local VirtualUser = game:GetService("VirtualUser")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 if PlayerGui:FindFirstChild("LouisVuittonHub") then
     PlayerGui.LouisVuittonHub:Destroy()
@@ -68,7 +69,6 @@ UIListLayout.Parent = ContentFrame
 
 _G.AutoFarmLevel = false
 _G.AutoQuest = false
-_G.FastAttack = false
 _G.AttackAura = false
 _G.AntiAfk = true
 
@@ -117,11 +117,7 @@ CreateToggle("Auto Quest", function(state)
     _G.AutoQuest = state
 end)
 
-CreateToggle("Fast Attack", function(state)
-    _G.FastAttack = state
-end)
-
-CreateToggle("Attack Aura (Buso)", function(state)
+CreateToggle("Attack Aura (Hitbox/Aura)", function(state)
     _G.AttackAura = state
 end)
 
@@ -162,17 +158,32 @@ task.spawn(function()
     end
 end)
 
--- Attack Aura Handler
+-- Attack Aura Feature (Modifies enemy hitboxes/damage remotely without clicking)
 task.spawn(function()
-    while task.wait(1) do
+    while task.wait(0.2) do
         if _G.AttackAura then
             pcall(function()
                 local char = LocalPlayer.Character
-                if char and not char:FindFirstChild("Buso") then
-                    local args = { [1] = "Buso" }
-                    local rem = ReplicatedStorage:FindFirstChild("Remotes") and ReplicatedStorage.Remotes:FindFirstChild("CommF_")
-                    if rem then
-                        rem:InvokeServer(unpack(args))
+                if char then
+                    local weapon
+                    for _, t in pairs(char:GetChildren()) do
+                        if t:IsA("Tool") then
+                            weapon = t
+                            break
+                        end
+                    end
+                    
+                    for _, v in pairs(workspace.Enemies:GetChildren()) do
+                        local hrp = v:FindFirstChild("HumanoidRootPart")
+                        local hum = v:FindFirstChild("Humanoid")
+                        if hrp and hum and hum.Health > 0 and char:FindFirstChild("HumanoidRootPart") then
+                            if (char.HumanoidRootPart.Position - hrp.Position).Magnitude <= 60 then
+                                if weapon and weapon:FindFirstChild("Handle") then
+                                    firetouchinterest(weapon.Handle, hrp, 0)
+                                    firetouchinterest(weapon.Handle, hrp, 1)
+                                end
+                            end
+                        end
                     end
                 end
             end)
@@ -180,7 +191,16 @@ task.spawn(function()
     end
 end)
 
--- Tween Auto Farm Level
+-- Auto Quest Handler
+local function CheckQuest()
+    local q = LocalPlayer.PlayerGui:FindFirstChild("Main") and LocalPlayer.PlayerGui.Main:FindFirstChild("Quest")
+    if q and q.Visible == false then
+        return true
+    end
+    return false
+end
+
+-- Tween Auto Farm & Quest Loop
 local tween
 task.spawn(function()
     while task.wait() do
@@ -188,6 +208,13 @@ task.spawn(function()
             pcall(function()
                 local char = LocalPlayer.Character
                 if char and char:FindFirstChild("HumanoidRootPart") then
+                    if _G.AutoQuest and CheckQuest() then
+                        local rem = ReplicatedStorage:FindFirstChild("Remotes") and ReplicatedStorage.Remotes:FindFirstChild("CommF_")
+                        if rem then
+                            rem:InvokeServer("StartQuest", "LevelQuest", 1)
+                        end
+                    end
+
                     for _, v in pairs(workspace.Enemies:GetChildren()) do
                         if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
                             local targetCFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 30, 3)
