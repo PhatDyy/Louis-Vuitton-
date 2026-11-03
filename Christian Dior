@@ -1,146 +1,665 @@
--- [https://discord.gg/vBcjBC6wQ](https://discord.gg/vBcjBC6wQ)
---[===========================================================[
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⣿⣿⣿⣯⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡭⣿⣿⡿⣷⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡜⣷⣿⣿⢿⡸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣼⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢰⢫⣿⣿⢿⣘⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣽⣿⣿⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⢆⡫⢾⣿⡿⣌⠳⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡷⣿⣿⣿⣯⢿⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⣾⣿⣿⣽⣿⣿⣿⣿⣿⣿⣟⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⡌⢖⡫⣿⣟⣇⠳⠼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣽⣿⣿⣿⢿⣾⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣯⣿⢿⣾⣟⣿⣯⣿⣿⣿⣿⣯⢿⣿⣿⣿⣿⣿⣿⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣻⣿⣿⣿⣟⡜⠥⣞⢽⣿⢼⡹⡸⢽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣽⣿⣿⣿⣿⣿⣿⣿⣿⣟⣿⣿⣿⢽⣿⣿⣿⣻⣞⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣟⣿⣟⣿⣾⢿⣻⣿⣿⣿⣿⡯⣿⣿⣿⣿⣿⣿⣿⢾⣿⣿⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⣟⣯⣷⣿⣿⣿⣿⣿⣻⢌⡳⣽⡞⣿⡇⣿⢥⡛⣼⣿⣿⣿⣿⣝⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣯⣟⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⣿⣾⣻⢿⣿⣿⢼⣻⢿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣿⣿⣟⣾⢯⣿⢿⣻⣿⣿⣿⣿⣏⣷⣿⣿⣿⣿⣿⣻⢿⣿⡿⣽⣻⣿⣿⣿⣿⣿⣿⣿⢿⣻⣽⣾⣿⣿⡿⣟⣯⣿⣾⣿⣿⣽⠎⡖⣽⣿⡵⣿⠸⣷⣙⡖⣯⢿⣿⣿⣿⣿⣷⣮⣝⣻⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣯⢿⣿⣿⣿⣯⣿⣿⣿⣟⣿⣿⣽⣯⢿⣿⣯⢯⣿⡞⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢾⣿⣽⣟⣾⡿⣯⣟⣿⣿⣿⣿⣿⣳⢞⣿⣿⣿⣿⣽⣿⣻⣿⢿⣽⣻⣿⣿⣿⢿⣻⣵⣾⣿⣻⡿⣽⡿⣾⣟⡿⣯⡷⣯⢿⣿⣻⣜⡱⣫⣿⣷⢻⡇⢿⣷⢺⣥⢻⣿⣿⣿⡿⣟⣿⣿⣿⣿⣶⣭⣛⡿⣿⣿⣿⣿⣿⣿⣯⢿⣿⣿⣿⣽⣾⣿⣿⣯⣿⣿⡷⣏⣿⣿⣯⣏⣿⢿⣻⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡯⣿⣿⢾⡯⣷⢿⣻⣽⢾⣿⣿⡿⣿⢧⣻⡽⣟⣿⣿⣻⣯⢷⣿⣻⢞⡷⣯⣿⣾⢿⣯⡷⣿⢾⣽⣻⣽⣻⢷⣯⣟⣷⣻⣽⣻⣿⣿⢆⡳⢽⣻⣿⣯⣝⠮⣿⣿⡜⣷⣹⣿⣿⣟⣿⢿⣽⣾⣿⢿⣿⣿⣿⣶⢯⣻⢿⣿⣿⣯⣟⣿⣿⣿⣻⣞⣿⣿⣳⣿⣿⣻⣏⣷⣿⣷⣻⢼⡿⣽⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡗⣿⣿⣻⡽⣽⣻⣽⣞⣿⢿⣳⣿⡿⣟⢶⣻⡿⣿⣿⣻⣿⣻⡾⣽⢾⣻⢷⣿⢯⣟⡾⣽⢯⣟⣾⣳⢯⣟⣻⢾⣹⠾⣵⣻⢼⣻⣿⢧⡹⢞⣿⣿⣿⣎⡷⣹⣿⣞⣽⣧⡟⣿⡾⣟⣯⣿⣻⣾⢿⣻⣾⢿⣽⣿⣿⣿⣾⣽⣿⡞⣿⣿⣿⡽⣯⣿⡿⣽⣿⣿⣽⣻⢼⣿⡷⣻⢾⣿⡯⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣹⣿⣿⣹⢿⡷⣏⣷⢿⣾⣿⢿⣹⡿⣏⡾⣱⣿⢿⣿⣹⣷⣿⣹⣏⢿⣹⣾⣹⡿⣾⣹⣏⡿⣾⣇⣿⣹⠾⡉⠏⡷⢿⣱⢏⡷⣏⣿⣇⠿⣉⣿⣿⣿⣿⢷⣹⣿⣿⡾⣿⣹⢷⡿⣏⡿⣾⣹⣏⣿⣿⣹⣿⣏⣿⣷⣿⣏⣿⣿⣹⣏⣿⣷⣿⣏⣿⣿⣹⣿⣿⡾⣿⢾⣿⣿⢹⢷⣿⢿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣻⣿⡿⣽⢾⣝⣻⡼⣟⡾⣽⣟⣯⣿⢧⣝⣳⢯⣿⣿⣽⣷⣻⣽⣞⡯⣷⢫⣿⣟⠷⠛⠈⠉⠀⠉⠀⠉⠈⠙⠋⢹⢣⠟⣾⡱⣏⠿⣞⡽⣣⢿⣿⣿⣿⣿⢾⣯⣿⣿⣟⡟⡎⠑⠉⠘⠁⠉⠈⠑⠋⠛⠳⠿⣯⣷⡿⣾⣿⣿⣷⣹⣿⣟⡷⣯⣿⣯⢿⣿⣿⣽⣻⢞⣽⣿⣏⣯⢿⣻⣽⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢯⣿⣿⡟⣾⡟⣾⣱⢿⣽⢺⣽⢾⣻⢾⣓⡮⣝⣯⣿⣷⣻⣾⣟⡷⣯⡗⡯⢿⠟⠀⠀⠀⠀⠀⠀⠀⠰⣶⣷⣶⠀⠀⠉⡞⣥⢻⣜⡻⣜⡳⣭⢿⣿⣿⣿⣾⣿⣿⣾⢿⡝⠀⢠⠀⠀⠀⠀⠀ ⠀⠀ ⠀⠀ ⣀⣀⡈⠙⠿⣽⣷⣿⣗⢯⣿⡿⣽⣳⣿⣽⢺⣿⡿⣾⡽⣞⣿⣏⣷⢯⢾⣹⣿⡿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⡿⣽⣹⡽⣹⣧⢟⡾⣝⡾⣯⣟⣯⠧⣟⡜⣷⣯⣿⣽⣳⢿⣽⡧⠟⠀⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠀⠀⣯⡔⠸⣼⣳⣾⣵⣯⣽⣣⣟⣿⣿⣿⣿⣿⣿⢯⡗⠌⣴⢧⠀⢀⠀⠀⠀⠀  ⠀⠀ ⠀⠛⠿⠃⡦⡀⠈⠟⡾⣽⣻⢾⣟⣷⣹⡿⣎⢿⣿⣻⢷⣻⡜⣿⣏⣿⡞⣯⢞⣿⣿⢿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡷⣿⣿⣻⣳⢿⡳⣿⣿⢫⣿⡜⡿⣵⡻⢾⣙⢮⣓⣟⡾⣿⣼⣟⣯⣷⡞⣅⠀⠼⢤⠠⠄⠀⢀⠀⢀⢀⡀⠀⠀⠀⢸⡟⣥⢻⡼⣷⡿⣿⣻⣿⡿⣿⣟⣯⣿⣾⣿⣿⢯⣞⡱⣬⢻⡄⠀⠈⢠⠀⠀⠀  ⠀⠀⠄⠀⢀⣿⡔⢀⣬⣑⡳⣝⣾⣟⡾⣱⣿⡍⣾⣿⢯⣟⡷⡭⣿⣯⣿⣯⢽⢾⣯⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⢽⣳⢯⣏⣷⣹⣿⡻⣞⡭⢿⣱⡟⣯⢞⣣⢯⣸⢿⣽⣞⣷⣻⣾⣿⡽⢀⠈⠻⢧⣀⣀⡄⣬⢤⣣⢦⢶⠶⣏⣿⣹⣞⣯⣟⣷⣿⣟⣿⣟⣿⣿⣿⢿⣿⡿⣿⣿⣿⣾⣟⣷⣯⣟⣷⡶⣦⣽⢧⣳⣌⣄⣀⣠⠎⣭⣀⢸⣿⣟⣿⣻⡼⣯⣗⣻⢧⡝⣶⣿⢿⡽⣞⡷⣹⣷⣿⣿⡞⣯⡷⣿⣻
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣳⣿⢞⣯⡟⡦⣽⢞⣿⡗⣯⡟⣭⢷⡻⡵⢎⣳⢳⡬⣟⣿⣞⣷⢯⣿⣿⣟⠤⢋⢾⣱⢻⡼⣹⢎⡷⣹⢎⣯⢻⡝⣶⢻⢮⡷⣻⣞⡷⣿⣽⣾⡿⣿⣾⣿⣟⣿⣿⡷⣿⣞⣯⢷⣻⣞⣷⣻⡽⣞⣯⢷⣻⠾⣽⣻⢞⣵⣯⢸⣿⡾⣟⣷⣻⡷⣹⣞⡏⣾⡱⣿⢯⡿⣽⣓⢿⡷⣿⣟⡯⣿⡗⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣽⣿⢺⣷⢻⣱⣯⢯⣻⡯⣷⢯⡽⣞⡵⢯⣙⡮⢧⣓⢯⣿⡾⣿⣹⣿⣿⣿⡘⠬⣞⡵⣫⢞⡵⢫⢞⣥⢻⣬⢳⡝⣮⢏⣷⢻⡵⣯⢿⣽⣾⣻⣽⣿⣯⣷⣿⣟⣾⣿⣳⣟⡾⣯⢷⣻⡼⣳⡽⣳⢞⡯⣞⡻⢧⣟⡻⣞⣿⢸⣿⣿⣟⣿⣼⡻⡵⣾⣙⠶⣝⡿⣯⣟⡷⣏⣾⣟⣿⣿⢽⣿⣻⡽⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣞⣿⣻⡾⢧⣿⣿⢞⣭⢳⢯⣷⣹⢞⡽⣳⢸⡝⣧⡹⢎⣿⣿⣿⢧⣿⣿⣿⡇⢚⡵⣫⢗⡹⣎⢻⡜⢦⡳⢎⣧⠻⣼⡹⣎⠿⣼⢯⣟⣾⣳⢿⣻⣾⢿⣟⣾⣯⣿⣾⣳⢯⣟⣭⢷⡳⣽⢣⣟⡵⣫⠾⣵⢫⡟⣼⢳⣻⣿⣸⣿⣿⣯⣟⣶⡻⣵⡻⢜⡻⣼⣹⢷⣻⣽⢷⣺⣯⢿⣿⣺⣿⣳⣿⣻
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢾⣽⡧⣟⣻⣿⣿⣞⣮⠟⣞⣧⣛⣮⢷⡱⢮⣽⢲⢭⡓⣯⣷⣿⡧⣿⣿⣿⢧⢙⡾⣱⣋⠷⣜⣣⢞⣣⡝⡞⣴⡛⡶⣝⡞⣯⣳⢟⣾⣳⢿⣻⣯⣟⡃⣿⣯⣷⡿⣿⣽⣻⡼⣏⡾⣵⢫⡿⣼⢳⣭⢻⡜⣧⢻⡵⣫⢷⡯⣿⣿⣿⣯⣿⢶⡻⣼⣛⠼⣓⢧⡝⣿⡽⣯⡷⣯⣿⢻⣿⣽⣿⣳⡷⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢻⣞⣷⢯⣿⣿⣿⣿⢺⣽⡹⣧⢻⡜⣧⠏⣾⢼⣋⢶⡙⢾⣿⣿⡗⣿⣿⣿⣏⠲⣝⢧⡝⣎⡳⣜⠧⣞⡼⣹⠖⣽⢳⡝⣾⣱⢯⣟⡾⣽⣻⣯⣷⣻⠰⣯⣷⡿⣽⣿⣳⢯⢷⣫⠷⣭⢷⣻⡷⣏⡞⣧⢻⡜⣧⢻⡵⣫⣟⣿⣿⣿⣿⣯⢷⣏⡷⣭⢚⡽⢮⡝⣷⢿⣯⡷⣟⣿⣹⢾⣿⣿⣹⣿⣽
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⡝⣾⣻⣿⣿⣿⣿⡯⣗⣳⢯⡗⣯⢞⡵⣋⡾⣏⢮⢇⣻⢚⣿⣿⡟⣼⣿⣿⣿⠸⣝⢮⡜⣮⢳⣭⣛⢶⡹⣵⢫⣗⣯⡽⣞⣭⣟⡾⣽⡿⣽⣷⣿⣳⣟⣷⣿⣽⣟⣾⢯⣟⣯⢷⣛⣧⡟⣾⡽⢧⣻⠼⣧⣛⡞⣧⣻⣽⣎⣿⣿⣿⣿⣯⢷⣞⡳⣏⢧⣛⢧⡻⣼⣟⣯⡿⣽⣿⣽⣿⣿⣿⢳⣿⣯
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣽⣳⢟⣷⣻⣿⣿⣿⢾⡽⣹⢺⣇⢯⢺⡵⢩⣗⡟⣮⣙⠦⡏⣿⣿⣏⣿⣿⣿⣿⡙⣮⣓⢾⡱⣟⡶⢯⣳⠿⣼⣻⣼⡞⣷⣻⢾⣽⣻⣽⣟⡿⣷⣻⢿⣻⢿⡾⣟⣾⣻⣟⡾⣽⢾⡽⣶⣻⣳⣻⢻⣼⢻⡶⢯⣝⡾⣵⣻⢸⣿⣿⣿⣿⣯⠿⣼⢱⣏⡶⢏⡾⣱⠽⣾⣿⡿⣽⣿⣿⣾⣿⣭⡿⣞⣷
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣟⣶⣿⢯⡷⣯⢿⣟⡾⢯⢞⣽⣹⢜⡎⣿⡘⢧⣻⣼⢣⢞⡣⢇⣿⣿⣧⢿⣿⣾⣿⣧⢳⡽⣾⣽⣻⣞⡿⣽⣻⢷⣻⡾⣽⣷⣻⣿⢾⣟⣿⡾⡹⠥⠎⠦⣍⠎⡙⢻⣽⢿⣯⣿⢯⡿⣽⣳⢯⣗⣯⣟⡾⣯⣟⢿⣜⢷⣻⠥⣟⣿⣿⣿⣿⣯⢟⡧⢻⣜⢧⢻⡵⣫⠗⣿⣷⣟⣯⣿⣿⣾⣿⢧⣟⣷⢻
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⣾⣿⣿⣿⣻⡝⣾⡿⣽⢫⣟⡮⡟⣼⡸⢧⣙⢧⡷⣞⢭⠚⣤⢓⢾⣿⣯⢿⣿⣿⣯⡷⢩⢾⣿⣞⡷⣯⣿⢷⣟⣯⣷⣿⢿⣾⣿⣽⣿⡿⣯⠗⠁⠀⠀⠀ ⠀⠄⠀⠀⢯⢿⣿⣾⢿⣻⣽⢯⣟⣾⣳⢯⣟⡷⣯⣟⢮⣟⡷⢨⣿⣿⣿⣿⣿⣯⡟⡼⣳⢺⣭⠳⣿⣱⢻⡜⣿⣯⣟⣿⣿⣷⣿⢺⣯⣟⢿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡾⣽⣿⣿⣿⣿⣳⣿⢻⡽⢯⣟⡾⣇⣟⢶⣛⠧⣎⡳⡝⣎⢇⡻⣔⢫⢾⣿⣯⣿⣿⣿⣿⣿⡈⢎⢿⣟⡾⣷⣻⢿⣻⣯⣿⣿⡿⣿⣾⣿⢿⡿⠁⠀⠀⠀⠀⠀⠀ ⡀⠀⠀⠘⡘⣿⣽⣿⣿⣻⣟⡿⣾⡽⣿⣽⣻⢗⣯⠳⠞⡱⢺⣿⣿⣿⣿⣿⣳⢟⡰⢧⣛⣧⢻⡽⣧⢳⣍⢿⣽⣯⣿⣿⣯⣿⢻⡾⣽⢾
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⣿⣿⣿⣿⣿⣻⣼⢿⡽⣟⣯⣽⣺⢮⡿⡍⢞⡰⢵⡹⡜⢮⡱⢎⡳⣜⣿⡷⣿⣿⣿⣿⣿⡱⢊⡜⢻⡷⣹⡽⣻⣟⣿⣽⣿⣿⢿⣿⣾⣿⡏⡀⣠⣴⣤⡔⣀⡀⣤⣤⣄⠀⣇⢻⣿⣿⣾⢿⣽⣻⢷⣿⣻⠾⣝⠾⡌⢣⠜⣡⣿⣿⣿⣟⣿⣿⡽⣎⠵⣣⠞⣽⡎⣷⢯⡗⣮⢝⣿⣞⣯⣿⣿⣿⣹⢯⣟⡞
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⢷⣻⣿⣿⣿⢿⣯⣷⣿⡽⣯⢿⣻⢾⡵⠯⢏⣵⢺⣍⢾⡱⢧⣛⢶⡹⢮⡱⢎⣿⣟⣿⣿⣿⣟⣿⣇⠣⡜⡡⢟⡰⢏⢿⡾⣽⢾⣿⣾⢿⣟⣿⣾⠁⣿⣿⣿⣟⡾⡱⢟⡷⢊⠿⣷⣯⢾⣿⢷⡿⣯⣟⣯⣟⡾⢭⡛⡌⢣⠜⣡⠎⣥⣿⣿⣯⣿⢯⣿⢞⡬⢳⢥⢛⡲⣝⠮⣿⣽⣚⠮⣽⡾⣟⣿⣿⣯⢟⣟⡾⣝
-⣿⣿⣿⣿⣿⣿⣿⣿⣏⣿⣿⢿⡽⣯⣿⣿⣿⣿⢿⣻⣯⢟⣫⣴⣿⣻⣼⢷⣞⣯⣽⣳⢯⡾⣝⣧⣛⠧⣿⣯⣿⣿⣿⣿⣺⣧⢛⡴⣉⢎⠲⣌⠣⠟⣭⢟⣿⣯⣟⡾⣿⣽⡘⣿⢿⣿⢿⡡⢓⡌⡖⣩⢂⠽⣟⢾⡽⣯⢟⡳⣿⡟⡼⠱⢋⠴⡘⡥⢚⠥⣚⢴⣿⣿⣳⢿⣻⣟⠮⣜⢣⢎⢧⠳⣬⠳⣝⡾⣭⢻⡜⣻⣟⣿⣿⣿⣻⢾⡽⣏
-⣿⣿⣿⣿⣿⣿⣿⣿⣽⣻⣵⣿⣿⣿⣿⣿⡿⣿⣯⣛⣴⡿⣟⣷⣿⣿⣿⣿⣿⣯⣷⣿⣯⣿⣽⡾⣽⣳⣿⣷⣿⣿⣿⡿⣽⣿⡘⢶⡱⢪⡱⢈⡞⢤⡑⢎⢳⣯⢞⡽⣳⣽⡘⣧⣟⡿⢮⣑⠣⣜⣧⠒⣌⢚⡟⡜⡳⣍⠮⣵⢯⠛⡄⢣⡍⠖⣍⠲⣍⠺⡴⣹⣿⡿⣽⢯⡷⣟⠼⣌⠳⣎⢎⡳⣌⠻⣌⠷⣯⣇⠯⡵⣿⣽⣿⣿⣏⣿⢾⣹
-⣿⣿⣿⣿⣿⣿⣿⣟⣾⣟⣳⣿⣿⣿⣿⣿⡿⣏⣶⡿⣟⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣽⣷⣿⡿⣷⣻⣽⣿⣿⣿⣿⣳⣿⢜⣣⢍⡳⣌⠧⡘⢦⡙⢆⠣⢞⠯⡜⢳⢎⡳⢻⣽⣿⣳⢌⢣⠽⣾⡑⢆⣊⠧⣙⠲⣬⢳⣧⡟⡱⣘⢣⡜⢭⡸⡱⢎⡳⣱⢹⣿⣿⢯⣟⡷⣏⠞⣬⢓⣎⢮⡱⢎⡽⢬⣳⢣⣟⣮⡵⣹⢾⣿⣿⣿⣞⣻⡼
-⣿⣿⣿⣿⣿⣟⣷⣿⢿⣼⣿⣿⣿⣿⣿⡿⣱⣿⣻⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⣿⣿⣿⣿⣿⣿⣿⣽⣻⣿⣿⣿⡷⣗⣿⢎⡾⣌⠳⣌⡳⢥⠒⡍⢎⡱⢎⠲⣉⠣⢎⡱⡹⣿⣿⣿⣎⡜⡜⢶⣍⠲⣌⡗⣈⠖⡹⢿⠳⡏⢴⠱⣊⡜⢦⡓⡝⢮⡱⢣⢻⣿⣿⣻⠾⣝⡮⣙⢦⢫⡜⣶⡹⣝⣾⣳⣽⣻⣞⣷⡿⣶⡻⣿⣿⣿⡯⣗⣻
-⣿⣿⣿⣿⢿⣿⣿⢫⣿⣿⣿⣿⣿⣿⣳⡿⣯⢷⣿⣻⣯⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣯⣿⡷⣿⣽⣿⣿⣿⣻⣏⣿⢎⡷⢪⡝⣲⠝⣎⢧⢹⡘⡴⢋⡕⢪⡱⢆⠦⣑⠹⣿⣿⠆⠳⣌⢻⣜⠢⡝⡏⣔⢫⡱⢎⡽⣘⠎⡵⢣⠞⣥⡛⣜⣣⢝⡣⢿⣟⣿⣳⢿⣹⢶⣙⢮⣳⣽⣾⣽⣿⣿⣿⣿⣿⣿⣿⣿⢿⣽⣻⢿⣿⣿⣽⣳
-⣿⣿⣿⣽⣿⡟⣎⣿⣿⣿⣿⣿⣿⣿⣏⡷⣯⣿⣾⢿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣿⣿⣿⣿⡿⣿⣿⣿⡟⣧⣿⣿⣿⣯⣷⢏⣿⢎⣞⣳⡜⣱⣛⢮⡳⢦⡙⢶⡩⡜⡱⡜⢬⢲⣉⠞⣿⡟⡌⢃⠆⣿⡎⡴⠳⡜⡜⢦⡙⢮⡳⣌⡻⣜⢯⡝⣶⡹⢮⠵⣎⢳⣹⣿⣹⣯⢷⣫⢞⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⣳⣯⢿⣿⣿⣗⣯
-⣿⣿⣿⣿⡟⣹⣧⣿⣿⣿⣿⣿⢷⣿⡧⣿⣳⢿⣯⣿⣟⣿⣿⣿⣿⣿⣿⣯⣿⣿⣿⣿⣿⣿⣿⣿⣿⡯⣽⣿⣿⣳⣟⡾⣡⣿⢎⡼⣿⢷⢣⢭⡳⣏⣷⣙⣎⢷⣭⡱⢎⡣⢇⡞⠼⣱⣋⡜⢦⣛⡯⢗⣝⣣⠝⣎⡳⣍⡟⣴⢫⢷⣹⢮⣝⡶⣝⢯⡓⣎⠳⣞⣯⡟⣿⣯⢞⡇⣿⣿⣿⣿⣿⣯⣿⣟⣿⣽⣿⣿⣿⣿⢿⣳⣯⣟⣎⣿⣿⣾
-⣿⣿⣿⡽⣼⣿⢲⣿⣿⣿⣿⣿⣿⣿⡗⣯⣟⣯⢿⣾⢿⣻⣿⣾⣿⣻⣿⣽⣿⣿⣿⣿⣿⣟⣿⣿⢿⢧⣿⣿⣳⢟⣾⡃⢷⣟⠆⣿⡽⣏⣞⢦⡓⣝⢺⣗⣮⣛⣾⣳⡭⢞⡱⢮⡹⣱⢧⢺⡱⣎⠿⣜⡞⣬⢻⡜⢧⣿⣝⣮⢟⣞⣧⡟⣮⢳⡝⢎⣱⣎⣿⡾⣽⣻⡽⣿⢮⡽⢺⣿⣿⣿⣿⣿⡷⣿⣟⣿⣾⣿⣿⡿⣟⣿⢾⡽⣾⣹⣿⣿
-⣿⡿⣾⢱⣿⣿⣹⣿⣿⣿⡿⣾⣿⣿⣛⢷⡽⣞⣿⣽⣿⣿⣿⣳⣿⣻⣿⣽⣿⣿⣿⣿⣽⣿⣿⣿⣿⣺⣿⢷⣛⡾⣧⠙⣾⢿⡘⣼⢿⣽⣞⣯⢷⣎⣧⡜⠮⣟⣾⢿⣿⣭⣛⢶⡹⣭⣏⢷⡳⣭⢟⡼⣝⣮⢳⣏⣿⣾⡽⣞⡿⣚⡾⣹⢣⣳⣼⣯⣷⣿⣿⡇⣿⣳⡽⣻⣿⢼⡹⣿⣿⣿⣿⣾⣿⣽⣻⢾⣻⣿⣿⣿⣿⣟⣯⣟⢾⣽⣿⣿
-⣿⣻⢧⣿⣿⡿⣼⣿⣯⣿⣿⣿⣿⡷⡽⣎⣽⣻⢾⣽⣾⣿⣟⣷⣏⢷⣟⣿⣾⢿⣟⣿⣿⣻⣾⢿⣲⣿⢯⢯⣗⡿⢢⢋⣿⢯⡒⣽⣻⣟⣾⣽⢻⣞⣷⣿⣷⣬⣝⣻⢿⣿⣟⣮⢷⡽⣮⣳⡽⢮⣟⡾⣽⣚⣯⣾⣿⣷⢿⣯⠟⣍⣣⣷⣿⣿⣿⣻⣿⣿⣟⡧⢹⡗⣯⢻⣿⣧⢇⣻⣿⣯⣷⣿⣻⢾⣽⣻⣿⢿⣿⣷⣿⣻⣞⡾⣏⢾⣿⣿
-⣿⣏⣾⣿⣿⡟⣷⣿⣟⣯⣿⣿⣿⢳⣽⡳⡜⣯⢿⣽⣷⣿⣿⣿⡜⢮⡽⣾⡽⣟⣯⡿⣞⡿⣽⢯⣿⣏⡟⣾⢺⡍⣇⣻⣟⠮⣱⢺⣷⣛⣾⡝⣯⠾⣽⢯⣿⣿⣿⣷⣯⣜⡻⢯⣟⣾⢷⣳⣟⡿⣾⣽⣳⣟⣾⢿⣳⠟⣫⣴⣻⣿⣿⣿⣟⣿⣿⣷⣿⣿⣻⡝⢦⢻⡽⣣⢿⣿⣏⡖⣻⣿⣽⣷⣻⢟⡾⣽⡿⣿⣿⢿⣾⢷⣯⣳⠏⣿⣿⣿
-⣿⢼⣿⣿⣿⣏⡷⣿⣿⣿⣿⣿⣟⢳⢮⣟⡵⡸⢿⣽⡾⣟⣯⣿⡿⡌⣞⣳⢽⣛⠾⣝⡯⣟⣵⣿⡻⣼⣹⢞⡯⢜⣰⣿⢺⢱⢣⣟⣾⣳⣭⢿⡾⣹⢎⡿⣽⣾⢿⣻⣿⣿⣿⣿⣼⣻⢯⣷⢯⣟⣷⣯⡷⣿⢛⣫⣴⣿⣿⣿⣿⡿⣿⣟⣿⣻⣞⡿⣽⡷⣟⡿⣌⢳⡻⣽⡚⣿⣿⣷⣙⡾⣷⢯⡝⣾⣟⣿⣿⣿⣿⣿⣯⣟⣾⡱⢻⣧⢿⣿
-⣟⣾⣿⣿⣿⣧⣿⣿⢯⣿⣿⣿⣏⡟⣮⡟⡖⣧⠹⣞⣿⣻⣟⣯⣿⡕⡸⢧⡻⣜⢯⡳⣝⣾⣻⠶⣝⣧⣛⢮⠕⣮⣟⢧⣋⠞⣼⣻⣞⡷⣯⢷⣏⣷⣫⣞⣷⣻⢿⣟⣿⢿⣿⣿⢿⣿⣿⣾⣿⣻⣿⣾⣿⣳⣿⣿⣿⣿⣿⡿⣟⣿⣟⣯⣷⢻⣜⡿⣯⢷⣯⢿⡽⣶⣹⢳⡟⡼⣿⣿⣮⣝⡳⣏⠞⣽⣾⣿⣿⣿⡿⣿⣳⣟⡶⣉⣿⡽⣾⣿
-⣿⣿⣯⣿⣿⣧⣿⣾⣿⣿⣿⣿⡧⣟⡼⣏⡗⣯⢳⣘⡳⢯⡿⣽⢾⣽⡐⣯⢳⢎⡳⣳⡽⣯⢗⣻⡝⡶⢩⡞⣾⣻⢎⡳⣌⣻⣞⣷⣻⢾⣽⣻⣞⣷⣻⣞⡷⣯⣟⣾⡽⣯⣟⣿⡿⣯⣿⣾⣿⣿⣷⣿⣿⣿⣿⣿⣿⢯⣿⣿⡿⣿⣻⡽⣞⡿⣾⡽⣯⢷⣯⢷⣻⡵⣯⣳⣝⣳⡹⣿⣿⣮⡕⣎⢺⡽⣿⣿⣿⡿⣿⣿⡽⣞⢱⢾⣹⢿⡽⣿
-⣿⣷⡿⣿⣾⣷⣻⣿⣿⣿⣿⣿⣱⣏⣿⣏⡿⣜⢧⣧⡙⢯⠽⣹⣛⣮⢳⣭⣿⢨⣳⣯⡟⣵⣫⢷⡹⣡⢻⣽⢳⠝⣪⢵⣞⣷⣻⣾⣽⡿⣞⣷⣻⣞⡷⣯⣟⡷⣛⡾⣽⣳⢾⣽⣻⣷⣻⣿⣽⣿⣿⣿⣿⣿⣻⢾⡽⣿⢿⣯⢟⡷⣯⣟⣯⣟⣷⢿⣽⣻⣞⣯⢷⣻⡵⣏⡾⣥⣳⠹⣾⣟⣷⡘⣼⣹⢿⣽⣷⡿⣟⣷⡛⡴⣟⢺⡽⣯⡗⣿
-⣿⣯⣿⣟⣷⣯⢿⣿⣿⣿⣿⣿⢼⡧⣿⢯⡷⣹⢎⣷⣻⡡⣏⢧⡹⣜⠳⡜⢣⣾⡟⣶⢻⡜⣧⠫⣴⠳⡟⣬⢧⣟⣷⣻⣾⣿⣿⣿⣿⢿⣟⣯⣿⣽⣻⢷⣯⢿⡽⣻⡵⢯⣟⣾⣷⣧⣟⣾⣳⣛⣞⣳⢯⡗⣯⢷⣻⣽⣻⣞⣯⣟⡷⣯⣟⣾⣯⢿⡾⣷⣻⣞⣯⢷⣛⡾⣵⢫⡖⣯⢜⣻⣞⣧⢺⡵⣻⣟⡾⣽⣻⠦⣹⠵⣏⡳⣽⢷⡏⣿
-⣿⣯⣷⣿⣻⣽⣻⣿⣿⣿⣿⡿⣾⡽⣿⣻⣝⢧⡻⣞⣷⣳⡙⣦⠳⣜⡹⢆⡿⢧⣟⡞⣧⢛⡴⢫⡵⣻⡼⣯⣟⡾⣷⣿⣳⣿⣿⣿⢿⣿⣿⣿⣽⣷⣿⣻⣞⣯⢿⣵⣫⢟⡾⣜⡷⣻⣿⣿⡿⣝⣮⡝⣮⢿⣽⣻⢗⣯⢶⣻⢾⣽⣻⣽⣯⢿⣾⣟⣿⣟⣷⣯⣟⣯⢿⡽⣞⡯⣽⣚⢮⡒⢿⣾⡱⢣⡟⣾⠹⣧⢇⣯⢱⡻⣇⢽⣚⣯⣏⣿
-⣿⣽⣾⢿⣽⣿⣹⣿⣿⣿⣿⣟⣷⣻⣽⢿⣏⡶⣻⡽⣞⡷⣧⢻⡱⢎⡵⣻⢏⡿⠼⣙⡤⢯⡜⣷⣛⢷⣻⣳⢯⣿⣟⣾⣿⣿⣷⣿⣿⣿⣿⣿⣿⣾⣟⣷⣻⣞⢿⣮⣏⣟⠾⣝⢾⡳⢯⣿⣿⣟⣾⣽⣯⢟⡾⣭⣟⢾⣯⣟⡿⣞⣿⣳⣿⣿⣻⣾⣿⣯⣿⣾⣻⣾⢯⣟⣷⣫⣗⢯⣳⠽⣎⠷⣏⢷⡼⣡⠟⣼⢏⣖⣫⡽⣸⡚⢦⡿⣧⣿
-⣿⣻⣾⣟⣷⢿⣳⣿⣿⣿⣿⣟⡾⣯⢿⣻⣧⢷⣹⡽⣯⣟⡷⣎⡝⢮⡼⠯⣏⠵⣛⣬⢛⣧⣛⡶⢯⣛⡷⣯⢿⣳⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣟⣷⢯⣟⣶⡻⣞⢯⣛⡮⣝⢯⡞⣿⢿⣿⡻⣼⢯⡽⢶⢯⣟⣶⢯⣿⣻⣟⣿⣽⣾⣿⣿⣽⣿⣿⣷⡿⣯⣿⣞⡷⣽⣞⣻⣼⢻⡼⣹⢻⣎⣧⢳⡹⣎⢯⡲⢵⣋⠧⣝⣣⢿⡷⣿
-⣿⢯⣷⣟⣯⡿⣷⣻⣿⣿⣿⣯⣟⣿⣽⣻⣽⢧⣛⣾⣳⢯⣟⡷⣜⣣⣟⢃⡾⣍⢳⠬⣏⢶⡹⣞⢯⣟⡽⣯⣟⣿⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⣯⣿⣞⡷⣻⢽⣚⣧⢻⡜⣧⢻⡼⣻⢾⣱⢟⣮⠽⣏⡿⣾⡽⣯⣷⡿⣿⣿⣿⣿⣿⣾⣿⣿⣿⣾⣿⣟⣷⣯⣟⡷⣯⢷⣫⣟⢾⣧⢻⣎⠷⣣⢗⡯⣲⠝⣯⢼⡙⡦⢏⣿⣏⣿
-⣿⣟⣷⣯⢿⣽⣷⣻⣿⣿⣿⡷⣯⣿⡼⣷⡿⣯⡜⡷⣯⣛⡾⡙⡍⣾⡽⢸⠲⣍⢮⢳⢎⡷⣫⡽⣳⢞⡽⣷⣻⣾⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⣿⣯⣷⢯⣟⣭⢷⣫⢞⣧⢻⡜⣧⡹⣽⢇⣾⡹⢮⢿⣝⣿⣳⣟⡿⣷⣿⣿⣿⣿⣾⣿⣿⣿⣿⣽⣿⣯⣿⣿⣾⣽⣻⡽⣯⣳⢯⣟⣾⢣⢿⣃⢷⡏⣞⡥⣛⢧⡗⣭⡓⣏⣾⣏⣿
-⣿⢾⣳⣯⣿⣞⡷⣯⣿⣿⣿⣟⣽⡿⣽⣳⣿⣻⠼⣹⠓⡭⢰⡱⣘⣷⣻⢸⢏⡜⣎⢧⡻⣜⢧⣻⢵⣻⡽⣯⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣯⣷⢿⣻⢾⣝⡾⣱⢯⡞⣧⢻⣔⡳⣍⢺⡵⣫⢟⡽⣞⣷⣻⣾⢿⣿⣻⣿⣯⣿⣿⣿⣿⣿⣿⣿⣿⣟⣿⣷⡿⣯⣷⣻⣗⣯⢿⣞⡷⣏⢾⡹⡞⡵⢮⢵⢫⡾⢱⡲⡹⣜⣾⣽⣻
-⣿⢯⣟⣾⣳⣯⢿⣞⣿⣿⣿⣻⣞⡿⣷⢻⣾⢯⠛⡤⢛⠴⣃⠖⣱⣯⢷⡹⢎⡼⢎⡳⣝⢮⣻⡜⣯⢷⣻⢷⣻⣾⣿⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣿⣽⣟⣯⣟⣮⢗⡯⣞⡵⣫⢗⢮⠵⡎⣾⣱⢯⢯⣟⡽⣞⣷⡿⣿⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⣟⣷⣻⢮⣟⡾⢯⣟⣞⠮⣗⠯⡵⣋⢮⢷⢏⢧⢳⡙⣦⣟⣾⢿
-⡿⣯⣟⣾⣳⢯⡿⣼⣿⣯⣿⢷⣫⣿⢯⡟⢩⢖⡹⢌⠳⡸⢄⠏⣼⢯⣯⢳⡹⣜⣫⢵⢫⡞⣵⢫⣯⢟⡽⣯⢿⣳⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣯⣷⣿⣽⡾⣽⢾⣽⣚⢷⡹⣞⡵⣫⢞⡹⢶⣏⢾⣹⠾⣭⢿⣽⡾⣟⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣽⡿⣞⣯⣟⡾⣽⣻⡽⣾⣙⣧⠻⣜⠭⣞⡯⡜⣎⢧⣙⢦⣿⢾⣿
-⣿⣳⣟⡾⣽⢯⣟⡾⣷⣟⣯⣿⡽⣞⢋⡜⢣⢞⡸⢌⡣⢕⡪⡑⣯⣟⣾⢳⣙⢦⢳⣎⢷⡹⣞⡽⢮⡿⣽⣻⣟⡿⣽⣾⣿⣻⣿⣿⣿⣿⣿⣿⣿⣽⡿⣾⢷⣟⣯⣟⡶⣏⣯⡳⣝⡞⣵⢫⡝⣎⢞⡧⢯⣟⣽⣻⢾⣽⢿⣯⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⡿⣟⣿⣳⣯⣟⣧⢿⡽⣶⣓⣎⢳⡍⣾⡽⣱⢚⡜⢦⡙⣮⢿⣯⡿
-⣷⢿⣾⣹⣏⡿⣾⢷⣏⡿⣏⣷⠏⣰⠏⡸⢇⡾⡰⢏⡸⢎⢱⢱⡿⣾⢷⢹⣎⢹⡶⣎⢷⡹⣎⡹⣷⢏⣷⢿⣾⣹⣿⣹⡿⣿⣿⢿⣹⣿⣿⡿⣾⣿⣹⡿⣿⡾⣷⣏⣹⡏⣶⢿⣈⢿⡸⣇⡾⣈⡏⣾⢹⡾⣾⣹⢿⡾⣿⣹⣾⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⣿⣹⣷⢿⣾⣹⢾⣹⢷⣇⡎⢷⡸⣷⢁⡇⣏⡸⢇⡹⣸⡿⣾⠷
-⣯⣟⣾⢳⣯⣻⡽⣎⣿⣻⡽⢣⠞⣥⢫⡕⣣⠖⡝⢮⡱⣋⢮⡱⣻⣭⢿⡌⣟⢦⣛⣬⠳⣝⢮⡳⣽⢺⡽⣞⣳⣟⡾⣽⣟⣿⣽⡿⣿⣯⣷⡿⣟⡷⣿⣽⣳⣟⡷⣽⣣⢟⡭⣗⢫⢎⡷⡹⢎⢷⣚⢧⡟⡾⣵⢫⡾⣽⢷⡿⣽⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⣿⣟⣷⡿⣽⣻⢾⡽⣞⣯⣟⡮⡜⢢⡹⠇⡜⡰⢡⢛⡬⢳⣱⢿⣏⢳
-⣷⣻⡞⣟⡾⣵⣻⡽⣞⠷⣡⢏⡞⡴⢣⡞⣥⡛⣼⢣⢳⡍⣶⠱⣟⡾⣻⢤⢻⡮⡕⣎⢳⡝⣮⢳⡭⣗⢯⣽⢳⣯⢿⡽⣾⡽⣞⣿⡽⣷⢯⣟⣯⣟⣳⢯⣷⢻⣞⢧⡟⣮⢗⣮⢛⡞⣶⢹⡹⢆⣛⢮⣝⣳⡭⣷⣻⡽⣯⢿⣟⣾⣿⣿⣾⣿⣽⣿⢿⣿⢿⣻⣷⣿⢯⣿⢯⡿⣽⢯⣟⠾⣽⣞⣳⠇⣍⠳⣔⢣⠘⡔⠣⡜⢨⢇⣿⡿⣌⠧
-⡷⣯⡽⣯⣽⡳⣏⢷⢋⠶⡱⢮⡜⡵⢫⡜⡶⣹⣒⢯⣓⢾⣡⠟⣽⣷⣻⢎⡜⣷⡹⣬⡓⡾⣱⢏⡾⣹⢞⡮⣟⡼⢯⣽⣳⢿⣽⣳⡿⣽⣻⣞⢷⣫⡽⣏⣾⢻⣼⢫⣞⡵⣫⢞⡹⡞⣥⠯⣽⢸⣹⢺⡜⣧⢻⣼⣳⠿⣽⢯⣟⡿⣾⣷⢿⣯⣿⣻⣿⣻⡿⣟⣿⡾⣟⣯⡿⣽⢯⣟⣞⣻⢳⡯⣽⡘⡴⢩⢆⣋⢖⡨⠱⠌⡥⢾⣯⠳⣌⢳
-⣟⡷⣻⣵⡳⣿⣹⠎⡸⣇⣛⢦⡝⣞⣣⢟⡱⢧⣏⠾⣭⠶⣭⢻⡼⣿⣯⡇⢾⡰⣟⣦⢹⡱⢧⣛⡼⢣⡟⣼⣭⢻⡽⣲⢟⣮⢗⣯⢿⣳⢟⣞⣯⢳⣝⢮⡗⣯⢞⡳⣎⢷⡹⢎⡷⣹⡒⣟⠆⣸⢎⡷⣹⢎⡟⡶⣝⣻⣽⣻⣞⣿⣳⢿⣯⢷⣟⡷⣯⣷⡿⣟⣯⣿⣻⢷⣻⣽⣛⡾⣎⠷⣯⢽⠆⣧⠓⡭⢎⡼⢌⡣⢇⠹⣼⢿⡙⢢⢍⠲
-⣯⣽⣳⡳⣟⣵⠫⣰⢇⡯⣜⡞⣼⡱⣎⢯⣝⡳⣎⠿⣜⣻⡼⢧⣳⢻⣿⣽⢪⣵⠸⣧⢧⡹⢖⣣⡝⣧⣛⠶⣭⢳⡝⣧⡻⣜⢯⡞⣧⢟⡾⣹⢎⡷⢮⣳⢻⡜⣯⢳⡝⣮⡝⣪⢵⢣⣻⠼⡱⢌⡻⣴⢫⡞⣽⢳⣝⣳⢮⣗⣻⢾⣽⣻⣞⠿⣾⣽⣳⢯⣟⡿⣽⢾⣽⣫⢷⣏⢷⡻⣼⢻⣜⡏⡞⡴⢫⡜⣣⢎⢧⡹⣌⢳⢫⡟⠨⣅⠪⣱
-⣷⡳⣽⢽⣹⡞⢡⡳⢎⡷⣚⡼⣥⢻⣜⡳⣎⣷⡹⣏⣯⠷⣽⣫⢷⡭⣿⣟⡦⢯⣛⡬⢷⡙⢮⡱⢞⡱⣎⡻⣜⢧⣛⢶⡹⣝⢮⡝⣮⢻⡜⣧⢯⡝⣧⢏⡷⣹⢎⡷⡹⢦⡝⢦⣛⢮⢇⢣⡱⢎⡱⢧⣛⡼⢣⡟⣼⢣⠿⣜⣯⣞⠷⣧⣻⣛⢷⣺⡽⣻⢾⡽⣏⣿⢲⢯⣳⢞⣯⢳⣭⢳⡞⡸⡵⢭⣓⢮⡕⢮⡲⡕⣎⢧⠳⡌⡱⢄⡓⣼
-⣿⡽⣞⢯⣳⠍⣳⢭⣛⡼⣣⠷⣭⢳⡞⣽⢳⣎⣿⣹⢞⣻⣳⡽⣯⢾⡱⣿⡷⣹⣭⢟⣦⢻⡆⢏⡳⣹⡜⡵⣫⠞⣭⠞⣵⢫⡞⡽⢎⡷⣹⢎⡷⣹⢮⡝⢶⣹⠺⣜⡝⣮⢹⢧⡏⢏⡜⢦⢣⢏⡜⢳⢧⣚⠧⣝⠮⣝⡿⣹⠶⣭⢟⣞⡳⢯⣛⣶⢻⡭⢷⣫⢗⡞⣯⢳⡝⡾⣜⡳⢮⠟⣴⢯⡝⣧⢏⡶⣹⢣⡗⣹⠜⣎⣳⢱⡂⠎⢴⣻
-⠿⣿⡭⣷⢫⣘⢧⣏⢞⡶⣭⢻⣜⢷⣫⢯⡷⣛⡶⣯⣟⡷⣯⣟⡷⣯⣗⢯⣷⣣⢻⡾⣭⢷⣫⢧⡑⢧⣚⡵⡹⡞⣥⠻⣜⢧⣛⡼⢫⡜⣧⢻⡜⢧⡻⡜⣧⢓⡻⡜⣼⢡⡟⣾⡘⢮⢜⡣⢇⡞⡼⣈⠳⣭⠞⣥⣛⣮⢳⣭⠻⡜⢾⡼⣹⢏⡾⣍⢷⡹⣏⢾⡹⣞⡵⣫⢞⡵⢫⡽⢋⣾⣳⣞⢾⣱⢯⡞⣵⢫⡞⣥⢻⡜⢦⡳⢭⡜⢲⡿
-⣟⠽⣷⣫⠇⣞⢧⡞⣽⢺⡵⣛⣮⢟⡼⣯⡽⣯⣟⡷⣯⣟⡷⣯⣟⣷⣻⣶⢫⣗⢯⣻⣽⣳⢯⠾⣝⡎⠳⣼⢱⡏⣖⠻⡜⣎⢶⡙⣧⢻⡴⣋⢾⡹⢧⡝⣲⢫⠵⡹⢆⠣⣜⢣⡜⢣⢮⢱⣃⢮⡱⢎⡱⢌⠻⣖⡿⣼⢳⢮⣟⠼⣓⠾⣱⢏⡾⣙⢮⠵⣏⢾⡱⣎⠷⣙⢮⡝⣫⡴⣟⣾⣳⣞⣯⠷⣏⡾⣭⢷⡹⣎⢷⡚⡧⡝⣦⠹⣌⠷
-⣏⢯⡽⣿⣘⢮⡳⣝⢮⣳⠽⣝⣮⠿⣽⣳⣟⡷⣯⣟⣷⣯⢿⣷⣻⣾⣽⣞⣯⡞⡗⣮⠷⣯⣟⣻⢧⣏⡗⡤⣋⠼⣎⢳⡹⣜⢲⡙⡶⣻⢶⡹⢎⣝⢣⠞⣥⠋⣎⢱⡊⡵⢊⡖⣩⢓⢎⡆⢳⢢⡝⢬⡱⢎⠖⣸⣿⣯⣿⣻⣮⠹⡼⣩⠗⣎⡳⡝⣮⢳⡜⢣⣟⡼⣣⠟⣬⣞⣵⣫⣿⣳⣟⣾⣽⣻⡽⣯⢷⣫⠷⣝⡮⣽⡱⣛⡴⣛⠼⣆
-⣻⢎⡷⣃⢯⡞⣵⢫⡾⣱⠿⣽⣺⢟⣷⣻⢾⣽⣳⡿⣾⣽⡿⣞⣿⢾⣳⡿⣯⢿⡽⣎⣻⢳⣯⡽⣞⣮⡝⡶⣩⠞⡹⢆⡱⢌⢢⡙⢲⢹⠧⡙⠎⡜⠤⢣⡔⣩⢆⡳⢜⡡⢏⡜⡱⢎⢲⡽⣎⠶⢮⡱⣘⢎⡝⣆⠻⢿⡻⠟⢢⢛⡴⢋⡞⣥⢳⣙⣾⢣⠝⠣⠜⢳⣟⣾⡟⣞⣶⢿⣳⣯⣿⣞⣷⣯⢿⡽⣯⢯⣿⣹⢞⡵⣫⢵⡳⡭⣞⡹
-⢯⡞⣵⣸⢳⡞⣵⣫⢗⣯⢟⣳⢯⣟⡾⣽⣻⣞⣯⣿⣟⣷⣿⣿⣻⣿⣟⣿⣿⣻⣟⣾⡱⣏⡾⣽⣳⢧⡟⣵⢣⢏⡵⢋⡖⢣⢆⢧⠣⡜⢢⡉⢼⡓⣎⠳⣜⡱⢎⡵⢪⡕⣫⠜⡵⢫⡞⡽⣸⡙⡮⣕⢫⠞⡼⣌⡛⢦⠳⣍⠧⢦⢌⡱⠌⡔⢣⠜⡎⡔⢊⡱⣎⢷⣿⢳⡽⣾⣟⣿⡿⣽⣾⢿⣽⣾⣿⣻⣽⣻⢾⣭⣟⡾⣵⣫⢷⡹⣖⡹
-⣻⢼⢣⡳⣝⢾⡱⢯⡾⣭⢿⣽⣻⢾⣽⣻⡷⣟⣯⣷⣿⢿⣷⡿⣿⣽⡿⣿⣾⢿⣽⡷⣿⣭⣳⣏⠷⣯⣛⣮⢳⣎⡜⣣⢞⡱⢎⠮⡱⣌⠧⡜⢦⡹⣌⢳⣌⠳⣍⢞⡱⢎⡵⢫⠵⣫⢳⡱⢣⣝⠲⡝⢮⣙⠶⣡⢛⡬⣓⢎⡟⣬⢚⡴⢋⡜⣆⠩⢔⢢⢏⡵⣽⢟⣼⣳⣿⣟⣿⣽⣿⣟⣿⣿⢿⣷⣿⣻⣯⡿⣟⣾⡽⣞⣷⣹⣎⠷⣭⢳
-⣧⢻⢸⡳⣝⢮⡽⣳⣏⣯⣟⡾⣽⣻⢾⡷⣿⣿⣻⣯⣿⣿⣿⣿⣿⣿⣿⣿⣯⣿⡿⣽⡿⣞⣷⣞⠿⣧⣻⢼⡳⢮⡜⡱⢎⡵⣊⠷⣑⠮⣱⡙⢦⠳⣌⡳⣌⠗⣎⠮⣕⢫⣜⢣⡛⡴⢣⡝⣣⠮⣝⡹⢦⡙⢮⡱⣋⠶⣩⢎⡷⣌⠳⣜⢣⠞⡬⠹⣌⡷⣫⡽⣣⣿⢾⣻⣽⣾⢿⣻⣾⣿⣿⣿⣿⣿⣷⣿⡿⣽⣿⡷⣿⡽⣞⡷⣞⣻⣜⣳
-⣞⠭⣏⢷⡹⣎⡷⣻⣼⢳⣯⣟⡷⣿⣻⣟⣿⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣿⡿⣿⡿⣽⣟⡾⣽⣻⢧⡟⣮⢽⣣⢏⡵⣋⠶⣩⠞⣌⢧⡱⢎⢣⡛⠴⣓⢬⡛⣬⢓⣎⠳⣬⢣⡝⡖⣭⢚⡥⣛⠴⣙⢦⣋⢧⢓⡭⣚⢥⣺⠵⣌⠳⣌⢣⠞⣰⣛⡬⢷⣭⢷⡿⣽⣻⣯⣿⣟⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣿⢯⣿⣽⣻⡽⣖⢯⢶
-⡞⣝⢯⡞⡵⣏⣾⢳⣭⣟⡾⣽⣻⢷⡿⣯⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⣿⣟⣾⣟⡷⣯⢟⣾⡹⣎⢷⣋⠶⣩⠞⣥⢛⡬⢲⢱⡊⣕⢪⠓⡭⢲⡙⡴⣋⡜⡳⣌⠳⣜⣣⠜⣣⠞⣡⢛⡜⣆⡓⣎⢣⠞⣡⠞⣜⠣⣌⠳⣌⠳⢎⡵⣣⢟⡽⣮⢿⣽⣳⣟⣷⢿⣻⣯⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣿⣻⣞⣷⣻⡽⣞⢯
-⣽⢸⢧⡻⣝⠾⣼⣛⣮⢿⣽⣳⢿⣻⣿⢿⣽⣿⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣯⣿⢿⣾⣻⢾⡽⣯⢟⣶⢻⡝⣮⢭⡳⢥⡛⡴⣋⡜⣣⠇⡞⢤⢣⡙⣌⠓⠬⠱⠜⡲⣑⢎⠳⡌⣷⡩⢆⡝⣢⢃⡞⣤⠳⡜⠦⢛⢠⠻⣝⠲⣌⠳⣌⢻⣜⡳⣝⢾⡹⣧⣟⢾⣳⣟⡾⣿⣻⣽⣿⣻⣽⣿⣿⣿⣿⣿⣿⣿⣿⣯⣷⣿⢿⣽⣾⣳⢿⣹⣞
-⣞⢸⢧⡻⣜⣻⡵⣻⣞⢿⡾⣽⣻⣯⣿⢿⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⢯⣟⣯⢿⣝⣻⡼⣳⢻⡜⣧⣛⢦⡙⢶⡱⢎⡕⡫⢜⠣⠖⡉⣄⠚⠬⣑⠲⡐⠤⡊⢍⡩⡙⡍⣋⠜⡩⢍⡩⠔⠣⠜⣐⠣⢢⠱⢠⠒⡌⠱⢎⡳⢎⡷⣹⢎⡷⣳⢞⣯⢷⣯⢿⡽⣟⣯⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⣻⡾⣽⢯⡷⣞
---]===========================================================]
+-- This Luraph V15.1 Cracked By SL | Source Leak [ https://discord.gg/zNyHGU6eUK ]
+-- [SL] Luraph V15.1 Cracked & Leaked | Source Leak [ https://discord.gg/zNyHGU6eUK ]
 
-
-local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local RunService = game:GetService("RunService")
-
-local targetRemote = workspace.Map.Destructible.Model.StationControl.Handle.Train
-
-local function createCircleGui()
-    local existingGui = LocalPlayer.PlayerGui:FindFirstChild("CircleGui")
-    if existingGui then return existingGui end
-
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
-    screenGui.Name = "CircleGui"
-    screenGui.ResetOnSpawn = false 
-
-    local circleButton = Instance.new("TextButton")
-    circleButton.Name = "CircleButton"
-    circleButton.Parent = screenGui
-    circleButton.Size = UDim2.new(0, 100, 0, 100)
-    circleButton.Position = UDim2.new(0.87, -50, 0.5, -450)
-    circleButton.AnchorPoint = Vector2.new(0.5, 0.5)
-    circleButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) 
-    circleButton.Text = ""
-    circleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-    local function clickAnimation()
-        local downTween = TweenService:Create(circleButton, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Size = UDim2.new(0, 90, 0, 90)
-        })
-        local upTween = TweenService:Create(circleButton, TweenInfo.new(0.2, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out), {
-            Size = UDim2.new(0, 100, 0, 100)
-        })
-
-        downTween:Play()
-        downTween.Completed:Connect(function()
-            upTween:Play()
-        end)
-    end
-
-    circleButton.MouseButton1Click:Connect(function()
-        clickAnimation()
-        targetRemote:FireServer()
-    end)
-
-    RunService.RenderStepped:Connect(function()
-        local prompt = workspace:FindFirstChild("Map") 
-            and workspace.Map:FindFirstChild("Destructible") 
-            and workspace.Map.Destructible:FindFirstChild("Model") 
-            and workspace.Map.Destructible.Model:FindFirstChild("StationControl") 
-            and workspace.Map.Destructible.Model.StationControl:FindFirstChild("ButtonTrain") 
-            and workspace.Map.Destructible.Model.StationControl.ButtonTrain:FindFirstChild("Button") 
-            and workspace.Map.Destructible.Model.StationControl.ButtonTrain.Button:FindFirstChild("Button")
-
-        if prompt and prompt:IsA("ProximityPrompt") and prompt.Enabled then
-            circleButton.BackgroundColor3 = Color3.fromRGB(91, 154, 76) 
-        else
-            circleButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) 
-        end
-    end)
-
-    return screenGui
+-- internal runtime stub (VM core, not script code).
+-- LPH_ENCFUNC: (key, encrypted buffer, ...) -> function.
+local function luraph_runtime1(...)
+	error("internal runtime stub")
 end
 
-createCircleGui()
+-- internal runtime stub (VM core, not script code).
+-- LPH_ENCFUNC: (key, encrypted buffer, ...) -> function.
+local function luraph_runtime2(...)
+	error("internal runtime stub")
+end
 
--- [https://discord.gg/JD4s8wrvVH](https://discord.gg/JD4s8wrvVH)
+-- internal runtime stub (VM core, not script code).
+-- LPH_ENCFUNC: (key, encrypted buffer, ...) -> function.
+local function luraph_runtime3(...)
+	error("internal runtime stub")
+end
+
+-- internal runtime stub (VM core, not script code).
+-- LPH_ENCFUNC: (key, encrypted buffer, ...) -> function.
+local function luraph_runtime4(...)
+	error("internal runtime stub")
+end
+
+-- internal runtime stub (VM core, not script code).
+-- LPH_ENCFUNC: (key, encrypted buffer, ...) -> function.
+local function luraph_runtime5(...)
+	error("internal runtime stub")
+end
+
+-- internal runtime stub (VM core, not script code).
+-- LPH_ENCFUNC: (key, encrypted buffer, ...) -> function.
+local function luraph_runtime6(...)
+	error("internal runtime stub")
+end
+
+-- internal runtime stub (VM core, not script code).
+-- LPH_ENCFUNC: (key, encrypted buffer, ...) -> function.
+local function luraph_runtime7(...)
+	error("internal runtime stub")
+end
+
+-- internal runtime stub (VM core, not script code).
+-- LPH_ENCFUNC: (key, encrypted buffer, ...) -> function.
+local function luraph_runtime8(...)
+	error("internal runtime stub")
+end
+
+local tbl
+tbl = {}
+local v = nil
+local v2
+v2 = nil
+local v3 = nil
+local v4 = nil
+local v5 = nil
+local v6 = nil
+local v7 = nil
+local v8 = nil
+local v9 = nil
+local v10
+v10 = nil
+local v11 = nil
+local v12 = nil
+local v13 = nil
+local fn
+fn = v10
+local fn2
+fn2 = nil
+local fn3
+fn3 = nil
+local v14
+v14 = task
+local cancel
+cancel = v14.cancel
+local spawn
+spawn = v14.spawn
+local defer
+defer = v14.defer
+local delay
+delay = v14.delay
+local wait
+wait = v14.wait
+local v15, v16, v17, v18, v19, fn4, fn5, v20, info, traceback
+local n, fn6, fn7, tbl2, fn8, fn9, new, new2, new3, color
+local rect, udim2, udim, new4, v21, v22
+
+do
+	local v23 = Instance
+	v15 = Vector3
+	local v24 = Vector2
+	v16 = CFrame
+	v17 = Random
+	v18 = loadstring
+	local tbl3 = { 164, 112, 25, 180, 144, 233, 58, 195, 110, 6, 237, 237 }
+	local n2 = 12
+	local tbl4 = { 0, 43, 5, 219, 177, 115, 179, 181, 141, 32, 189, 225 }
+	local n3 = 12
+	local n4 = 16179
+-- [ SL x Luraph V15.1 ] Cracked & Open | discord.gg/zNyHGU6eUK
+	local tbl5 = {}
+	v19 = bit32.bor(nil, 406321593)
+	local n5 = 0
+
+	fn4 = function(arg, arg2)
+		n5 += 1
+		local v25 = tbl5
+		local v26 = n5
+		local n6
+
+		if nil then
+			n6 = 256
+			bit32.bxor(arg2, 17236303)
+		else
+			n6 = 256
+		end
+
+		v25[v26] = arg % n6
+	end
+
+	fn5 = function(arg, arg2)
+		local tbl6 = { nil, nil, arg2 + 0, 1, 0 }
+
+		while true do
+			local v25 = tbl6[4]
+			local v26 = tbl6[3]
+			local n6 = tbl6[5] + v25
+			local flag = v25 <= 0
+			tbl6[5] = n6
+
+			if n6 <= v26 then
+				local n7 = arg % 256
+				arg = (arg - n7) / 256
+				n5 += 1
+				tbl5[n5] = n7
+			else
+				break
+			end
+		end
+	end
+
+	local n6 = v19 + 699169419
+
+	local function fn10(arg)
+		local v25 = nil
+		local v26 = tbl5
+		local v27 = n5
+		local tbl6 = {}
+		local tbl7 = { 255, -1, nil, 1, nil }
+
+		while true do
+			local v28 = tbl7[4]
+			local v29 = tbl7[1]
+			local n7 = tbl7[2] + v28
+			local flag = v28 <= 0
+			tbl7[2] = n7
+
+			if n7 <= v29 then
+				tbl6[n7] = n7
+			else
+				break
+			end
+		end
+
+		local n7 = nil - n6
+		local n8 = 0
+		local tbl8 = { nil, 255, tbl7[5], -1, 1 }
+
+		while true do
+			local v28 = tbl8[5]
+			local v29 = tbl8[2]
+			local n9 = tbl8[4] + v28
+			local flag = v28 <= 0
+			tbl8[4] = n9
+
+			if n9 <= v29 then
+				v25 = n9
+				local v30 = bit32.band(v25, 255)
+				n8 = bit32.band(n8 + tbl6[v30] + v26[v25 % v27 + 1], 255)
+				local v31 = tbl6[v30]
+				tbl6[v30] = tbl6[n8]
+				tbl6[n8] = v31
+			else
+				break
+			end
+		end
+
+		local tbl9 = {}
+		local tbl10 = { tbl8[3], nil, 32, 0, 1 }
+		local n9 = 0
+		local n10 = 0
+
+		while true do
+			local v28 = tbl10[5]
+			local v29 = tbl10[3]
+			local n11 = tbl10[4] + v28
+			local flag = v28 <= 0
+			tbl10[4] = n11
+
+-- SL | Luraph V15.1 Cracked & Released | Source Leak [ https://discord.gg/zNyHGU6eUK ]
+			if n11 <= v29 then
+				v25 = n11
+				n9 = bit32.band(n9 + 1, 255)
+				n10 = bit32.band(n10 + tbl6[n9], 255)
+				local v30 = tbl6[n9]
+				tbl6[n9] = tbl6[n10]
+				tbl6[n10] = v30
+				tbl9[v25] = tbl6[bit32.band(tbl6[n9] + tbl6[n10], 255)]
+			else
+				break
+			end
+		end
+
+		local v28 = tbl10[1]
+		n5 += 1
+		local v29 = tbl5
+		local v30 = n5
+
+		v29[v30] = 82
+		;(not v29)[v30] = 71
+		;(nil)[nil] = 50
+		bit32.band(n9, 12)
+		local tbl11 = { nil, 255, -1, 1, v28 }
+		local n11 = 32
+
+		while true do
+			local v31 = tbl11[4]
+			local v32 = tbl11[2]
+			local n12 = tbl11[3] + v31
+			local flag = v31 <= 0
+			tbl11[3] = n12
+
+			if n12 <= v32 then
+				v25[n12] = n12
+			else
+				break
+			end
+		end
+
+		local v31 = tbl11[5]
+		local n12
+
+		if tbl6 < 256 then
+			n12 = 256
+		else
+			n12 = tbl6
+		end
+
+		local tbl12 = { nil, n12 - 1 + 0, v31, 1, -1 }
+		local n13 = 0
+		local v32 = tbl12
+
+		while true do
+			local v33 = v32[4]
+			local v34 = v32[2]
+			local n14 = v32[5] + v33
+			local flag = v33 <= 0
+			v32[5] = n14
+
+			if n14 <= v34 then
+				local v35 = n14
+				local v36 = bit32.band(v35, 255)
+				n13 = bit32.band(n13 + v25[v36] + n10[v35 % tbl6 + 1], 255)
+				local v37 = v25[v36]
+				v25[v36] = v25[n13]
+				v25[n13] = v37
+			else
+				break
+			end
+		end
+
+		local tbl13 = {}
+		local tbl14 = { 1, nil, v32[3], 32, 0 }
+		local n14 = 0
+		local n15 = 0
+
+		while true do
+			local v33 = tbl14[1]
+			local v34 = tbl14[4]
+			local n16 = tbl14[5] + v33
+			local flag = v33 <= 0
+			tbl14[5] = n16
+
+			if n16 <= v34 then
+				n14 = bit32.band(n14 + 1, 255)
+				n15 = bit32.band(n15 + v25[n14], 255)
+				local v35 = v25[n14]
+				v25[n14] = v25[n15]
+				v25[n15] = v35
+				tbl13[n16] = v25[bit32.band(v25[n14] + v25[n15], 255)]
+			else
+				break
+			end
+		end
+
+		local v33 = tbl14[3]
+		tbl5[n5] = 0
+		n5 -= 1
+		local tbl15 = { nil, v33, n2 + 0, 0, 1 }
+-- *.*.* Luraph V15.1 Cracked By SL *.*.* [ https://discord.gg/zNyHGU6eUK ]
+		local n16 = 32
+
+		while true do
+			local v34 = tbl15[5]
+			local v35 = tbl15[3]
+			local n17 = tbl15[4] + v34
+			local flag = v34 <= 0
+			tbl15[4] = n17
+
+			if n17 <= v35 then
+				n11 += 1
+				tbl9[n11] = tbl3[n17]
+			else
+				break
+			end
+		end
+
+		local v34 = tbl15[2]
+		local tbl16, n17, tbl17, n18
+
+		while true do
+			local tbl18 = { nil, n3 + 0, v34, 0, 1 }
+
+			while true do
+				local v35 = tbl18[5]
+				local v36 = tbl18[2]
+				local n19 = tbl18[4] + v35
+				local flag = v35 <= 0
+				tbl18[4] = n19
+
+				if n19 <= v36 then
+					n16 += 1
+					tbl13[n16] = tbl4[n19]
+				else
+					break
+				end
+			end
+
+			tbl16 = {}
+			local tbl19 = { 1, -1, nil, tbl18[3], 255 }
+
+			while true do
+				local v35 = tbl19[1]
+				local v36 = tbl19[5]
+				local n19 = tbl19[2] + v35
+				local flag = v35 <= 0
+				tbl19[2] = n19
+
+				if n19 <= v36 then
+					tbl16[n19] = n19
+				else
+					break
+				end
+			end
+
+			local v35 = tbl19[4]
+			local n19
+
+			if n11 < 256 then
+				bit32.bor(n17, n6)
+				n17 = 1132836504
+				n19 = 256
+			else
+				n19 = n11
+			end
+
+			local tbl20 = { v35, 1, -1, nil, n19 - 1 + 0 }
+			local n20 = 0
+			local v36 = tbl20
+
+			while true do
+				local v37 = v36[2]
+				local v38 = v36[5]
+				local n21 = v36[3] + v37
+				local flag = v37 <= 0
+				v36[3] = n21
+
+				if n21 <= v38 then
+					local v39 = n21
+					local v40 = bit32.band(v39, 255)
+					n20 = bit32.band(n20 + tbl16[v40] + tbl9[v39 % n11 + 1], 255)
+					local v41 = tbl16[v40]
+					tbl16[v40] = tbl16[n20]
+					tbl16[n20] = v41
+				else
+					break
+				end
+			end
+
+			tbl17 = {}
+			local tbl21 = { 255, -1, 1, v36[1], nil }
+
+			while true do
+				local v37 = tbl21[3]
+				local v38 = tbl21[1]
+				local n21 = tbl21[2] + v37
+				local flag = v37 <= 0
+				tbl21[2] = n21
+
+-- ~~ Luraph V15.1 | Cracked By SL ~~ https://discord.gg/zNyHGU6eUK ~~
+				if n21 <= v38 then
+					tbl17[n21] = n21
+				else
+					break
+				end
+			end
+
+			v34 = tbl21[4]
+
+			if n16 < 256 then
+				if bit32.bxor(arg, 137510353) ~= 536043115 then
+					n18 = 256
+					break
+				end
+				continue
+			end
+
+			n18 = n16
+			break
+		end
+
+		local tbl18 = { v34, n18 - 1 + 0, 1, -1, nil }
+		local n19 = 0
+		local v35 = tbl18
+
+		while true do
+			local v36 = v35[3]
+			local v37 = v35[2]
+			local n20 = v35[4] + v36
+			local flag = v36 <= 0
+			v35[4] = n20
+
+			if n20 <= v37 then
+				local v38 = n20
+				local v39 = bit32.band(v38, 255)
+				n19 = bit32.band(n19 + tbl17[v39] + tbl13[v38 % n16 + 1], 255)
+				local v40 = tbl17[v39]
+				tbl17[v39] = tbl17[n19]
+				tbl17[n19] = v40
+			else
+				break
+			end
+		end
+
+		local tbl19 = { nil, 1, n11 + 0, v35[1], 0 }
+
+		while true do
+			local v36 = tbl19[2]
+			local v37 = tbl19[3]
+			local n20 = tbl19[5] + v36
+			local flag = v36 <= 0
+			tbl19[5] = n20
+
+			if n20 <= v37 then
+				tbl9[n20] = 0
+			else
+				break
+			end
+		end
+
+		local v36 = tbl19[4]
+		bit32.bxor(2742316332, arg)
+		local tbl20 = { 0, nil, v36, n16 + 0, 1 }
+
+		while true do
+			local v37 = tbl20[5]
+			local v38 = tbl20[4]
+			local n20 = tbl20[1] + v37
+			local flag = v37 <= 0
+			tbl20[1] = n20
+
+			if n20 <= v38 then
+				tbl13[n20] = 0
+			else
+				break
+			end
+		end
+
+		local tbl21 = { 1, 0, nil, n5 + 0, tbl20[3] }
+		local v37 = tbl21[1]
+		local v38 = tbl21[4]
+		local n20 = tbl21[2] + v37
+		local flag = v37 <= 0
+		tbl21[2] = n20
+		local tbl22 = { nil, tbl21[5], 1, 0, n2 + 0 }
+
+		while true do
+			local v39 = tbl22[3]
+			local v40 = tbl22[5]
+			local n21 = tbl22[4] + v39
+			local flag2 = v39 <= 0
+			tbl22[4] = n21
+
+			if n21 <= v40 then
+				tbl3[n21] = 0
+			else
+				break
+			end
+		end
+-- ----------- SL | Luraph V15.1 | Cracked ----------- [ https://discord.gg/zNyHGU6eUK ]
+
+		local v39 = tbl22[2]
+		;(nil)[nil] = 85
+		local tbl23 = { nil, (arg == 295535792) + 0, 1, v39, 0 }
+
+		while true do
+			local v40 = tbl23[3]
+			local v41 = tbl23[2]
+			local n21 = tbl23[5] + v40
+			local flag2 = v40 <= 0
+			tbl23[5] = n21
+
+			if n21 <= v41 then
+				tbl4[n21] = 0
+			else
+				break
+			end
+		end
+
+		n5 = 0
+		n2 = 0
+		n3 = 0
+		return tbl16, tbl17
+	end
+
+	n6 = 459961438
+
+	local function fn11(arg, arg2, arg3)
+		local v25 = fn10
+		local v26 = bit32.bxor(arg3, 75854874)
+		local v27, v28 = v25(v26)
+		luraph_runtime7(table.pack(r34, r35, v))()
+		error("SL: unresolved constant write (at 20:389)")
+	end
+
+	v20 = assert(debug, "The debug library is required on Luau platforms. Please open a support ticket.")
+	info = v20.info
+	traceback = v20.traceback
+	n = 90161386
+
+	fn6 = function()
+		local function fn12(arg, arg2, arg3, arg4, arg5, arg6)
+			local tbl6 = { arg2, arg3, arg4, arg6 }
+			local n7 = 557281413
+			local tbl7 = { nil, 1, 0, 4, nil }
+			local v25, n8, n9, n10, n11, v26, v27, v28, writeu32, v29, v30, writeu16, v31, v32
+
+			while true do
+				local v33 = tbl7[2]
+				local v34 = tbl7[4]
+				local n12 = tbl7[3] + v33
+				local flag = v33 <= 0
+				local flag2 = not flag
+				local flag3 = n12 >= v34
+				local flag4 = n12 <= v34
+				local v35, tbl8, v36, v37, n13, flag5, v38, v39, v40, v41, v42, n14, v43, v44, v45, n15, v46, n16, v47, v48, n17, v49, n18, n19, n20, v50, v51, n21, v52, n22, v53, v54, n23, v55, v56, v57, v58, v59, n24, v60, v61, v62, v63, v64, n25, v65, v66, v67, n26, v68, v69, v70, v71, v72, v73, n27, v74, v75, v76, v77, v78, n28, v79, v80, v81, n29, v82, v83, v84, n30, v85, v86, v87, v88, v89, v90, n31, v91, v92, v93, v94, v95, v96, n32, v97, v98, n33, v99, v100, v101, v102, n34, v103, v104, v105, v106, n35, v107, v108, v109, v110, n36, v111, v112, v113, v114, n37, v115, v116, v117, n38, v118, v119, n39, v120, v121, n40, n41, v122, v123, v124, n42, v125, n43
+
+				if flag then
+					if flag2 then
+						if flag3 then
+							tbl7[3] = n12
+
+							if flag3 then
+								v35 = tbl6[n12]
+								tbl8 = { tbl7, #v35 + 0, nil, 0, 1 }
+
+								while true do
+									v36 = tbl8[5]
+									v37 = tbl8[2]
+									n13 = tbl8[4] + v36
+									flag5 = v36 <= 0
+									tbl8[4] = n13
+
+									if n13 <= v37 then
+										v38 = n13
+										v39 = bit32.lshift(bit32.band(n7, v38), 1)
+										v40 = bit32.bor(v39, v38)
+										v41 = bit32.bnot(v40)
+										local v126 = table.pack(bit32.band(v38, 4294967295))
+										local v127 = table.pack(bit32.band(v41, 4294967295))
+										local v128 = table.pack(bit32.band(v126[1], 65535))
+										local v129 = table.pack(bit32.rshift(v126[1], 16))
+										local v130 = table.pack(bit32.band(v127[1], 65535))
+										local v131 = table.pack(bit32.band(bit32.band(v128[1] * v130[1] + bit32.lshift(bit32.band(v128[1] * bit32.rshift(v127[1], 16) + v129[1] * v130[1], 65535), 16), 4294967295), 4294967295))
+										local v132 = table.pack(bit32.band(v131[1], 65535))
+										v42 = bit32.band(52876 * v132[1] + bit32.lshift(bit32.band(52876 * bit32.rshift(v131[1], 16) + 29966 * v132[1], 65535), 16), 4294967295)
+										local v133 = table.pack(bit32.band(v38, 4294967295))
+										local v134 = table.pack(bit32.band(v133[1], 65535))
+										n14 = n7 + v39 + v42 + bit32.band(65535 * v134[1] + bit32.lshift(bit32.band(65535 * bit32.rshift(v133[1], 16) + 65535 * v134[1], 65535), 16), 4294967295)
+										v43 = bit32.bnot(n7)
+										local v135 = table.pack(bit32.band(bit32.band(v38, v43), 4294967295))
+										local v136 = table.pack(bit32.band(v135[1], 65535))
+										v44 = bit32.band(2 * v136[1] + bit32.lshift(bit32.band(2 * bit32.rshift(v135[1], 16) + 0 * v136[1], 65535), 16), 4294967295)
+										v45 = bit32.bnot(v38)
+										local v137 = table.pack(bit32.band(v45, 4294967295))
+										local v138 = table.pack(bit32.band(v41, 4294967295))
+										local v139 = table.pack(bit32.band(v137[1], 65535))
+										local v140 = table.pack(bit32.rshift(v137[1], 16))
+										local v141 = table.pack(bit32.band(v138[1], 65535))
+-- ====== Luraph V15.1 Cracked By SL ====== [ https://discord.gg/zNyHGU6eUK ]
+										local v142 = table.pack(bit32.band(bit32.band(v139[1] * v141[1] + bit32.lshift(bit32.band(v139[1] * bit32.rshift(v138[1], 16) + v140[1] * v141[1], 65535), 16), 4294967295), 4294967295))
+										local v143 = table.pack(bit32.band(v142[1], 65535))
+										n15 = v44 + bit32.band(52876 * v143[1] + bit32.lshift(bit32.band(52876 * bit32.rshift(v142[1], 16) + 29966 * v143[1], 65535), 16), 4294967295)
+										local v144 = table.pack(bit32.band(v41, 4294967295))
+										local v145 = table.pack(bit32.band(v144[1], 65535))
+										v46 = bit32.band(2649 * v145[1] + bit32.lshift(bit32.band(2649 * bit32.rshift(v144[1], 16) + 32435 * v145[1], 65535), 16), 4294967295)
+										local v146 = table.pack(bit32.band(bit32.band(bit32.bnot(v39), v45), 4294967295))
+										local v147 = table.pack(bit32.band(v146[1], 65535))
+										n16 = n14 + n15 + v46 + bit32.band(50227 * v147[1] + bit32.lshift(bit32.band(50227 * bit32.rshift(v146[1], 16) + 63067 * v147[1], 65535), 16), 4294967295)
+										local v148 = table.pack(bit32.band(n16, 4294967295))
+										local v149 = table.pack(bit32.band(v148[1], 65535))
+										v47 = bit32.band(38217 * v149[1] + bit32.lshift(bit32.band(38217 * bit32.rshift(v148[1], 16) + 47351 * v149[1], 65535), 16), 4294967295)
+										bit32.bor(138734387, n16)
+										v48 = bit32.bnot(n16)
+										local v150 = table.pack(bit32.band(bit32.bor(v48, 4156232908), 4294967295))
+										local v151 = table.pack(bit32.band(v150[1], 65535))
+										n17 = 3798675710 + v47 + 7829084 + bit32.band(38217 * v151[1] + bit32.lshift(bit32.band(38217 * bit32.rshift(v150[1], 16) + 47351 * v151[1], 65535), 16), 4294967295)
+										local v152 = table.pack(bit32.band(bit32.bor(n16, 138734387), 4294967295))
+										local v153 = table.pack(bit32.band(v152[1], 65535))
+										local v154 = table.pack(bit32.band(n17 - 4460944383 + 1440178488 + bit32.band(45426 * v153[1] + bit32.lshift(bit32.band(45426 * bit32.rshift(v152[1], 16) + 3264 * v153[1], 65535), 16), 4294967295), 4294967295))
+										local v155 = table.pack(bit32.band(v154[1], 65535))
+										v49 = bit32.band(44454 * v155[1] + bit32.lshift(bit32.band(44454 * bit32.rshift(v154[1], 16) + 59201 * v155[1], 65535), 16), 4294967295)
+										local v156 = table.pack(bit32.band(n16, 4294967295))
+										local v157 = table.pack(bit32.band(v156[1], 65535))
+										n18 = bit32.band(52296 * v157[1] + bit32.lshift(bit32.band(52296 * bit32.rshift(v156[1], 16) + 9892 * v157[1], 65535), 16), 4294967295) + 2105199192 + 4306981028
+										local v158 = table.pack(bit32.band(bit32.band(v48, 4156232908), 4294967295))
+										local v159 = table.pack(bit32.band(v158[1], 65535))
+										n19 = v49 + n18 + 1720452840 + 695442357 + bit32.band(39056 * v159[1] + bit32.lshift(bit32.band(39056 * bit32.rshift(v158[1], 16) + 19785 * v159[1], 65535), 16), 4294967295) + 1284655084
+										v35[v38] = bit32.bxor(v35[v38], 695442357)
+										n20 = n7 + 268845561
+										local v160 = table.pack(bit32.band(v38, 4294967295))
+										local v161 = table.pack(bit32.band(v160[1], 65535))
+										v50 = bit32.band(v161[1] * 36781 + bit32.lshift(bit32.band(v161[1] * 4001 + bit32.rshift(v160[1], 16) * 36781, 65535), 16), 4294967295)
+										local v162 = table.pack(bit32.band(n19, 4294967295))
+										local v163 = table.pack(bit32.band(v50, 4294967295))
+										local v164 = table.pack(bit32.band(v162[1], 65535))
+										local v165 = table.pack(bit32.rshift(v162[1], 16))
+										local v166 = table.pack(bit32.band(v163[1], 65535))
+										local v167 = table.pack(bit32.band(bit32.band(v164[1] * v166[1] + bit32.lshift(bit32.band(v164[1] * bit32.rshift(v163[1], 16) + v165[1] * v166[1], 65535), 16), 4294967295), 4294967295))
+										local v168 = table.pack(bit32.band(v167[1], 65535))
+										v51 = bit32.band(41589 * v168[1] + bit32.lshift(bit32.band(41589 * bit32.rshift(v167[1], 16) + 36796 * v168[1], 65535), 16), 4294967295)
+										local v169 = table.pack(bit32.band(v50, 4294967295))
+										local v170 = table.pack(bit32.band(v169[1], 65535))
+										n21 = n20 + v51 + bit32.band(42375 * v170[1] + bit32.lshift(bit32.band(42375 * bit32.rshift(v169[1], 16) + 10157 * v170[1], 65535), 16), 4294967295)
+										local v171 = table.pack(bit32.band(n20, 4294967295))
+										local v172 = table.pack(bit32.band(v50, 4294967295))
+										local v173 = table.pack(bit32.band(v171[1], 65535))
+										local v174 = table.pack(bit32.rshift(v171[1], 16))
+										local v175 = table.pack(bit32.band(v172[1], 65535))
+										local v176 = table.pack(bit32.band(bit32.band(v173[1] * v175[1] + bit32.lshift(bit32.band(v173[1] * bit32.rshift(v172[1], 16) + v174[1] * v175[1], 65535), 16), 4294967295), 4294967295))
+										local v177 = table.pack(bit32.band(v176[1], 65535))
+										v52 = bit32.band(27352 * v177[1] + bit32.lshift(bit32.band(27352 * bit32.rshift(v176[1], 16) + 46839 * v177[1], 65535), 16), 4294967295)
+										local v178 = table.pack(bit32.band(v50, 4294967295))
+										local v179 = table.pack(bit32.band(v178[1], 65535))
+										local v180 = table.pack(bit32.band(bit32.band(v179[1] * 60211 + bit32.lshift(bit32.band(v179[1] * 2116 + bit32.rshift(v178[1], 16) * 60211, 65535), 16), 4294967295), 4294967295))
+										local v181 = table.pack(bit32.band(v180[1], 65535))
+										n22 = n21 + v52 + 1826852524 + bit32.band(23297 * v181[1] + bit32.lshift(bit32.band(23297 * bit32.rshift(v180[1], 16) + 59647 * v181[1], 65535), 16), 4294967295)
+										local v182 = table.pack(bit32.band(v50, 4294967295))
+										local v183 = table.pack(bit32.band(v182[1], 65535))
+										local v184 = table.pack(bit32.band(bit32.band(v183[1] * 5324 + bit32.lshift(bit32.band(v183[1] * 63419 + bit32.rshift(v182[1], 16) * 5324, 65535), 16), 4294967295), 4294967295))
+										local v185 = table.pack(bit32.band(v184[1], 65535))
+										v53 = bit32.band(46140 * v185[1] + bit32.lshift(bit32.band(46140 * bit32.rshift(v184[1], 16) + 29491
